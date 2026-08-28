@@ -217,5 +217,13 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Documentación local (no subir al repo por ahora)
-docs/planificacion/
+
+# Node / React
+node_modules/
+dist/
+build/
+.next/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
