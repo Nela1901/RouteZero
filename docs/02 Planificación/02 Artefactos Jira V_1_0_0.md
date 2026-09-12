@@ -32,7 +32,7 @@ El proyecto RouteZero fue configurado en Atlassian Jira Software aplicando la je
 
 ## 2. Evidencias de Configuración
 
-### Evidencia 1 — Roadmap del Proyecto
+### Evidencia 1 - Roadmap del Proyecto
 
 Mapeo de las 7 épicas en la línea de tiempo del proyecto, mostrando la secuencia de desarrollo desde EP-01 Seguridad y Acceso hasta EP-07 Sostenibilidad, alineadas con los 4 sprints y la versión v1.0.0-MVP.
 
@@ -40,7 +40,7 @@ Mapeo de las 7 épicas en la línea de tiempo del proyecto, mostrando la secuenc
 
 ---
 
-### Evidencia 2 — Backlog Priorizado
+### Evidencia 2 - Backlog Priorizado
 
 Vista general del backlog con todas las Historias de Usuario (HU) e Historias Técnicas (HT) distribuidas en los 4 sprints, con Story Points estimados en secuencia de Fibonacci y épicas asignadas.
 
@@ -50,7 +50,7 @@ Vista general del backlog con todas las Historias de Usuario (HU) e Historias T�
 
 ---
 
-### Evidencia 3 — Sprint Planning & Sprint Goal
+### Evidencia 3 - Sprint Planning & Sprint Goal
 
 Detalle del Sprint 1 con los 13 ítems seleccionados y la meta del sprint redactada en la cabecera: *"Implementar la base del sistema RouteZero: autenticación JWT con control de acceso por roles (EP-01), gestión de flota de vehículos (EP-02) y registro de pedidos con coordenadas GPS (EP-03)."*
 
@@ -58,7 +58,7 @@ Detalle del Sprint 1 con los 13 ítems seleccionados y la meta del sprint redact
 
 ---
 
-### Evidencia 4 — Tablero Scrum Activo
+### Evidencia 4 - Tablero Scrum Activo
 
 Flujo de trabajo del Sprint 1 activo con tarjetas distribuidas en las columnas: **Por Hacer → En Curso → In Review → Listo**.
 
@@ -66,7 +66,7 @@ Flujo de trabajo del Sprint 1 activo con tarjetas distribuidas en las columnas: 
 
 ---
 
-### Evidencia 5 — Gestión de Versiones / Release
+### Evidencia 5 - Gestión de Versiones / Release
 
 Vista del módulo de Publicaciones mostrando la versión **v1.0.0-MVP** creada con fecha de lanzamiento 13/11/2026 y su asociación con las historias del proyecto.
 
@@ -78,11 +78,11 @@ Vista del módulo de Publicaciones mostrando la versión **v1.0.0-MVP** creada c
 
 | Sprint | Fechas | Épicas | Ítems | Story Points | Objetivo |
 |---|---|---|---|---|---|
-| Sprint 1 — Base del sistema | 19 sep – 02 oct | EP-01, EP-02, EP-03 | 13 | 42 | Autenticación, flota y pedidos |
-| Sprint 2 — Personas y Algoritmo ACO | 03 oct – 16 oct | EP-04, EP-05 | 6 | 41 | Conductores, clientes y motor ACO |
-| Sprint 3 — Rutas y Visualización | 17 oct – 30 oct | EP-05, EP-06 | 5 | 24 | Re-optimización y mapa interactivo |
-| Sprint 4 — Sostenibilidad y Cierre | 31 oct – 13 nov | EP-07 | 5 | 18 | Dashboard, reportes y documentación |
-| **Total** | **19 sep – 13 nov** | **7 épicas** | **29** | **125** | |
+| Sprint 1 - Base del sistema | 19 sep - 02 oct | EP-01, EP-02, EP-03 | 13 | 42 | Autenticación, flota y pedidos |
+| Sprint 2 - Personas y Algoritmo ACO | 03 oct - 16 oct | EP-04, EP-05 | 6 | 41 | Conductores, clientes y motor ACO |
+| Sprint 3 - Rutas y Visualización | 17 oct - 30 oct | EP-05, EP-06 | 5 | 24 | Re-optimización y mapa interactivo |
+| Sprint 4 - Sostenibilidad y Cierre | 31 oct - 13 nov | EP-07 | 5 | 18 | Dashboard, reportes y documentación |
+| **Total** | **19 sep - 13 nov** | **7 épicas** | **29** | **125** | |
 
 ---
 
