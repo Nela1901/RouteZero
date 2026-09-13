@@ -212,19 +212,34 @@ RouteZero/
 
 ## 📚 Documentación
 
+### Fase 01: Inicio
+
 | Documento | Ubicación |
 |---|---|
-| Selección del enfoque | [`docs/01 Inicio/01. Selección del enfoque del proyecto V_1_0_0.md`](docs/01%20Inicio/01.%20Selección%20del%20enfoque%20del%20proyecto%20V_1_0_0.md) |
+| Selección del enfoque del proyecto | [`docs/01 Inicio/01. Selección del enfoque del proyecto V_1_1_0.md`](docs/01%20Inicio/01.%20Selección%20del%20enfoque%20del%20proyecto%20V_1_1_0.md) |
 | Acta de constitución | [`docs/01 Inicio/02. Acta de constitución V_1_0_0.md`](docs/01%20Inicio/02.%20Acta%20de%20constitución%20V_1_0_0.md) |
 | Declaración de la visión | [`docs/01 Inicio/03. Declaración de la visión V_1_0_0.md`](docs/01%20Inicio/03.%20Declaración%20de%20la%20visión%20V_1_0_0.md) |
 | Registro de supuestos y restricciones | [`docs/01 Inicio/04. Registro de supuestos y restricciones V_1_0_0.md`](docs/01%20Inicio/04.%20Registro%20de%20supuestos%20y%20restricciones%20V_1_0_0.md) |
 | Registro de interesados | [`docs/01 Inicio/05. Registro de interesados V_1_0_0.md`](docs/01%20Inicio/05.%20Registro%20de%20interesados%20V_1_0_0.md) |
+| Requisitos funcionales | [`docs/01 Inicio/06. Requisitos funcionales V_1_0_0.md`](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_0_0.md) |
+| Requisitos no funcionales | [`docs/01 Inicio/07. Requisitos no funcionales V_1_0_0.md`](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_0_0.md) |
+| Usuarios | [`docs/01 Inicio/08. Usuarios V_1_0_0.md`](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) |
+| Reglas de negocio | [`docs/01 Inicio/09. Reglas de negocio V_1_0_0.md`](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_0_0.md) |
+| Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_0_0.md`](docs/01%20Inicio/10.%20Stack%20tecnológico%20V_1_0_0.md) |
+| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_0_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_0_0.md) |
+| Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_0_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_0_0.md) |
+| Restricciones | [`docs/01 Inicio/13. Restricciones V_1_0_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_0_0.md) |
 
 ---
 
-## 🚀 Instalación
+### Fase 02: Planificación del Proyecto
 
-> Próximamente — se completará al iniciar la fase de implementación (Iteración 2)
+| Documento | Ubicación |
+|---|---|
+| Transformando a Ágil | [`docs/02 Planificación/01 Transformando a ágil V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md) |
+| Artefactos Jira | [`docs/02 Planificación/02 Artefactos Jira V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md) |
+| Registro de Riesgos | [`docs/02 Planificación/03 Registro de riesgos V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md) |
+| Presupuesto del Proyecto | [`docs/02 Planificación/04 Presupuesto del proyecto V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_0_0.md) |
 
 ---
 
