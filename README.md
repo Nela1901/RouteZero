@@ -37,6 +37,7 @@
 ---
 
 ## 🌿 Sobre el Proyecto
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 **RouteZero** es una plataforma web de optimización de rutas logísticas sostenibles desarrollada como Proyecto Final de Asignatura (PFA) del curso Taller de Proyectos 2 de la carrera de Ingeniería de Sistemas e Informática de la Universidad Continental.
 
@@ -47,6 +48,7 @@ RouteZero aplica algoritmos metaheurísticos para resolver el **Problema de Rute
 ---
 
 ## 🚨 Problemática
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 Andina Reparto S.A.C. enfrenta cuatro desafíos operativos críticos en su operación diaria dentro del distrito de Huancayo:
 
@@ -71,6 +73,7 @@ Las principales vías del distrito presentan congestión severa en horas punta:
 ---
 
 ## 💡 Solución
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 RouteZero resuelve estos problemas mediante una plataforma web moderna que:
 
@@ -85,12 +88,14 @@ RouteZero resuelve estos problemas mediante una plataforma web moderna que:
 ---
 
 ## 🎯 Justificación del MVP
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 El MVP de RouteZero se justifica por la necesidad de demostrar en un entorno académico controlado que la aplicación de algoritmos metaheurísticos a la logística urbana de Huancayo genera un impacto medible en la eficiencia operativa y la sostenibilidad ambiental. La plataforma web permite validar el modelo de optimización con datos reales de la geografía y el tráfico del distrito de Huancayo, estableciendo una base escalable para futuras versiones del sistema.
 
 ---
 
 ## 🎯 Objetivos
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 ### Objetivo General
 Desarrollar una plataforma web funcional que optimice las rutas de reparto de Andina Reparto S.A.C. en el distrito de Huancayo, minimizando distancia, consumo de combustible, emisiones de CO₂ y penalizaciones por incumplimiento de ventanas de tiempo.
@@ -105,20 +110,22 @@ Desarrollar una plataforma web funcional que optimice las rutas de reparto de An
 ---
 
 ## 🛠️ Stack Tecnológico
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 | Capa | Tecnología | Versión | Justificación |
 |---|---|---|---|
 | **Frontend** | React.js | 18+ | Ecosistema amplio, integración nativa con Leaflet, componentes reutilizables |
 | **Backend** | Python + FastAPI | 3.11+ / 0.100+ | Ideal para APIs REST, genera Swagger automáticamente, perfecto para algoritmos en Python |
 | **Base de datos** | PostgreSQL | 15+ | Robusto, open source, soporte para datos geoespaciales |
-| **Mapas** | Leaflet + OpenStreetMap | — | Gratuito, sin límites de uso, datos precisos para Huancayo |
-| **Algoritmo** | Python (metaheurísticas) | — | VRPTW + Green VRP implementado en Python puro |
-| **Control de versiones** | Git + GitHub | — | Flujo Feature Branch Workflow con versionado semántico |
-| **Documentación API** | Swagger / OpenAPI | — | Generado automáticamente por FastAPI |
+| **Mapas** | Leaflet + OpenStreetMap | NV | Gratuito, sin límites de uso, datos precisos para Huancayo |
+| **Algoritmo** | Python (metaheurísticas) | NV | VRPTW + Green VRP implementado en Python puro |
+| **Control de versiones** | Git + GitHub | NV | Flujo Feature Branch Workflow con versionado semántico |
+| **Documentación API** | Swagger / OpenAPI | NV | Generado automáticamente por FastAPI |
 
 ---
 
 ## 🏗️ Arquitectura del Sistema
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 > La arquitectura detallada se encuentra en [`docs/01 Inicio/`](docs/01%20Inicio/)
 
@@ -140,6 +147,7 @@ Base de datos (PostgreSQL)
 ---
 
 ## 👥 Equipo de Desarrollo
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 | Rol | Integrante |
 |---|---|
@@ -154,6 +162,7 @@ Base de datos (PostgreSQL)
 ---
 
 ## 📐 Estándares Aplicados
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 | Estándar | Aplicación |
 |---|---|
@@ -169,6 +178,7 @@ Base de datos (PostgreSQL)
 ---
 
 ## 🔄 Enfoque de Desarrollo
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 RouteZero aplica un **enfoque híbrido adaptativo-dominante** (promedio de evaluación: **3.6/5**) que combina:
 
@@ -185,17 +195,34 @@ RouteZero aplica un **enfoque híbrido adaptativo-dominante** (promedio de evalu
 ---
 
 ## 📁 Estructura del Repositorio
+
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
+
 ```
 RouteZero/
 ├── docs/
 │   ├── 01 Inicio/
-│   │   ├── 01. Selección del enfoque del proyecto V_1_0_0.md
+│   │   ├── 01. Selección del enfoque del proyecto V_1_1_0.md
 │   │   ├── 02. Acta de constitución V_1_0_0.md
 │   │   ├── 03. Declaración de la visión V_1_0_0.md
 │   │   ├── 04. Registro de supuestos y restricciones V_1_0_0.md
-│   │   └── 05. Registro de interesados V_1_0_0.md
-│   ├── 02 Planificacion/
-│   ├── 03 Ejecucion/
+│   │   ├── 05. Registro de interesados V_1_0_0.md
+│   │   ├── 05. Registro de interesados V_1_1_0.md
+│   │   ├── 06. Requisitos funcionales V_1_0_0.md
+│   │   ├── 07. Requisitos no funcionales V_1_0_0.md
+│   │   ├── 08. Usuarios V_1_0_0.md
+│   │   ├── 09. Reglas de negocio V_1_0_0.md
+│   │   ├── 10. Stack tecnológico V_1_0_0.md
+│   │   ├── 11. Base de datos V_1_0_0.md
+│   │   ├── 11. Base de datos V_1_1_0.md
+│   │   ├── 12. Modelo C4 V_1_0_0.md
+│   │   └── 13. Restricciones V_1_0_0.md
+│   ├── 02 Planificación/
+│   │   ├── 01 Transformando a ágil V_1_0_0.md
+│   │   ├── 02 Artefactos Jira V_1_0_0.md
+│   │   ├── 03 Registro de riesgos V_1_0_0.md
+│   │   └── 04 Presupuesto del proyecto V_1_0_0.md
+│   ├── 03 Ejecución/
 │   ├── 04 Seguimiento_Control/
 │   └── 05 Cierre/
 ├── backend/
@@ -211,6 +238,7 @@ RouteZero/
 ---
 
 ## 📚 Documentación
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
 
 ### Fase 01: Inicio
 
@@ -220,13 +248,13 @@ RouteZero/
 | Acta de constitución | [`docs/01 Inicio/02. Acta de constitución V_1_0_0.md`](docs/01%20Inicio/02.%20Acta%20de%20constitución%20V_1_0_0.md) |
 | Declaración de la visión | [`docs/01 Inicio/03. Declaración de la visión V_1_0_0.md`](docs/01%20Inicio/03.%20Declaración%20de%20la%20visión%20V_1_0_0.md) |
 | Registro de supuestos y restricciones | [`docs/01 Inicio/04. Registro de supuestos y restricciones V_1_0_0.md`](docs/01%20Inicio/04.%20Registro%20de%20supuestos%20y%20restricciones%20V_1_0_0.md) |
-| Registro de interesados | [`docs/01 Inicio/05. Registro de interesados V_1_0_0.md`](docs/01%20Inicio/05.%20Registro%20de%20interesados%20V_1_0_0.md) |
+| Registro de interesados | [`docs/01 Inicio/05. Registro de interesados V_1_1_0.md`](docs/01%20Inicio/05.%20Registro%20de%20interesados%20V_1_0_0.md) |
 | Requisitos funcionales | [`docs/01 Inicio/06. Requisitos funcionales V_1_0_0.md`](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_0_0.md) |
 | Requisitos no funcionales | [`docs/01 Inicio/07. Requisitos no funcionales V_1_0_0.md`](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_0_0.md) |
 | Usuarios | [`docs/01 Inicio/08. Usuarios V_1_0_0.md`](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) |
 | Reglas de negocio | [`docs/01 Inicio/09. Reglas de negocio V_1_0_0.md`](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_0_0.md) |
 | Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_0_0.md`](docs/01%20Inicio/10.%20Stack%20tecnológico%20V_1_0_0.md) |
-| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_0_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_0_0.md) |
+| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_1_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_0_0.md) |
 | Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_0_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_0_0.md) |
 | Restricciones | [`docs/01 Inicio/13. Restricciones V_1_0_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_0_0.md) |
 
@@ -250,3 +278,5 @@ RouteZero/
 *Universidad Continental | Ingeniería de Sistemas e Informática | 2026*
 
 </div>
+
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
