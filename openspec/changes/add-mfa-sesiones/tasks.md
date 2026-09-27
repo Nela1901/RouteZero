@@ -1,0 +1,64 @@
+# Tasks
+
+## 1. Configuración de Supabase Auth
+
+- [x] 1.1 En el panel de Supabase, configurar la expiración del token de acceso a 15 minutos y confirmar el proveedor de email/password habilitado, y verificar con un login de prueba que el token emitido expira en 15 minutos
+- [x] 1.2 Crear la función SQL `custom_access_token_hook` de design.md (creada en el SQL Editor de Supabase, corre sin errores aunque `usuarios` aún no exista). Falta activar el interruptor en Authentication → Auth Hooks y verificar el claim `ver` en un token — se hace al final del grupo 2, cuando `usuarios.token_version` ya exista
+- [x] 1.3 Confirmar en el panel de Supabase la disponibilidad del Custom Access Token Hook para el plan del proyecto (Open Question de design.md): confirmado disponible (Authentication → Auth Hooks, sección "BETA" pero funcional en el plan Free)
+
+## 2. Base de datos: esquema y seguridad a nivel de fila (dentro del proyecto de Supabase)
+
+- [x] 2.1 Crear `usuarios` (referenciando `auth.users(id)`, sin `password_hash`, con `mfa_activo`, `mfa_intentos_fallidos`, `mfa_bloqueado_hasta`, `token_version`) según design.md, ejecutado directamente en el SQL Editor de Supabase
+- [x] 2.2 Crear la tabla `sesiones_activas` según el DDL de design.md
+- [x] 2.3 Habilitar RLS y crear las políticas `usuarios_solo_propio` y `sesiones_solo_propias` (corregidas para usar `current_setting(..., true)` y no lanzar error si la variable no está seteada); verificado con prueba real: sin variable = 0 filas, UUID incorrecto = 0 filas, UUID correcto = 1 fila
+- [x] 2.4 Creados los roles `app_backend` (sin `BYPASSRLS`) y `app_admin` (con `BYPASSRLS`); confirmado con `pg_roles` que `postgres` sí tenía `BYPASSRLS` (de ahí la necesidad de un rol propio) y que `app_backend` no lo tiene
+- [x] 2.5 Down-migration escrita y probada en vivo: se revirtieron `usuarios`, `sesiones_activas`, sus políticas RLS y `roles`, se confirmó `count = 0` tablas en `public`, y se volvió a aplicar el esquema completo — conexión y RLS verificados de nuevo tras la restauración
+
+## 3. Backend: middleware de autenticación y RLS compartido
+
+- [x] 3.1 Implementado `get_current_user` en `backend/src/core/security.py`: valida la firma ES256 vía JWKS público de Supabase (no `SUPABASE_JWT_SECRET`, que resultó no aplicar — el proyecto usa llaves asimétricas), extrae `usuario_id` y compara `ver` contra `usuarios.token_version`. Verificado end-to-end real: token normal → acceso concedido; tras `UPDATE token_version`, el mismo token viejo → 401 "Token revocado" (escenario "Token de acceso rechazado tras incremento de versión" confirmado)
+- [x] 3.2 Implementado `get_db_con_rls` que fija `app.usuario_actual_id` antes de cada consulta; verificado que `/api/auth/me` solo puede leer el perfil del propio usuario autenticado (gracias a RLS + la variable de sesión)
+- [x] 3.3 Verificado: los tres endpoints de `mfa-totp` y los tres protegidos de `session-management` (más `/me`) devuelven 401 sin token y con token falso; además el script de pruebas confirma que una sesión revocada o aal1 con MFA es rechazada. (`/login`, `/login/mfa` y `/sesiones/renovar` no llevan `get_current_user` a propósito: se autentican con credenciales o con el par de tokens)
+
+## 4. Backend: inscripción y verificación de MFA (capability `mfa-totp`)
+
+- [x] 4.1 Implementado `RepositorioUsuarios` (`backend/src/auth/repository.py`) y `supabase_client.py` (llamadas a la API de Auth de Supabase con `anon key` reenviando el token del usuario). Verificado con datos reales, no solo pruebas unitarias
+- [x] 4.2 Implementado `ServicioMFA.iniciar_inscripcion` — verificado end-to-end real: `POST /api/auth/mfa/inscribir` devolvió `factor_id`, `qr_code` y `secret` válidos
+- [x] 4.3 Implementado `ServicioMFA.confirmar_inscripcion` — verificado end-to-end real generando un código TOTP válido (script PowerShell HMAC-SHA1) y confirmando `mfa_activo = true` en la base de datos. **Bug encontrado y corregido**: cada método del repositorio hacía su propio `commit()`, cortando la transacción donde vivía `SET LOCAL app.usuario_actual_id` — la segunda actualización (`activar_mfa`) corría sin RLS activo y no afectaba ninguna fila, sin lanzar error. Se corrigió centralizando un solo `commit()` en `get_db_con_rls`
+- [x] 4.4 Implementado el bloqueo independiente en `_verificar_codigo_totp` — verificado end-to-end real: 3 códigos inválidos consecutivos → 4to intento devuelve 429 "Verificación de MFA bloqueada temporalmente". **Segundo bug encontrado y corregido**: un `HTTPException` esperado (código inválido) hacía que `get_db_con_rls` revirtiera TODO, incluyendo el contador de intentos que se acababa de incrementar — nunca llegaba a 3 de verdad. Se corrigió: los `HTTPException` ahora hacen `commit()` (son respuestas de negocio esperadas), solo excepciones no controladas hacen `rollback()`
+- [x] 4.5 Implementado `ServicioMFA.desactivar` (verifica contraseña vía login a Supabase + código TOTP, luego desenrola el factor) — verificado end-to-end real: "Desactivación rechazada por verificación fallida" (3 códigos incorrectos → bloqueo 429) y "Desactivación exitosa" (contraseña + código válido → 204, `mfa_activo` pasa a `false`)
+- [x] 4.6 Endpoints `POST /api/auth/mfa/inscribir`, `/confirmar`, `/desactivar` expuestos en `backend/src/auth/router.py` con validación Pydantic (código TOTP: string de exactamente 6 dígitos vía regex)
+- [x] 4.7 Satisfecho por diseño: ningún endpoint de `mfa-totp` acepta un `usuario_id` como parámetro de entrada — siempre se deriva del token ya validado por `get_current_user`, así que no existe una ruta para que un usuario consulte el estado MFA de otra cuenta
+- [x] 4.8 Documentación automática vía FastAPI/Swagger en `/docs` (OpenAPI generado a partir de los modelos Pydantic y las rutas ya definidas)
+
+## 5. Backend: login con segundo factor y gestión de sesiones (capability `session-management`)
+
+- [x] 5.1 Implementados `POST /api/auth/login` y `POST /api/auth/login/mfa` (`service_sesiones.py`, `router_sesiones.py`): bloqueo RN-001 propio (3 intentos, 15 min, con tiempo restante en el 429; mismo 401 genérico exista o no el correo) y login en dos pasos. Verificado end-to-end (31/34 del script de pruebas): `mfa_required` sin refresh token, el token parcial aal1 no sirve para la API, código incorrecto → 400, código correcto → tokens aal2. **Refinamiento de diseño**: Supabase siempre entrega una sesión aal1 tras la contraseña, así que "no emitir tokens" se implementa devolviendo solo el access token parcial (`mfa_token`) y haciendo que `get_current_user` exija aal2 + sesión registrada
+- [x] 5.2 La sesión se registra en `sesiones_activas` (dispositivo = User-Agent, IP) al completar el login o la verificación MFA (`RepositorioSesiones.registrar`, idempotente por `supabase_session_id`); verificado: la sesión aparece en el listado con su dispositivo
+- [x] 5.3 Implementado `renovar` (`POST /api/auth/sesiones/renovar`): valida la firma del access token aunque esté vencido para saber de quién es, se niega a renovar sesiones revocadas o no registradas, y actualiza `ultimo_uso_en`; verificado "Renovación exitosa" y el rechazo de sesiones revocadas
+- [x] 5.4 Reutilización detectada, **implementada por nosotros** porque Supabase no la detecta (comprobado con su ajuste activo: aceptó un refresh token "abuelo" y uno "padre" a los 35 s). `sesiones_activas` guarda el hash SHA-256 del token vigente y del anterior (columnas `refresh_token_hash`, `refresh_token_anterior_hash`, `rotada_en`), y `renovar` lee la fila con `FOR UPDATE` (sin carreras). Verificado end-to-end: token anterior dentro de 10 s → 200 sin penalizar; token anterior pasados 10 s → 401, sesión `REVOCADA`, `token_version` +1 y el access token vigente deja de servir; token desconocido → 401 sin tocar la sesión
+- [x] 5.5 Implementados `listar_propias` (con dispositivo, IP y marca de sesión actual) y `revocar` / `revocar_todas`. **Diseño corregido**: no se usa `service_role` — Supabase no ofrece endpoint para invalidar una sesión ajena concreta (`DELETE /admin/sessions/{id}` → 404), pero nuestra tabla es autoritativa (el middleware exige sesión `ACTIVA`), así que marcarla `REVOCADA` invalida sus tokens al instante. Verificado: revocar sesión de otro dispositivo (204, su token deja de servir), sesión inexistente/ajena (404), cerrar la propia (204), cerrar todas (204, ningún token anterior sirve, `token_version` incrementado)
+- [x] 5.6 `backend/src/auth/mantenimiento.py` (`python -m src.auth.mantenimiento`, con el rol `app_admin` vía `DATABASE_ADMIN_URL`) marca `EXPIRADA` las sesiones `ACTIVA` sin renovar en más de 7 días. Se implementó por inactividad y no consultando a Supabase (no expone si una sesión sigue vigente), y además `renovar` hace cumplir el mismo tope de 7 días por sí mismo (Supabase Free no permite configurarlo). Verificado: sesión `ACTIVA` de 8 días → `EXPIRADA`; `renovar` con una sesión inactiva 8 días → 401 y queda `EXPIRADA`
+- [x] 5.7 El mismo script borra las sesiones `REVOCADA`/`EXPIRADA` cuya última actividad supera 30 días (`ultimo_uso_en` aproxima el cierre). Verificado con 5 sesiones sembradas: se borró solo la revocada de 31 días; se conservaron la expirada de 5 días, la revocada reciente y la activa reciente. Falta programarlo en un cron (Render Cron Job) al desplegar
+- [x] 5.8 Endpoints expuestos con validación Pydantic estricta (UUID por regex, códigos de 6 dígitos, longitudes máximas); `GET/DELETE` de sesiones pasan por `get_current_user` (sesión ACTIVA + aal2 si hay MFA) y `get_db_con_rls` antes de tocar `sesiones_activas`
+- [x] 5.9 Los endpoints aparecen en `/docs` con sus esquemas (`LoginResponse` documenta `estado: ok | mfa_required`); verificado listando `/openapi.json`
+
+## 6. Backend: configuración de seguridad transversal
+
+- [x] 6.1 CORS configurado en `backend/src/main.py` con el origen exacto de `FRONTEND_ORIGIN` (nunca `*`), solo los métodos GET/POST/DELETE y las cabeceras Authorization/Content-Type, sin credenciales (la API usa tokens en cabecera, no cookies). Verificado: preflight desde `http://localhost:5173` → 200 con `access-control-allow-origin`; desde un origen ajeno → 400 sin esa cabecera
+- [x] 6.2 Agregadas `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `DATABASE_URL` y `FRONTEND_ORIGIN` a `.env.example` (`SUPABASE_SERVICE_ROLE_KEY` se descartó: ya no se usa) (sin valores reales); `config.py` (pydantic-settings) ya falla al arrancar si falta alguna variable requerida — verificado implícitamente al arrancar el servidor con éxito solo tras completar el `.env`
+- [ ] 6.3 Ejecutar `pytest-cov` sobre los módulos de `mfa-totp` y `session-management` y verificar que la cobertura combinada es ≥ 80%, conforme al DoD global del proyecto
+
+## 7. Frontend: pantallas de MFA y manejo del login en dos pasos
+
+- [ ] 7.1 Implementar la pantalla de enrolamiento TOTP (muestra el QR devuelto por `POST /api/auth/mfa/inscribir` y el campo de confirmación) y verificar manualmente el flujo completo de inscripción contra el backend en un entorno de desarrollo apuntando al proyecto de Supabase
+- [ ] 7.2 Implementar la pantalla de verificación de código TOTP durante el login (se activa cuando la respuesta del login es `mfa_required`) y verificar manualmente el flujo de login con MFA activo
+- [ ] 7.3 Implementar la vista de sesiones activas (lista con dispositivo/fechas, y revocar individual/todas) consumiendo los endpoints de `session-management`, y verificar manualmente que revocar una sesión desde la vista invalida esa sesión en Supabase
+- [ ] 7.4 Escribir pruebas Jest para los componentes de enrolamiento y verificación TOTP, y verificar que cubren al menos el caso de código válido y el de código inválido
+
+## 8. Documentación del proyecto y verificación final
+
+- [ ] 8.1 Publicar `docs/01 Inicio/11. Base de datos V_1_3_0.md`: la V_1_2_0 ya refleja `usuarios` sobre `auth.users` y `sesiones_activas`, pero le faltan las columnas `refresh_token_hash`, `refresh_token_anterior_hash` y `rotada_en`, las políticas RLS corregidas (`current_setting(..., true)`), los roles `app_backend`/`app_admin` y la función `usuario_id_por_email`; verificar que el diagrama ER y el DDL quedan consistentes con lo implementado
+- [ ] 8.2 Ejecutar todos los escenarios Gherkin derivados de `specs/mfa-totp/spec.md` y `specs/session-management/spec.md` de punta a punta (backend + frontend) y verificar que todos pasan
+- [ ] 8.3 Ejecutar un análisis estático (CodeQL o SonarQube) sobre el código nuevo y verificar 0 vulnerabilidades críticas, conforme al DoD global del proyecto
+- [ ] 8.4 Abrir un Pull Request desde una rama propia hacia `main` (Feature Branch Workflow) y verificar que al menos un par técnico lo aprueba antes del merge
