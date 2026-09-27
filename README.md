@@ -213,9 +213,12 @@ RouteZero/
 │   │   ├── 08. Usuarios V_1_0_0.md
 │   │   ├── 09. Reglas de negocio V_1_0_0.md
 │   │   ├── 10. Stack tecnológico V_1_0_0.md
+│   │   ├── 10. Stack tecnológico V_1_1_0.md
 │   │   ├── 11. Base de datos V_1_0_0.md
 │   │   ├── 11. Base de datos V_1_1_0.md
+│   │   ├── 11. Base de datos V_1_2_0.md
 │   │   ├── 12. Modelo C4 V_1_0_0.md
+│   │   ├── 12. Modelo C4 V_1_1_0.md
 │   │   └── 13. Restricciones V_1_0_0.md
 │   ├── 02 Planificación/
 │   │   ├── 01 Transformando a ágil V_1_0_0.md
@@ -223,12 +226,20 @@ RouteZero/
 │   │   ├── 03 Registro de riesgos V_1_0_0.md
 │   │   └── 04 Presupuesto del proyecto V_1_0_0.md
 │   ├── 03 Ejecución/
+│   │   ├── 01 Sprint 1 Plan de ejecución y estado V_1_0_0.md
+│   │   ├── 02 Implementación del módulo de autenticación V_1_0_0.md
+│   │   └── 03 Plan y resultados de pruebas V_1_0_0.md
 │   ├── 04 Seguimiento_Control/
 │   └── 05 Cierre/
 ├── backend/
+│   ├── src/
+│   │   ├── core/
+│   │   └── auth/
 │   └── tests/
 ├── frontend/
 │   └── tests/
+├── openspec/
+│   └── changes/add-mfa-sesiones/
 ├── otros/
 ├── .env.example
 ├── .gitignore
@@ -253,9 +264,9 @@ RouteZero/
 | Requisitos no funcionales | [`docs/01 Inicio/07. Requisitos no funcionales V_1_0_0.md`](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_0_0.md) |
 | Usuarios | [`docs/01 Inicio/08. Usuarios V_1_0_0.md`](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) |
 | Reglas de negocio | [`docs/01 Inicio/09. Reglas de negocio V_1_0_0.md`](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_0_0.md) |
-| Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_0_0.md`](docs/01%20Inicio/10.%20Stack%20tecnológico%20V_1_0_0.md) |
-| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_1_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_0_0.md) |
-| Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_0_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_0_0.md) |
+| Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_1_0.md`](docs/01%20Inicio/10.%20Stack%20tecnológico%20V_1_1_0.md) |
+| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_2_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_2_0.md) |
+| Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_1_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_1_0.md) |
 | Restricciones | [`docs/01 Inicio/13. Restricciones V_1_0_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_0_0.md) |
 
 ---
@@ -268,6 +279,16 @@ RouteZero/
 | Artefactos Jira | [`docs/02 Planificación/02 Artefactos Jira V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md) |
 | Registro de Riesgos | [`docs/02 Planificación/03 Registro de riesgos V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md) |
 | Presupuesto del Proyecto | [`docs/02 Planificación/04 Presupuesto del proyecto V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_0_0.md) |
+
+---
+
+### Fase 03: Ejecución
+
+| Documento | Ubicación |
+|---|---|
+| Sprint 1: plan de ejecución y estado | [`docs/03 Ejecución/01 Sprint 1 Plan de ejecución y estado V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/01%20Sprint%201%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_0_0.md) |
+| Implementación del módulo de autenticación | [`docs/03 Ejecución/02 Implementación del módulo de autenticación V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/02%20Implementaci%C3%B3n%20del%20m%C3%B3dulo%20de%20autenticaci%C3%B3n%20V_1_0_0.md) |
+| Plan y resultados de pruebas | [`docs/03 Ejecución/03 Plan y resultados de pruebas V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/03%20Plan%20y%20resultados%20de%20pruebas%20V_1_0_0.md) |
 
 ---
 
