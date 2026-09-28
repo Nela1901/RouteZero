@@ -1,6 +1,7 @@
 import httpx
 from fastapi import HTTPException, status
 
+from src.auditoria.repository import RepositorioAuditoria
 from src.auth import supabase_client
 from src.auth.repository import RepositorioUsuarios
 
@@ -8,6 +9,7 @@ from src.auth.repository import RepositorioUsuarios
 class ServicioMFA:
     def __init__(self, repo: RepositorioUsuarios):
         self.repo = repo
+        self.auditoria = RepositorioAuditoria(repo.session)
 
     def iniciar_inscripcion(self, usuario_id: str, access_token: str) -> dict:
         estado = self.repo.obtener_estado_mfa(usuario_id)
@@ -36,6 +38,7 @@ class ServicioMFA:
             sesion = supabase_client.mfa_verify(access_token, factor_id, challenge["id"], codigo)
         except httpx.HTTPStatusError as exc:
             self.repo.registrar_intento_mfa_fallido(usuario_id)
+            self.auditoria.registrar(usuario_id, "mfa_codigo_invalido", "auth")
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "Código TOTP inválido") from exc
         self.repo.resetear_intentos_mfa(usuario_id)
         return sesion
@@ -46,6 +49,7 @@ class ServicioMFA:
     def confirmar_inscripcion(self, usuario_id: str, access_token: str, factor_id: str, codigo: str) -> None:
         self._verificar_codigo_totp(usuario_id, access_token, factor_id, codigo)
         self.repo.activar_mfa(usuario_id)
+        self.auditoria.registrar(usuario_id, "mfa_activado", "auth")
 
     def desactivar(
         self,
@@ -69,3 +73,4 @@ class ServicioMFA:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "No se pudo desactivar el MFA") from exc
 
         self.repo.desactivar_mfa(usuario_id)
+        self.auditoria.registrar(usuario_id, "mfa_desactivado", "auth")
