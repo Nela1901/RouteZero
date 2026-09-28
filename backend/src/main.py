@@ -35,4 +35,10 @@ def health() -> dict:
 
 @app.get("/api/auth/me")
 def me(usuario: UsuarioActual = Depends(get_current_user)) -> dict:
-    return {"usuario_id": usuario.usuario_id, "rol_id": usuario.rol_id}
+    return {
+        "usuario_id": usuario.usuario_id,
+        "email": usuario.email,
+        "rol_id": usuario.rol_id,
+        "rol_nombre": usuario.rol_nombre,
+        "mfa_activo": usuario.mfa_activo,
+    }

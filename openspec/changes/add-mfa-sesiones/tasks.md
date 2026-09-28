@@ -47,14 +47,14 @@
 
 - [x] 6.1 CORS configurado en `backend/src/main.py` con el origen exacto de `FRONTEND_ORIGIN` (nunca `*`), solo los métodos GET/POST/DELETE y las cabeceras Authorization/Content-Type, sin credenciales (la API usa tokens en cabecera, no cookies). Verificado: preflight desde `http://localhost:5173` → 200 con `access-control-allow-origin`; desde un origen ajeno → 400 sin esa cabecera
 - [x] 6.2 Agregadas `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `DATABASE_URL` y `FRONTEND_ORIGIN` a `.env.example` (`SUPABASE_SERVICE_ROLE_KEY` se descartó: ya no se usa) (sin valores reales); `config.py` (pydantic-settings) ya falla al arrancar si falta alguna variable requerida — verificado implícitamente al arrancar el servidor con éxito solo tras completar el `.env`
-- [ ] 6.3 Ejecutar `pytest-cov` sobre los módulos de `mfa-totp` y `session-management` y verificar que la cobertura combinada es ≥ 80%, conforme al DoD global del proyecto
+- [x] 6.3 Ejecutar `pytest-cov` sobre los módulos de `mfa-totp` y `session-management` y verificar que la cobertura combinada es ≥ 80%, conforme al DoD global del proyecto — suite real en `backend/tests/` (23 pruebas, portadas de `tests_manual/e2e_sesiones.py` a `TestClient` para que la cobertura se mida en el mismo proceso), **87 % de cobertura combinada** sobre `src/auth/` + `src/core/security.py`
 
 ## 7. Frontend: pantallas de MFA y manejo del login en dos pasos
 
-- [ ] 7.1 Implementar la pantalla de enrolamiento TOTP (muestra el QR devuelto por `POST /api/auth/mfa/inscribir` y el campo de confirmación) y verificar manualmente el flujo completo de inscripción contra el backend en un entorno de desarrollo apuntando al proyecto de Supabase
-- [ ] 7.2 Implementar la pantalla de verificación de código TOTP durante el login (se activa cuando la respuesta del login es `mfa_required`) y verificar manualmente el flujo de login con MFA activo
-- [ ] 7.3 Implementar la vista de sesiones activas (lista con dispositivo/fechas, y revocar individual/todas) consumiendo los endpoints de `session-management`, y verificar manualmente que revocar una sesión desde la vista invalida esa sesión en Supabase
-- [ ] 7.4 Escribir pruebas Jest para los componentes de enrolamiento y verificación TOTP, y verificar que cubren al menos el caso de código válido y el de código inválido
+- [x] 7.1 Implementar la pantalla de enrolamiento TOTP (muestra el QR devuelto por `POST /api/auth/mfa/inscribir` y el campo de confirmación) y verificar manualmente el flujo completo de inscripción contra el backend en un entorno de desarrollo apuntando al proyecto de Supabase
+- [x] 7.2 Implementar la pantalla de verificación de código TOTP durante el login (se activa cuando la respuesta del login es `mfa_required`) y verificar manualmente el flujo de login con MFA activo
+- [x] 7.3 Implementar la vista de sesiones activas (lista con dispositivo/fechas, y revocar individual/todas) consumiendo los endpoints de `session-management`, y verificar manualmente que revocar una sesión desde la vista invalida esa sesión en Supabase
+- [x] 7.4 Escribir pruebas Jest para los componentes de enrolamiento y verificación TOTP, y verificar que cubren al menos el caso de código válido y el de código inválido (con Vitest, compatible con la API de Jest, por ser el estándar para proyectos Vite)
 
 ## 8. Documentación del proyecto y verificación final
 
