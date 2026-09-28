@@ -9,7 +9,7 @@ deja la cuenta en un estado conocido entre bloques.
 import time
 import uuid
 
-from conftest import UID, auth, db, get, login, reset_usuario_prueba
+from conftest import EMAIL_OPERADOR, PASSWORD_OPERADOR, UID, admin_db, auth, db, get, login, reset_usuario_prueba
 
 estado: dict = {}
 
@@ -104,7 +104,7 @@ def test_correo_inexistente_da_el_mismo_401_generico(client):
     assert "Credenciales inválidas" in r.text
 
 
-def test_revocar_una_sesion_ajena_la_invalida_al_instante(client):
+def test_revocar_otro_dispositivo_de_la_misma_cuenta_lo_invalida(client):
     reset_usuario_prueba()
     a = login(client, "Dev-A").json()
     b = login(client, "Dev-B").json()
@@ -123,6 +123,23 @@ def test_revocar_una_sesion_ajena_la_invalida_al_instante(client):
 def test_revocar_una_sesion_inexistente_da_404(client):
     r = client.delete(f"/api/auth/sesiones/{uuid.uuid4()}", headers=auth(estado["a_propia"]["access_token"]))
     assert r.status_code == 404
+
+
+def test_revocar_sesion_de_otra_cuenta_da_404_no_403(client):
+    """RLS solo deja ver las sesiones propias: una ajena se ve igual que una inexistente,
+    así que ni siquiera se distingue "existe pero no es tuya" con un 403 aparte."""
+    operador = login(client, "Dev-Op", email=EMAIL_OPERADOR, password=PASSWORD_OPERADOR).json()
+    sesion_operador = next(
+        s for s in get(client, "/api/auth/sesiones", operador["access_token"]).json() if s["actual"]
+    )
+
+    r = client.delete(
+        f"/api/auth/sesiones/{sesion_operador['sesion_id']}", headers=auth(estado["a_propia"]["access_token"])
+    )
+    assert r.status_code == 404
+    assert get(client, "/api/auth/me", operador["access_token"]).status_code == 200  # sigue viva
+
+    admin_db("DELETE FROM sesiones_activas WHERE sesion_id = %s", (sesion_operador["sesion_id"],))
 
 
 def test_cerrar_la_propia_sesion_la_invalida(client):

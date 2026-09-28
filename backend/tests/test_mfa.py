@@ -33,6 +33,33 @@ def test_inscribir_mfa_devuelve_factor_qr_y_secreto(client):
     estado["inscripcion"] = cuerpo
 
 
+def test_bloqueo_tras_tres_codigos_invalidos_en_confirmacion(client):
+    """Cubre a la vez «Código de confirmación inválido» (cada 400 individual) y «Bloqueo tras
+    intentos fallidos de MFA» (el 4.º intento, aunque llegue con el código correcto, da 429)."""
+    m = estado["login_inicial"]
+    insc = estado["inscripcion"]
+
+    for _ in range(3):
+        r = client.post(
+            "/api/auth/mfa/confirmar",
+            headers=auth(m["access_token"]),
+            json={"factor_id": insc["factor_id"], "codigo": "000000"},
+        )
+        assert r.status_code == 400
+
+    r = client.post(
+        "/api/auth/mfa/confirmar",
+        headers=auth(m["access_token"]),
+        json={"factor_id": insc["factor_id"], "codigo": totp(insc["secret"])},
+    )
+    assert r.status_code == 429
+    assert db("SELECT mfa_activo FROM usuarios WHERE usuario_id=%s", (UID,), fetch=True)[0] is False
+
+    # Se limpia el contador (independiente del de contraseña, RN-001) para poder confirmar de
+    # verdad en la siguiente prueba, sin tocar la sesión ni el token_version.
+    db("UPDATE usuarios SET mfa_intentos_fallidos=0, mfa_bloqueado_hasta=NULL WHERE usuario_id=%s", (UID,))
+
+
 def test_confirmar_con_codigo_valido_activa_mfa(client):
     m = estado["login_inicial"]
     insc = estado["inscripcion"]
@@ -90,6 +117,24 @@ def test_login_mfa_con_codigo_correcto_entrega_sesion_aal2(client):
     assert get(client, "/api/auth/me", cuerpo["access_token"]).status_code == 200
     sesiones = get(client, "/api/auth/sesiones", cuerpo["access_token"]).json()
     assert any(s["dispositivo_info"] == "Dev-M2" and s["actual"] for s in sesiones)
+
+
+def test_inscribir_de_nuevo_con_mfa_activo_da_409(client):
+    r = client.post("/api/auth/mfa/inscribir", headers=auth(estado["paso2"]["access_token"]))
+    assert r.status_code == 409
+
+
+def test_desactivar_con_password_incorrecta_no_desactiva(client):
+    insc = estado["inscripcion"]
+    r = client.post(
+        "/api/auth/mfa/desactivar",
+        headers=auth(estado["paso2"]["access_token"]),
+        # La contraseña se valida antes que el código TOTP (service_mfa.desactivar), así que
+        # un código cualquiera basta para probar el rechazo sin gastar una ventana TOTP real.
+        json={"factor_id": insc["factor_id"], "password": "contraseña-incorrecta", "codigo": "000000"},
+    )
+    assert r.status_code == 400
+    assert db("SELECT mfa_activo FROM usuarios WHERE usuario_id=%s", (UID,), fetch=True)[0] is True
 
 
 def test_desactivar_mfa_requiere_password_y_codigo_validos(client):
