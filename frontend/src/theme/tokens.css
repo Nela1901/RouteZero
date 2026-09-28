@@ -1,0 +1,95 @@
+:root {
+  --rz-bg: #14181a;
+  --rz-header-bg: #181d1f;
+  --rz-panel-bg: rgba(255, 255, 255, 0.06);
+  --rz-panel-solid-bg: rgba(24, 29, 31, 0.92);
+  --rz-panel-border: rgba(255, 255, 255, 0.08);
+  --rz-text: #f2f5f3;
+  --rz-text-muted: #8b9aa4;
+  --rz-text-faint: #5c6a66;
+  --rz-map-bg: #1b2124;
+  --rz-map-block: rgba(255, 255, 255, 0.045);
+  --rz-park-fill: rgba(47, 224, 184, 0.08);
+  --rz-track-bg: rgba(255, 255, 255, 0.08);
+
+  --rz-accent: #2fe0b8;
+  --rz-accent-2: #7b98f2;
+  --rz-accent-3: #f0b429;
+  --rz-accent-soft-bg: rgba(47, 224, 184, 0.1);
+  --rz-accent-soft-border: rgba(47, 224, 184, 0.28);
+  --rz-accent-3-soft-bg: rgba(240, 180, 41, 0.14);
+
+  --rz-danger: #f2545b;
+  --rz-danger-soft-bg: rgba(242, 84, 91, 0.12);
+
+  --rz-font-display: "Space Grotesk", sans-serif;
+  --rz-font-body: "Manrope", sans-serif;
+  --rz-font-mono: "JetBrains Mono", monospace;
+}
+
+:root[data-theme="light"] {
+  --rz-bg: #f5f7f6;
+  --rz-header-bg: #ffffff;
+  --rz-panel-bg: rgba(20, 24, 26, 0.05);
+  --rz-panel-solid-bg: rgba(255, 255, 255, 0.92);
+  --rz-panel-border: rgba(20, 24, 26, 0.09);
+  --rz-text: #14181a;
+  --rz-text-muted: #657069;
+  --rz-text-faint: #8b958f;
+  --rz-map-bg: #eaeeec;
+  --rz-map-block: rgba(20, 24, 26, 0.05);
+  --rz-park-fill: rgba(14, 163, 131, 0.14);
+  --rz-track-bg: rgba(20, 24, 26, 0.08);
+
+  --rz-accent: #0ea383;
+  --rz-accent-2: #3e63c9;
+  --rz-accent-3: #b9790a;
+  --rz-accent-soft-bg: rgba(14, 163, 131, 0.1);
+  --rz-accent-soft-border: rgba(14, 163, 131, 0.28);
+  --rz-accent-3-soft-bg: rgba(185, 121, 10, 0.12);
+
+  --rz-danger: #c23a40;
+  --rz-danger-soft-bg: rgba(194, 58, 64, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--rz-bg);
+  color: var(--rz-text);
+  font-family: var(--rz-font-body);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: var(--rz-accent);
+}
+
+/* OpenStreetMap solo publica tiles claros gratis y sin clave; en tema oscuro se invierten
+   con un filtro CSS (truco estándar de Leaflet) en vez de depender de un proveedor de pago. */
+:root[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
+.leaflet-container {
+  background: var(--rz-map-bg);
+}
+
+.rz-codigo-qr svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
