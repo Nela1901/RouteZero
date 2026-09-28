@@ -25,6 +25,11 @@ EMAIL = "prueba@routezero.dev"
 PASSWORD = "123456789"
 UID = "444a2660-2006-4deb-9cee-61552721128e"
 
+# Cuenta OPERADOR de prueba, creada a mano en Supabase igual que la ADMINISTRADOR de arriba
+# (ver el módulo de flota/pedidos: varios endpoints exigen ese rol, u OPERADOR u ADMINISTRADOR).
+EMAIL_OPERADOR = "operador.prueba@routezero.dev"
+PASSWORD_OPERADOR = "123456789"
+
 
 @pytest.fixture(scope="session")
 def client() -> TestClient:
@@ -88,6 +93,20 @@ def auth(token: str) -> dict:
 
 def get(client: TestClient, ruta: str, token: str):
     return client.get(ruta, headers=auth(token))
+
+
+def admin_db(sql: str, params: tuple | None = None, fetch: bool = False):
+    """Ejecuta SQL con el rol `app_admin` (BYPASSRLS) — solo para preparar/limpiar datos de
+    prueba entre organizaciones (p. ej. leer `roles` o borrar filas de otro usuario)."""
+    conn = psycopg2.connect(settings.database_admin_url, connect_timeout=15)
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, params)
+        fila = cur.fetchall() if fetch else None
+        conn.commit()
+        return fila
+    finally:
+        conn.close()
 
 
 @pytest.fixture(autouse=True, scope="session")
