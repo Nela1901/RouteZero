@@ -54,7 +54,7 @@ def ejecutar(session: Session) -> tuple[int, int]:
 def main() -> None:
     if not settings.database_admin_url:
         raise SystemExit("Falta DATABASE_ADMIN_URL en el .env (rol app_admin)")
-    engine = create_engine(settings.database_admin_url)
+    engine = create_engine(settings.database_admin_url, connect_args={"sslmode": "require"})
     with Session(engine) as session, session.begin():
         expiradas, borradas = ejecutar(session)
     print(f"Sesiones marcadas como expiradas: {expiradas}. Sesiones cerradas antiguas borradas: {borradas}.")

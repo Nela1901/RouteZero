@@ -7,7 +7,14 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from src.core.config import settings
 
-engine = create_engine(settings.database_url, pool_pre_ping=True)
+engine = create_engine(
+    settings.database_url,
+    pool_pre_ping=True,
+    # Supabase ya exige TLS del lado del servidor (comprobado: TLSv1.3), pero se declara
+    # explícito aquí para que la conexión falle en vez de degradar en silencio si alguna
+    # vez apunta a un host que no lo exija (RN-013 / Ley N° 29733, cifrado en tránsito).
+    connect_args={"sslmode": "require"},
+)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
