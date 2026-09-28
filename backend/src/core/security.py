@@ -21,6 +21,7 @@ _jwks_client = jwt.PyJWKClient(f"{settings.supabase_url}/auth/v1/.well-known/jwk
 class UsuarioActual:
     usuario_id: str
     rol_id: str
+    rol_nombre: str
     email: str
     aal: str
     mfa_activo: bool
@@ -41,6 +42,7 @@ def decodificar_token(token: str, verificar_exp: bool = True) -> dict:
             signing_key.key,
             algorithms=["ES256"],
             audience="authenticated",
+            leeway=10,  # tolera hasta 10 s de desfase de reloj entre esta máquina y Supabase
             options={"verify_exp": verificar_exp},
         )
     except jwt.PyJWTError as exc:
@@ -72,7 +74,11 @@ def get_current_user_parcial(
             text("SET LOCAL app.usuario_actual_id = :uid"), {"uid": usuario_id}
         )
         row = session.execute(
-            text("SELECT rol_id, token_version, mfa_activo FROM usuarios WHERE usuario_id = :uid"),
+            text(
+                "SELECT u.rol_id, u.token_version, u.mfa_activo, r.nombre "
+                "FROM usuarios u JOIN roles r ON r.rol_id = u.rol_id "
+                "WHERE u.usuario_id = :uid"
+            ),
             {"uid": usuario_id},
         ).one_or_none()
         session_id = payload.get("session_id", "")
@@ -85,7 +91,7 @@ def get_current_user_parcial(
     if row is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Usuario sin perfil registrado")
 
-    rol_id, version_actual, mfa_activo = row
+    rol_id, version_actual, mfa_activo, rol_nombre = row
     if int(token_version) != int(version_actual):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -95,6 +101,7 @@ def get_current_user_parcial(
     return UsuarioActual(
         usuario_id=usuario_id,
         rol_id=str(rol_id),
+        rol_nombre=rol_nombre,
         email=payload.get("email", ""),
         aal=payload.get("aal", "aal1"),
         mfa_activo=bool(mfa_activo),
@@ -123,6 +130,23 @@ def get_current_user(
             detail="Se requiere completar la verificación MFA",
         )
     return usuario
+
+
+def requiere_rol(*roles_permitidos: str):
+    """Dependencia que solo deja pasar a los roles indicados (RN-014, mínimo privilegio).
+
+    Uso: Depends(requiere_rol("ADMINISTRADOR")) o Depends(requiere_rol("ADMINISTRADOR", "OPERADOR")).
+    """
+
+    def _verificar(usuario: UsuarioActual = Depends(get_current_user)) -> UsuarioActual:
+        if usuario.rol_nombre not in roles_permitidos:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Tu rol no tiene permisos para acceder a este módulo",
+            )
+        return usuario
+
+    return _verificar
 
 
 def get_db_con_rls(
