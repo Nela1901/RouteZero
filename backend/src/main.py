@@ -3,9 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.auth.router import router as mfa_router
 from src.auth.router_sesiones import router as sesiones_router
+from src.clientes.router import router as clientes_router
 from src.core.config import settings
 from src.core.security import UsuarioActual, get_current_user
 from src.flota.router import router as flota_router
+from src.pedidos.router import router as pedidos_router
 
 app = FastAPI(title="RouteZero API")
 
@@ -22,6 +24,8 @@ app.add_middleware(
 app.include_router(mfa_router)
 app.include_router(sesiones_router)
 app.include_router(flota_router)
+app.include_router(clientes_router)
+app.include_router(pedidos_router)
 
 
 @app.get("/api/health")
