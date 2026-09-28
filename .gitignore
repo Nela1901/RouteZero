@@ -231,3 +231,6 @@ yarn-error.log*
 # Claude Code
 CLAUDE.md
 .claude/
+
+# Scripts de prueba manual de extremo a extremo (no son la suite oficial de pytest)
+backend/tests_manual/
