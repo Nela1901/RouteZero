@@ -58,7 +58,7 @@
 
 ## 8. Documentación del proyecto y verificación final
 
-- [ ] 8.1 Publicar `docs/01 Inicio/11. Base de datos V_1_3_0.md`: la V_1_2_0 ya refleja `usuarios` sobre `auth.users` y `sesiones_activas`, pero le faltan las columnas `refresh_token_hash`, `refresh_token_anterior_hash` y `rotada_en`, las políticas RLS corregidas (`current_setting(..., true)`), los roles `app_backend`/`app_admin` y la función `usuario_id_por_email`; verificar que el diagrama ER y el DDL quedan consistentes con lo implementado
+- [ ] 8.1 Publicar `docs/01 Inicio/11. Base de datos V_1_3_0.md`: la V_1_2_0 ya refleja `usuarios` sobre `auth.users` y `sesiones_activas`, pero le faltan las columnas `refresh_token_hash`, `refresh_token_anterior_hash` y `rotada_en`, las políticas RLS corregidas (`current_setting(..., true)`), la política de solo lectura de `roles` (`roles_lectura_app`, sin la cual "Enable automatic RLS" deja esa tabla de referencia inaccesible), la FK de `sesiones_activas` con `ON DELETE CASCADE`, la tabla `vehiculos` (con su propia política `vehiculos_acceso_app`), los roles `app_backend`/`app_admin` y la función `usuario_id_por_email`; verificar que el diagrama ER y el DDL quedan consistentes con lo implementado
 - [ ] 8.2 Ejecutar todos los escenarios Gherkin derivados de `specs/mfa-totp/spec.md` y `specs/session-management/spec.md` de punta a punta (backend + frontend) y verificar que todos pasan
 - [ ] 8.3 Ejecutar un análisis estático (CodeQL o SonarQube) sobre el código nuevo y verificar 0 vulnerabilidades críticas, conforme al DoD global del proyecto
 - [ ] 8.4 Abrir un Pull Request desde una rama propia hacia `main` (Feature Branch Workflow) y verificar que al menos un par técnico lo aprueba antes del merge

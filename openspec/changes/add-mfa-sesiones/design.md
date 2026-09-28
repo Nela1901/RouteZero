@@ -66,7 +66,7 @@ Supabase Auth emite y rota los tokens, pero **no se puede confiar en él para de
 ```sql
 CREATE TABLE sesiones_activas (
     sesion_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    usuario_id UUID NOT NULL REFERENCES usuarios(usuario_id),
+    usuario_id UUID NOT NULL REFERENCES usuarios(usuario_id) ON DELETE CASCADE,
     supabase_session_id TEXT NOT NULL UNIQUE,
     dispositivo_info TEXT,
     ip_origen VARCHAR(45),
@@ -137,7 +137,11 @@ CREATE POLICY sesiones_solo_propias ON sesiones_activas
 
 (Se usa `current_setting(..., true)` para que, si la variable no está fijada, la política devuelva 0 filas en vez de lanzar un error; el resultado sigue siendo *fail-closed*.)
 
+**Corrección tras implementar**: la referencia de `sesiones_activas` a `usuarios` no tenía `ON DELETE CASCADE`. Al intentar borrar un usuario de prueba desde el panel de Supabase, la eliminación en cadena hacia `usuarios` (que sí tiene `ON DELETE CASCADE` desde `auth.users`) quedaba bloqueada por las filas de `sesiones_activas` que aún referenciaban a ese usuario, con el error genérico "Database error deleting user". Se agregó `ON DELETE CASCADE` a esa clave foránea.
+
 Al crear el proyecto de Supabase, se activó "Enable automatic RLS" para que cualquier tabla nueva del esquema `public` nazca protegida por defecto (comportamiento *fail-closed*). El backend se conecta con un rol propio, `app_backend`, **sin** `BYPASSRLS` (el usuario `postgres` que Supabase entrega por defecto sí lo tiene y se saltaría todas las políticas); un rol administrativo separado, `app_admin`, lo tiene para tareas de mantenimiento (limpieza de sesiones viejas).
+
+**Corrección tras implementar (grupo 5 / autorización por rol)**: ese mismo ajuste automático activó RLS también en `roles`, una tabla de referencia sin dato sensible por usuario, y sin ninguna política asociada — el efecto fue que `app_backend` no podía leer ninguna fila de `roles` (0 filas, sin error), bloqueando en silencio cualquier consulta que necesitara el nombre del rol del usuario (por ejemplo, para la autorización). Se agregó una política de solo lectura sin restricción: `CREATE POLICY roles_lectura_app ON roles FOR SELECT USING (true)`. Cualquier tabla de catálogo/referencia nueva (sin dato por usuario) que se cree en el futuro debe recibir una política equivalente, o quedará inaccesible por el mismo motivo.
 
 Como `app_backend` no puede leer el esquema `auth`, el login localiza la cuenta por correo mediante una función `public.usuario_id_por_email(text)` con `SECURITY DEFINER`, ejecutable solo por ese rol. Con ese `usuario_id`, el backend fija `app.usuario_actual_id` antes de aplicar el bloqueo de RN-001: actúa de confianza sobre la cuenta que se está autenticando, todavía sin token.
 
@@ -157,6 +161,8 @@ FRONTEND_ORIGIN=
 `SUPABASE_ANON_KEY` es pública y cubre todas las operaciones de Auth (login, MFA propio, renovar, cerrar la propia sesión), reenviando el token del usuario cuando corresponde. No hay ninguna clave administrativa: `SUPABASE_SERVICE_ROLE_KEY` se descartó (ver Decisión 1).
 
 **Corrección tras implementar (grupo 3)**: originalmente se planeó `SUPABASE_JWT_SECRET` para verificar la firma localmente (HS256). En la práctica, el proyecto de Supabase ya usa **llaves asimétricas (ES256)**, no el secreto compartido legacy. La verificación real usa el endpoint JWKS público del proyecto (`{SUPABASE_URL}/auth/v1/.well-known/jwks.json`) vía `PyJWKClient` de PyJWT, que cachea la llave pública en memoria — sigue sin requerir una llamada de red por cada request (cumple RNF-001 igual), y además es más simple: no hay ningún secreto que guardar para esta verificación. Requiere el extra `pyjwt[crypto]` (paquete `cryptography`) para soportar ES256.
+
+**Corrección tras implementar (grupo 5 / autorización por rol)**: la verificación fallaba de forma intermitente con `ImmatureSignatureError: The token is not yet valid (iat)` — un desfase de pocos segundos entre el reloj de la máquina de desarrollo y el de Supabase hacía que el token pareciera emitido "en el futuro". PyJWT no tolera ningún desfase por defecto. Se agregó `leeway=10` (segundos) a `jwt.decode`, suficiente para absorber un desfase de reloj razonable sin debilitar la verificación de expiración real de los tokens.
 
 ### 10. Validación de entrada y prevención de inyección SQL
 Todos los endpoints nuevos reciben su payload a través de modelos Pydantic con tipos y longitudes explícitas (p. ej. código TOTP como `str` de exactamente 6 dígitos numéricos), y todo acceso a nuestras propias tablas pasa por SQLAlchemy con parámetros bindeados — nunca interpolación de strings SQL.
