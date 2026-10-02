@@ -155,7 +155,11 @@ class ServicioSesiones:
                 # El token anterior se usa pasada la ventana: alguien conserva un token que el
                 # dueño ya rotó. Se revoca la sesión y se invalidan los access tokens vigentes.
                 self.sesiones.marcar_revocada(session_id)
-                self.usuarios.incrementar_token_version(usuario_id)
+                # No se incrementa token_version (IMP-006): el Custom Access Token Hook de
+                # Supabase cachea el valor que lee de `usuarios`, así que incrementarlo aquí
+                # terminaba bloqueando logins legítimos posteriores con "Token revocado". La
+                # sesión igual queda sin acceso de inmediato vía sesiones_activas.estado,
+                # que get_current_user exige en cada request.
                 self.auditoria.registrar(usuario_id, "robo_sesion_detectado", "auth", detalle=f"sesion {session_id}")
                 raise HTTPException(
                     status.HTTP_401_UNAUTHORIZED,
@@ -214,6 +218,9 @@ class ServicioSesiones:
         except httpx.HTTPStatusError as exc:
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, "No se pudieron cerrar las sesiones") from exc
         self.sesiones.marcar_todas_revocadas(usuario.usuario_id)
-        # Invalida de inmediato los access tokens ya emitidos, sin esperar a que venzan.
-        self.usuarios.incrementar_token_version(usuario.usuario_id)
+        # No se incrementa token_version (IMP-006, mismo motivo que en la detección de robo
+        # de sesión): el hook de Supabase lo cachea y bloqueaba logins nuevos legítimos.
+        # sesiones_activas.estado ya invalida el acceso de inmediato para cualquier request
+        # nueva; el único costo residual es que un access token ya emitido sigue vigente
+        # hasta sus 15 minutos naturales, igual que el resto de JWTs de este proyecto.
         self.auditoria.registrar(usuario.usuario_id, "todas_sesiones_revocadas", "auth")

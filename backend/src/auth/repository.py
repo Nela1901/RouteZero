@@ -129,11 +129,6 @@ class RepositorioUsuarios:
             {"uid": usuario_id},
         )
 
-    def incrementar_token_version(self, usuario_id: str) -> None:
-        self.session.execute(
-            text("UPDATE usuarios SET token_version = token_version + 1 WHERE usuario_id = :uid"),
-            {"uid": usuario_id},
-        )
 
 
 class RepositorioSesiones:

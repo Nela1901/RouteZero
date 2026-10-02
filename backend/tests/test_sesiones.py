@@ -83,8 +83,9 @@ def test_reuso_del_refresh_token_fuera_de_la_ventana_revoca_la_sesion(client):
     )
     assert r.status_code == 401
     assert get(client, "/api/auth/me", estado["A2"]["access_token"]).status_code == 401
+    # No se incrementa token_version (IMP-006): ver test_cerrar_todas_las_sesiones_invalida_todos_los_tokens.
     version = db("SELECT token_version FROM usuarios WHERE usuario_id=%s", (UID,), fetch=True)[0]
-    assert version == 2
+    assert version == 1
     reset_usuario_prueba()
 
 
@@ -161,6 +162,9 @@ def test_cerrar_todas_las_sesiones_invalida_todos_los_tokens(client):
     assert get(client, "/api/auth/me", c1["access_token"]).status_code == 401
     assert get(client, "/api/auth/me", c2["access_token"]).status_code == 401
 
+    # No se incrementa token_version (IMP-006): el Custom Access Token Hook de Supabase lo
+    # cacheaba y bloqueaba logins nuevos legítimos. La invalidación de arriba ya depende solo
+    # de sesiones_activas.estado, sin pasar por el hook.
     version = db("SELECT token_version FROM usuarios WHERE usuario_id=%s", (UID,), fetch=True)[0]
-    assert version == 2
+    assert version == 1
     reset_usuario_prueba()
