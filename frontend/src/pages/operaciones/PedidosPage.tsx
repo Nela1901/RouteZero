@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api, ErrorApi } from "../../api/client";
+import { useToast } from "../../context/ToastContext";
 
 type Prioridad = "EXPRESS" | "ESTANDAR" | "ECONOMICO";
 type EstadoPedido = "PENDIENTE" | "ASIGNADO" | "EN_CAMINO" | "ENTREGADO" | "CANCELADO";
@@ -28,6 +29,7 @@ const COLOR_PRIORIDAD: Record<Prioridad, string> = {
 };
 
 export function PedidosPage() {
+  const { notificar } = useToast();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -47,12 +49,16 @@ export function PedidosPage() {
   }, []);
 
   async function cancelar(pedidoId: string) {
+    if (!window.confirm("¿Cancelar este pedido?")) return;
     setError(null);
     try {
       await api.delete(`/api/pedidos/${pedidoId}`);
       await cargar();
+      notificar("Pedido cancelado", "exito");
     } catch (err) {
-      setError(err instanceof ErrorApi ? String(err.detalle) : "No se pudo cancelar el pedido");
+      const mensaje = err instanceof ErrorApi ? String(err.detalle) : "No se pudo cancelar el pedido";
+      setError(mensaje);
+      notificar(mensaje, "error");
     }
   }
 
@@ -76,8 +82,12 @@ export function PedidosPage() {
           onCreado={() => {
             setMostrarFormulario(false);
             void cargar();
+            notificar("Pedido registrado", "exito");
           }}
-          onClienteCreado={() => void cargar()}
+          onClienteCreado={() => {
+            void cargar();
+            notificar("Cliente registrado", "exito");
+          }}
         />
       )}
 

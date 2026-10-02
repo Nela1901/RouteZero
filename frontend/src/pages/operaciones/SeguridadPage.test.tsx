@@ -2,6 +2,15 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { SeguridadPage } from "./SeguridadPage";
+import { ToastProvider } from "../../context/ToastContext";
+
+function renderConProviders() {
+  return render(
+    <ToastProvider>
+      <SeguridadPage />
+    </ToastProvider>,
+  );
+}
 
 const recargarUsuario = vi.fn();
 
@@ -47,7 +56,7 @@ describe("SeguridadPage — inscripción TOTP", () => {
     });
     const usuario = userEvent.setup();
 
-    render(<SeguridadPage />);
+    renderConProviders();
 
     await usuario.click(screen.getByRole("button", { name: /activar verificación en dos pasos/i }));
     expect(await screen.findByText("Escanea el código QR")).toBeInTheDocument();
@@ -75,7 +84,7 @@ describe("SeguridadPage — inscripción TOTP", () => {
     });
     const usuario = userEvent.setup();
 
-    render(<SeguridadPage />);
+    renderConProviders();
 
     await usuario.click(screen.getByRole("button", { name: /activar verificación en dos pasos/i }));
     await usuario.type(await screen.findByLabelText(/código de 6 dígitos/i), "000000");

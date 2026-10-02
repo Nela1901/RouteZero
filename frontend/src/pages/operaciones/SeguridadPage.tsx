@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { api, ErrorApi } from "../../api/client";
+import { useToast } from "../../context/ToastContext";
 
 interface InscripcionMfa {
   factor_id: string;
@@ -108,6 +109,7 @@ export function SeguridadPage() {
 
 function SeccionSesiones() {
   const { cerrarSesion } = useAuth();
+  const { notificar } = useToast();
   const [sesiones, setSesiones] = useState<Sesion[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revocandoId, setRevocandoId] = useState<string | null>(null);
@@ -132,8 +134,11 @@ function SeccionSesiones() {
     try {
       await api.delete(`/api/auth/sesiones/${sesion.sesion_id}`);
       await cargar();
+      notificar("Sesión cerrada", "exito");
     } catch (err) {
-      setError(err instanceof ErrorApi ? String(err.detalle) : "No se pudo cerrar la sesión");
+      const mensaje = err instanceof ErrorApi ? String(err.detalle) : "No se pudo cerrar la sesión";
+      setError(mensaje);
+      notificar(mensaje, "error");
     } finally {
       setRevocandoId(null);
     }

@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api, ErrorApi } from "../../api/client";
+import { useToast } from "../../context/ToastContext";
 
 type EstadoVehiculo = "DISPONIBLE" | "EN_RUTA" | "MANTENIMIENTO" | "INACTIVO";
 type TipoVehiculo = "CAMIONETA" | "FURGON" | "MOTO";
@@ -19,6 +20,7 @@ const ESTADOS: EstadoVehiculo[] = ["DISPONIBLE", "EN_RUTA", "MANTENIMIENTO", "IN
 const TIPOS: TipoVehiculo[] = ["CAMIONETA", "FURGON", "MOTO"];
 
 export function FlotaPage() {
+  const { notificar } = useToast();
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
   const [filtroEstado, setFiltroEstado] = useState<EstadoVehiculo | "">("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -44,8 +46,11 @@ export function FlotaPage() {
     try {
       await api.put(`/api/vehiculos/${vehiculoId}`, { estado });
       await cargar();
+      notificar(`Vehículo actualizado a ${estado.replace("_", " ")}`, "exito");
     } catch (err) {
-      setError(err instanceof ErrorApi ? String(err.detalle) : "No se pudo actualizar el vehículo");
+      const mensaje = err instanceof ErrorApi ? String(err.detalle) : "No se pudo actualizar el vehículo";
+      setError(mensaje);
+      notificar(mensaje, "error");
     }
   }
 
@@ -68,6 +73,7 @@ export function FlotaPage() {
           onCreado={() => {
             setMostrarFormulario(false);
             void cargar();
+            notificar("Vehículo registrado", "exito");
           }}
         />
       )}
