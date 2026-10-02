@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { api, ErrorApi, guardarTokens, limpiarTokens, obtenerAccessToken } from "../api/client";
+import { useToast } from "./ToastContext";
 
 export type RolNombre = "ADMINISTRADOR" | "OPERADOR" | "CONDUCTOR" | "GERENTE";
 
@@ -47,6 +48,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { notificar } = useToast();
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [cargando, setCargando] = useState(true);
   const [mfaPendiente, setMfaPendiente] = useState<MfaPendiente | null>(null);
@@ -116,6 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function cerrarSesion() {
+    notificar("Cerrando sesión…", "info");
     try {
       await api.delete("/api/auth/sesiones");
     } catch {

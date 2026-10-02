@@ -144,7 +144,9 @@ export function OperacionesLayout() {
 
         <button
           type="button"
-          onClick={() => void cerrarSesion()}
+          onClick={() => {
+            if (window.confirm("¿Cerrar tu sesión?")) void cerrarSesion();
+          }}
           aria-label="Cerrar sesión"
           title={!expandido ? "Cerrar sesión" : undefined}
           style={{
