@@ -3,6 +3,7 @@ import hashlib
 import httpx
 from fastapi import HTTPException, status
 
+from src.auditoria.repository import RepositorioAuditoria
 from src.auth import supabase_client
 from src.auth.politicas import DIAS_VIGENCIA_REFRESH, VENTANA_GRACIA_SEGUNDOS
 from src.auth.repository import RepositorioSesiones, RepositorioUsuarios
@@ -39,6 +40,7 @@ class ServicioSesiones:
     def __init__(self, usuarios: RepositorioUsuarios, sesiones: RepositorioSesiones):
         self.usuarios = usuarios
         self.sesiones = sesiones
+        self.auditoria = RepositorioAuditoria(usuarios.session)
 
     def _registrar_sesion(self, usuario_id: str, sesion: dict, dispositivo: str | None, ip: str | None) -> None:
         session_id = decodificar_token(sesion["access_token"]).get("session_id")
@@ -71,6 +73,7 @@ class ServicioSesiones:
         except httpx.HTTPStatusError as exc:
             if tiene_perfil:
                 self.usuarios.registrar_intento_login_fallido(usuario_id)
+                self.auditoria.registrar(usuario_id, "login_fallido", "auth", ip_origen=ip)
             # Mismo mensaje exista o no el correo, para no revelar qué cuentas existen.
             raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Credenciales inválidas") from exc
 
@@ -89,6 +92,7 @@ class ServicioSesiones:
             )
             if factor is None:
                 raise HTTPException(status.HTTP_409_CONFLICT, "MFA activo sin un factor verificado")
+            self.auditoria.registrar(usuario_id, "login_password_ok_pendiente_mfa", "auth", ip_origen=ip)
             return {
                 "estado": "mfa_required",
                 "mfa_token": sesion["access_token"],
@@ -96,6 +100,7 @@ class ServicioSesiones:
             }
 
         self._registrar_sesion(usuario_id, sesion, dispositivo, ip)
+        self.auditoria.registrar(usuario_id, "login_exitoso", "auth", ip_origen=ip)
         return _tokens(sesion)
 
     def completar_login_mfa(
@@ -111,6 +116,7 @@ class ServicioSesiones:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "Esta cuenta no tiene MFA activo")
         sesion = ServicioMFA(self.usuarios).verificar_login(usuario.usuario_id, mfa_token, factor_id, codigo)
         self._registrar_sesion(usuario.usuario_id, sesion, dispositivo, ip)
+        self.auditoria.registrar(usuario.usuario_id, "login_exitoso", "auth", detalle="via MFA", ip_origen=ip)
         return _tokens(sesion)
 
     def renovar(self, access_token_vencido: str, refresh_token: str) -> dict:
@@ -150,6 +156,7 @@ class ServicioSesiones:
                 # dueño ya rotó. Se revoca la sesión y se invalidan los access tokens vigentes.
                 self.sesiones.marcar_revocada(session_id)
                 self.usuarios.incrementar_token_version(usuario_id)
+                self.auditoria.registrar(usuario_id, "robo_sesion_detectado", "auth", detalle=f"sesion {session_id}")
                 raise HTTPException(
                     status.HTTP_401_UNAUTHORIZED,
                     "Token de refresco reutilizado: sesión revocada por seguridad",
@@ -199,6 +206,7 @@ class ServicioSesiones:
         # Supabase con un cliente normal; basta con marcarlas REVOCADA aquí: el middleware exige
         # una sesión ACTIVA y `renovar` la rechaza, así que sus tokens no sirven contra la API.
         self.sesiones.marcar_revocada(sesion["supabase_session_id"])
+        self.auditoria.registrar(usuario.usuario_id, "sesion_revocada", "auth", detalle=f"sesion {sesion_id}")
 
     def revocar_todas(self, usuario: UsuarioActual, access_token: str) -> None:
         try:
@@ -208,3 +216,4 @@ class ServicioSesiones:
         self.sesiones.marcar_todas_revocadas(usuario.usuario_id)
         # Invalida de inmediato los access tokens ya emitidos, sin esperar a que venzan.
         self.usuarios.incrementar_token_version(usuario.usuario_id)
+        self.auditoria.registrar(usuario.usuario_id, "todas_sesiones_revocadas", "auth")

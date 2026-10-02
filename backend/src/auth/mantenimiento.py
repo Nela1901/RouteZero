@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from src.auth.politicas import DIAS_RETENCION_CERRADAS, DIAS_VIGENCIA_REFRESH
 from src.core.config import settings
+from src.core.database import url_con_driver_explicito
 
 
 def marcar_expiradas(session: Session) -> int:
@@ -54,7 +55,9 @@ def ejecutar(session: Session) -> tuple[int, int]:
 def main() -> None:
     if not settings.database_admin_url:
         raise SystemExit("Falta DATABASE_ADMIN_URL en el .env (rol app_admin)")
-    engine = create_engine(settings.database_admin_url)
+    engine = create_engine(
+        url_con_driver_explicito(settings.database_admin_url), connect_args={"sslmode": "require"}
+    )
     with Session(engine) as session, session.begin():
         expiradas, borradas = ejecutar(session)
     print(f"Sesiones marcadas como expiradas: {expiradas}. Sesiones cerradas antiguas borradas: {borradas}.")

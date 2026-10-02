@@ -1,6 +1,7 @@
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.auditoria.router import router as auditoria_router
 from src.auth.router import router as mfa_router
 from src.auth.router_sesiones import router as sesiones_router
 from src.clientes.router import router as clientes_router
@@ -26,6 +27,7 @@ app.include_router(sesiones_router)
 app.include_router(flota_router)
 app.include_router(clientes_router)
 app.include_router(pedidos_router)
+app.include_router(auditoria_router)
 
 
 @app.get("/api/health")

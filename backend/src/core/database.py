@@ -7,7 +7,30 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from src.core.config import settings
 
-engine = create_engine(settings.database_url, pool_pre_ping=True)
+
+def url_con_driver_explicito(url: str) -> str:
+    """Fuerza el driver `psycopg2` (el que está en requirements.txt) en la URL que recibe
+    SQLAlchemy, en vez de dejarlo adivinar uno. Una URL `postgresql://` sin driver explícito
+    puede resolver a `psycopg` (v3, no instalado) según la versión de SQLAlchemy instalada
+    — pasó así en Render con una versión más nueva que la usada en desarrollo local, aunque
+    la misma URL funcionaba ahí sin problema. Solo se usa para crear el engine: `settings.*`
+    se deja intacto porque scripts de prueba y mantenimiento conectan con `psycopg2.connect()`
+    directo, que no entiende el sufijo `+psycopg2` de SQLAlchemy."""
+    if not url or "+" in url.split("://", 1)[0]:
+        return url
+    return url.replace("postgresql://", "postgresql+psycopg2://", 1).replace(
+        "postgres://", "postgresql+psycopg2://", 1
+    )
+
+
+engine = create_engine(
+    url_con_driver_explicito(settings.database_url),
+    pool_pre_ping=True,
+    # Supabase ya exige TLS del lado del servidor (comprobado: TLSv1.3), pero se declara
+    # explícito aquí para que la conexión falle en vez de degradar en silencio si alguna
+    # vez apunta a un host que no lo exija (RN-013 / Ley N° 29733, cifrado en tránsito).
+    connect_args={"sslmode": "require"},
+)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
