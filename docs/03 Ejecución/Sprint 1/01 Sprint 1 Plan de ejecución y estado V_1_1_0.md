@@ -12,13 +12,13 @@
 | **Inspección** | 2026-10-02 |
 | **Versión** | 1.1.0 |
 
-[← Volver al README Principal](../../README.md)
+[← Volver al README Principal](../../../README.md)
 
 ---
 
 ## 1. Objetivo del Sprint
 
-Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md)):
+Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md)):
 
 > *Implementar la base del sistema RouteZero: autenticación JWT con control de acceso por roles (EP-01), gestión de flota de vehículos (EP-02) y registro de pedidos con coordenadas GPS (EP-03).*
 
@@ -48,7 +48,7 @@ Estados: **Completada** (cumple todos sus escenarios de aceptación), **Parcial*
 
 ## 3. Trabajo adicional al alcance comprometido
 
-Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada como el cambio OpenSpec `add-mfa-sesiones` (ver [`openspec/changes/add-mfa-sesiones/`](../../openspec/changes/add-mfa-sesiones/)):
+Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada como el cambio OpenSpec `add-mfa-sesiones` (ver [`openspec/changes/add-mfa-sesiones/`](../../../openspec/changes/add-mfa-sesiones/)):
 
 - **Autenticación multifactor (MFA) con TOTP** como segundo factor del inicio de sesión.
 - **Gestión segura de sesiones**: listar, revocar una o todas, renovación con detección de robo de sesión.
@@ -61,7 +61,7 @@ También se agregó un módulo mínimo `clientes/` (registrar y listar) como pre
 
 ## 4. Definition of Done — estado del backend
 
-Criterios del DoD global ([`01 Transformando a ágil`](../02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md), sección 5):
+Criterios del DoD global ([`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md), sección 5):
 
 | # | Criterio | Meta | Estado |
 |---|---|---|---|
@@ -91,7 +91,7 @@ Se cumplió por completo la meta del día 27-09 (flota y pedidos) y se adelantó
 
 ## 6. Riesgos del Sprint
 
-Se relacionan con el [`03 Registro de riesgos`](../02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md).
+Se relacionan con el [`03 Registro de riesgos`](../../02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md).
 
 | Riesgo | Efecto | Mitigación |
 |---|---|---|
@@ -102,12 +102,12 @@ Se relacionan con el [`03 Registro de riesgos`](../02%20Planificaci%C3%B3n/03%20
 
 ## 7. Evidencias
 
-- Cambio OpenSpec `add-mfa-sesiones`: [`proposal.md`](../../openspec/changes/add-mfa-sesiones/proposal.md), [`design.md`](../../openspec/changes/add-mfa-sesiones/design.md), [`tasks.md`](../../openspec/changes/add-mfa-sesiones/tasks.md).
-- Código del backend: [`backend/`](../../backend/), módulos `auth/`, `flota/`, `clientes/` y `pedidos/`.
+- Cambio OpenSpec `add-mfa-sesiones`: [`proposal.md`](../../../openspec/changes/add-mfa-sesiones/proposal.md), [`design.md`](../../../openspec/changes/add-mfa-sesiones/design.md), [`tasks.md`](../../../openspec/changes/add-mfa-sesiones/tasks.md).
+- Código del backend: [`backend/`](../../../backend/), módulos `auth/`, `flota/`, `clientes/` y `pedidos/`.
 - Scripts de verificación de extremo a extremo: `backend/tests_manual/` (`e2e_sesiones.py`, `e2e_flota.py`, `e2e_pedidos.py`).
 - Plan y resultados de pruebas: [`03 Plan y resultados de pruebas`](03%20Plan%20y%20resultados%20de%20pruebas%20V_1_0_0.md).
 
-[← Volver al README Principal](../../README.md)
+[← Volver al README Principal](../../../README.md)
 
 ## Historial de Control de Cambios
 

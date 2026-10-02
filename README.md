@@ -226,9 +226,15 @@ RouteZero/
 │   │   ├── 03 Registro de riesgos V_1_0_0.md
 │   │   └── 04 Presupuesto del proyecto V_1_0_0.md
 │   ├── 03 Ejecución/
-│   │   ├── 01 Sprint 1 Plan de ejecución y estado V_1_4_0.md
-│   │   ├── 02 Implementación del módulo de autenticación V_1_0_0.md
-│   │   └── 03 Plan y resultados de pruebas V_1_0_0.md
+│   │   └── Sprint 1/
+│   │       ├── 01 Sprint 1 Plan de ejecución y estado V_1_5_0.md
+│   │       ├── 02 Implementación del módulo de autenticación V_1_0_0.md
+│   │       ├── 03 Plan y resultados de pruebas V_1_0_0.md
+│   │       └── Implementación/
+│   │           ├── 01 Informe de estado del proyecto V_1_0_0.md
+│   │           ├── 02 Registro de Impedimentos V_1_0_0.md
+│   │           ├── 03 Revisión del Sprint V_1_0_0.md
+│   │           └── 04 Retrospectiva del Sprint V_1_0_0.md
 │   ├── 04 Seguimiento_Control/
 │   └── 05 Cierre/
 ├── backend/
@@ -284,11 +290,24 @@ RouteZero/
 
 ### Fase 03: Ejecución
 
+#### Sprint 1 — Base del sistema
+
 | Documento | Ubicación |
 |---|---|
-| Sprint 1: plan de ejecución y estado | [`docs/03 Ejecución/01 Sprint 1 Plan de ejecución y estado V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/01%20Sprint%201%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md) |
-| Implementación del módulo de autenticación | [`docs/03 Ejecución/02 Implementación del módulo de autenticación V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/02%20Implementaci%C3%B3n%20del%20m%C3%B3dulo%20de%20autenticaci%C3%B3n%20V_1_0_0.md) |
-| Plan y resultados de pruebas | [`docs/03 Ejecución/03 Plan y resultados de pruebas V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/03%20Plan%20y%20resultados%20de%20pruebas%20V_1_0_0.md) |
+| Sprint 1: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 1/01 Sprint 1 Plan de ejecución y estado V_1_5_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/01%20Sprint%201%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_5_0.md) |
+| Implementación del módulo de autenticación | [`docs/03 Ejecución/Sprint 1/02 Implementación del módulo de autenticación V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/02%20Implementaci%C3%B3n%20del%20m%C3%B3dulo%20de%20autenticaci%C3%B3n%20V_1_0_0.md) |
+| Plan y resultados de pruebas | [`docs/03 Ejecución/Sprint 1/03 Plan y resultados de pruebas V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/03%20Plan%20y%20resultados%20de%20pruebas%20V_1_0_0.md) |
+
+**Entregables de cierre del Sprint 1** (`docs/03 Ejecución/Sprint 1/Implementación/`):
+
+| Documento | Ubicación |
+|---|---|
+| Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 1/Implementación/01 Informe de estado del proyecto V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md) |
+| Registro de Impedimentos | [`docs/03 Ejecución/Sprint 1/Implementación/02 Registro de Impedimentos V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_0_0.md) |
+| Revisión del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/03 Revisión del Sprint V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md) |
+| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/04 Retrospectiva del Sprint V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md) |
+
+*Sprint 2 en adelante se documentará en `docs/03 Ejecución/Sprint 2/`, siguiendo la misma estructura.*
 
 ---
 

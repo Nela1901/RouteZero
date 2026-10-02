@@ -12,13 +12,13 @@
 | **Inspección** | 2026-10-02 |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../README.md)
+[← Volver al README Principal](../../../README.md)
 
 ---
 
 ## 1. Objetivo del Sprint
 
-Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md)):
+Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md)):
 
 > *Implementar la base del sistema RouteZero: autenticación JWT con control de acceso por roles (EP-01), gestión de flota de vehículos (EP-02) y registro de pedidos con coordenadas GPS (EP-03).*
 
@@ -32,7 +32,7 @@ Estados: **Completada** (cumple todos sus escenarios de aceptación), **Parcial*
 |---|---|---|---|---|---|---|
 | HU-001 | Iniciar sesión en el sistema | EP-01 | 3 | Parcial | API completa: `POST /api/auth/login`, bloqueo tras 3 intentos por 15 min con tiempo restante (RN-001), respuesta genérica exista o no el correo | Pantalla de inicio de sesión y redirección al módulo según el rol (frontend) |
 | HU-002 | Acceder solo a módulos permitidos por rol | EP-01 | 3 | Parcial | Todo endpoint protegido exige sesión válida y activa (401 sin token o con token falso); RLS a nivel de base de datos | Autorización por rol (Administrador, Operador, Conductor) sobre cada módulo y su reflejo en la interfaz |
-| HU-003 | Registrar vehículo en la flota | EP-02 | 3 | Pendiente | Tabla `vehiculos` diseñada en [`11. Base de datos`](../01%20Inicio/11.%20Base%20de%20datos%20V_1_2_0.md) | Creación de la tabla, endpoints, validación de placa duplicada, pantalla |
+| HU-003 | Registrar vehículo en la flota | EP-02 | 3 | Pendiente | Tabla `vehiculos` diseñada en [`11. Base de datos`](../../01%20Inicio/11.%20Base%20de%20datos%20V_1_2_0.md) | Creación de la tabla, endpoints, validación de placa duplicada, pantalla |
 | HU-004 | Editar datos de un vehículo | EP-02 | 2 | Pendiente | — | Endpoint de edición y pantalla |
 | HU-005 | Consultar disponibilidad de la flota | EP-02 | 2 | Pendiente | — | Consulta filtrada por estado y pantalla |
 | HU-006 | Registrar pedido con coordenadas GPS y ventana de tiempo | EP-03 | 3 | Pendiente | Tablas `clientes` y `pedidos` diseñadas | Creación de tablas, validación de zona de cobertura (RN-007), endpoints, pantalla |
@@ -48,7 +48,7 @@ Estados: **Completada** (cumple todos sus escenarios de aceptación), **Parcial*
 
 ## 3. Trabajo adicional al alcance comprometido
 
-Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada como el cambio OpenSpec `add-mfa-sesiones` (ver [`openspec/changes/add-mfa-sesiones/`](../../openspec/changes/add-mfa-sesiones/)):
+Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada como el cambio OpenSpec `add-mfa-sesiones` (ver [`openspec/changes/add-mfa-sesiones/`](../../../openspec/changes/add-mfa-sesiones/)):
 
 - **Autenticación multifactor (MFA) con TOTP** como segundo factor del inicio de sesión.
 - **Gestión segura de sesiones**: listar, revocar una o todas, renovación con detección de robo de sesión.
@@ -59,7 +59,7 @@ Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada com
 
 ## 4. Definition of Done — estado del módulo de autenticación
 
-Criterios del DoD global ([`01 Transformando a ágil`](../02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md), sección 5):
+Criterios del DoD global ([`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md), sección 5):
 
 | # | Criterio | Meta | Estado |
 |---|---|---|---|
@@ -90,7 +90,7 @@ Propuesta de trabajo diario para llegar a la inspección con el sprint funcional
 
 ## 6. Riesgos del Sprint
 
-Se relacionan con el [`03 Registro de riesgos`](../02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md).
+Se relacionan con el [`03 Registro de riesgos`](../../02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md).
 
 | Riesgo | Efecto | Mitigación |
 |---|---|---|
@@ -101,11 +101,11 @@ Se relacionan con el [`03 Registro de riesgos`](../02%20Planificaci%C3%B3n/03%20
 
 ## 7. Evidencias
 
-- Cambio OpenSpec `add-mfa-sesiones`: [`proposal.md`](../../openspec/changes/add-mfa-sesiones/proposal.md), [`design.md`](../../openspec/changes/add-mfa-sesiones/design.md), [`tasks.md`](../../openspec/changes/add-mfa-sesiones/tasks.md).
-- Código del backend: [`backend/`](../../backend/).
+- Cambio OpenSpec `add-mfa-sesiones`: [`proposal.md`](../../../openspec/changes/add-mfa-sesiones/proposal.md), [`design.md`](../../../openspec/changes/add-mfa-sesiones/design.md), [`tasks.md`](../../../openspec/changes/add-mfa-sesiones/tasks.md).
+- Código del backend: [`backend/`](../../../backend/).
 - Plan y resultados de pruebas: [`03 Plan y resultados de pruebas`](03%20Plan%20y%20resultados%20de%20pruebas%20V_1_0_0.md).
 
-[← Volver al README Principal](../../README.md)
+[← Volver al README Principal](../../../README.md)
 
 ## Historial de Control de Cambios
 

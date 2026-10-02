@@ -11,7 +11,7 @@
 | **Alcance** | Módulo de autenticación (cambio OpenSpec `add-mfa-sesiones`) |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../README.md)
+[← Volver al README Principal](../../../README.md)
 
 ---
 
@@ -31,7 +31,7 @@ Las pruebas del módulo de autenticación son de **integración de extremo a ext
 
 ## 2. Casos de prueba de autenticación y sesiones
 
-Automatizados en un script de extremo a extremo. Trazabilidad: HU-001, RN-001, HT-01 y los escenarios de [`specs/mfa-totp`](../../openspec/changes/add-mfa-sesiones/specs/mfa-totp/spec.md) y [`specs/session-management`](../../openspec/changes/add-mfa-sesiones/specs/session-management/spec.md).
+Automatizados en un script de extremo a extremo. Trazabilidad: HU-001, RN-001, HT-01 y los escenarios de [`specs/mfa-totp`](../../../openspec/changes/add-mfa-sesiones/specs/mfa-totp/spec.md) y [`specs/session-management`](../../../openspec/changes/add-mfa-sesiones/specs/session-management/spec.md).
 
 | ID | Caso | Resultado esperado | Resultado |
 |---|---|---|---|
@@ -130,7 +130,7 @@ Las pruebas contra el proveedor real descubrieron problemas que el diseño en pa
 
 Las comprobaciones se ejecutaron con scripts de extremo a extremo (uno para autenticación y sesiones, otro para el mantenimiento) y con consultas directas a la base de datos. Su incorporación a `backend/tests/` con `pytest` está registrada en la tarea 6.3 del cambio OpenSpec, con las credenciales de la cuenta de prueba tomadas del archivo `.env` (nunca del repositorio).
 
-[← Volver al README Principal](../../README.md)
+[← Volver al README Principal](../../../README.md)
 
 ## Historial de Control de Cambios
 
