@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api, ErrorApi } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
+import { useConfirm } from "../../context/ConfirmContext";
+import { SelectorUbicacion } from "../../components/SelectorUbicacion";
 
 type Prioridad = "EXPRESS" | "ESTANDAR" | "ECONOMICO";
 type EstadoPedido = "PENDIENTE" | "ASIGNADO" | "EN_CAMINO" | "ENTREGADO" | "CANCELADO";
@@ -8,6 +10,7 @@ type EstadoPedido = "PENDIENTE" | "ASIGNADO" | "EN_CAMINO" | "ENTREGADO" | "CANC
 interface Cliente {
   cliente_id: string;
   nombre: string;
+  referencia?: string | null;
 }
 
 interface Pedido {
@@ -15,10 +18,14 @@ interface Pedido {
   cliente_id: string;
   descripcion: string | null;
   peso_kg: string;
+  volumen_m3: string | null;
   prioridad: Prioridad;
   estado: EstadoPedido;
+  latitud: string;
+  longitud: string;
   ventana_inicio: string;
   ventana_fin: string;
+  creado_en: string;
 }
 
 const PRIORIDADES: Prioridad[] = ["EXPRESS", "ESTANDAR", "ECONOMICO"];
@@ -30,9 +37,11 @@ const COLOR_PRIORIDAD: Record<Prioridad, string> = {
 
 export function PedidosPage() {
   const { notificar } = useToast();
+  const { confirmar } = useConfirm();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState<Pedido | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function cargar() {
@@ -49,7 +58,13 @@ export function PedidosPage() {
   }, []);
 
   async function cancelar(pedidoId: string) {
-    if (!window.confirm("¿Cancelar este pedido?")) return;
+    const acepto = await confirmar({
+      titulo: "Cancelar pedido",
+      mensaje: "¿Cancelar este pedido? Esta acción no se puede deshacer.",
+      textoAceptar: "Cancelar pedido",
+      peligroso: true,
+    });
+    if (!acepto) return;
     setError(null);
     try {
       await api.delete(`/api/pedidos/${pedidoId}`);
@@ -97,6 +112,12 @@ export function PedidosPage() {
         {pedidos.map((p) => (
           <div
             key={p.pedido_id}
+            role="button"
+            tabIndex={0}
+            onClick={() => setPedidoSeleccionado(p)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") setPedidoSeleccionado(p);
+            }}
             style={{
               display: "flex",
               alignItems: "center",
@@ -105,6 +126,7 @@ export function PedidosPage() {
               borderRadius: 12,
               border: "1px solid var(--rz-panel-border)",
               background: "var(--rz-panel-bg)",
+              cursor: "pointer",
             }}
           >
             <span
@@ -122,7 +144,14 @@ export function PedidosPage() {
               {p.estado}
             </span>
             {p.estado === "PENDIENTE" && (
-              <button type="button" onClick={() => void cancelar(p.pedido_id)} style={estiloBotonSecundario}>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void cancelar(p.pedido_id);
+                }}
+                style={estiloBotonSecundario}
+              >
                 Cancelar
               </button>
             )}
@@ -134,6 +163,111 @@ export function PedidosPage() {
           </div>
         )}
       </div>
+
+      {pedidoSeleccionado && (
+        <DetallePedido
+          pedido={pedidoSeleccionado}
+          cliente={clientes.find((c) => c.cliente_id === pedidoSeleccionado.cliente_id)}
+          onCerrar={() => setPedidoSeleccionado(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function DetallePedido({
+  pedido,
+  cliente,
+  onCerrar,
+}: {
+  pedido: Pedido;
+  cliente?: Cliente;
+  onCerrar: () => void;
+}) {
+  return (
+    <div
+      role="presentation"
+      onClick={onCerrar}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(10, 13, 14, 0.55)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1500,
+        padding: 20,
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Detalle del pedido"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 440,
+          borderRadius: 18,
+          background: "var(--rz-panel-solid-bg)",
+          border: "1px solid var(--rz-panel-border)",
+          boxShadow: "0 24px 60px rgba(0, 0, 0, 0.35)",
+          padding: 24,
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <div style={{ fontFamily: "var(--rz-font-display)", fontWeight: 700, fontSize: 17 }}>
+              {pedido.descripcion ?? "Pedido sin descripción"}
+            </div>
+            <span
+              style={{
+                display: "inline-block",
+                marginTop: 6,
+                fontSize: 11,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                color: "var(--rz-accent)",
+                background: "var(--rz-accent-soft-bg)",
+                padding: "2px 10px",
+                borderRadius: 999,
+              }}
+            >
+              {pedido.estado}
+            </span>
+          </div>
+          <button type="button" onClick={onCerrar} aria-label="Cerrar" style={estiloBotonCerrar}>
+            ✕
+          </button>
+        </div>
+
+        <FilaDetalle etiqueta="Cliente" valor={cliente?.nombre ?? pedido.cliente_id} />
+        {cliente?.referencia && <FilaDetalle etiqueta="Punto de referencia" valor={cliente.referencia} />}
+        <FilaDetalle etiqueta="Prioridad" valor={pedido.prioridad} />
+        <FilaDetalle etiqueta="Peso" valor={`${pedido.peso_kg} kg`} />
+        {pedido.volumen_m3 && <FilaDetalle etiqueta="Volumen" valor={`${pedido.volumen_m3} m³`} />}
+        <FilaDetalle
+          etiqueta="Horario de entrega"
+          valor={`${pedido.ventana_inicio.slice(0, 5)} – ${pedido.ventana_fin.slice(0, 5)}`}
+        />
+        <FilaDetalle etiqueta="Coordenadas" valor={`${pedido.latitud}, ${pedido.longitud}`} />
+        <FilaDetalle etiqueta="Registrado" valor={new Date(pedido.creado_en).toLocaleString("es-PE")} />
+
+        <button type="button" onClick={onCerrar} style={estiloBotonSecundario}>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function FilaDetalle({ etiqueta, valor }: { etiqueta: string; valor: string }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", gap: 16, fontSize: 13 }}>
+      <span style={{ color: "var(--rz-text-muted)" }}>{etiqueta}</span>
+      <span style={{ fontWeight: 600, textAlign: "right" }}>{valor}</span>
     </div>
   );
 }
@@ -223,10 +357,16 @@ function FormularioPedido({
           <CampoTexto etiqueta="Descripción" valor={descripcion} onCambio={setDescripcion} />
           <CampoTexto etiqueta="Peso (kg)" valor={pesoKg} onCambio={setPesoKg} tipo="number" />
           <CampoSelect etiqueta="Prioridad" valor={prioridad} opciones={PRIORIDADES} onCambio={(v) => setPrioridad(v as Prioridad)} />
-          <CampoTexto etiqueta="Latitud" valor={latitud} onCambio={setLatitud} tipo="number" />
-          <CampoTexto etiqueta="Longitud" valor={longitud} onCambio={setLongitud} tipo="number" />
-          <CampoTexto etiqueta="Ventana desde" valor={ventanaInicio} onCambio={setVentanaInicio} tipo="time" />
-          <CampoTexto etiqueta="Ventana hasta" valor={ventanaFin} onCambio={setVentanaFin} tipo="time" />
+          <SelectorUbicacion
+            latitud={latitud}
+            longitud={longitud}
+            onCambio={(lat, lon) => {
+              setLatitud(lat);
+              setLongitud(lon);
+            }}
+          />
+          <CampoTexto etiqueta="Entregar desde" valor={ventanaInicio} onCambio={setVentanaInicio} tipo="time" />
+          <CampoTexto etiqueta="Entregar hasta" valor={ventanaFin} onCambio={setVentanaFin} tipo="time" />
           {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
           <div style={{ gridColumn: "1 / -1" }}>
             <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
@@ -275,8 +415,14 @@ function FormularioClienteRapido({
     <form onSubmit={enviar} style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
       <div style={{ gridColumn: "1 / -1", fontSize: 13, color: "var(--rz-text-muted)" }}>Registrar cliente nuevo</div>
       <CampoTexto etiqueta="Nombre del negocio" valor={nombre} onCambio={setNombre} />
-      <CampoTexto etiqueta="Latitud" valor={latitud} onCambio={setLatitud} tipo="number" />
-      <CampoTexto etiqueta="Longitud" valor={longitud} onCambio={setLongitud} tipo="number" />
+      <SelectorUbicacion
+        latitud={latitud}
+        longitud={longitud}
+        onCambio={(lat, lon) => {
+          setLatitud(lat);
+          setLongitud(lon);
+        }}
+      />
       {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1", display: "flex", gap: 10 }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
@@ -345,6 +491,18 @@ const estiloBotonSecundario: React.CSSProperties = {
   color: "var(--rz-text)",
   fontSize: 12.5,
   cursor: "pointer",
+};
+
+const estiloBotonCerrar: React.CSSProperties = {
+  width: 28,
+  height: 28,
+  borderRadius: 8,
+  border: "1px solid var(--rz-panel-border)",
+  background: "transparent",
+  color: "var(--rz-text-muted)",
+  fontSize: 13,
+  cursor: "pointer",
+  flexShrink: 0,
 };
 
 const estiloInput: React.CSSProperties = {

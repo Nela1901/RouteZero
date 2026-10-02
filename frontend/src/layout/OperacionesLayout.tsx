@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useConfirm } from "../context/ConfirmContext";
 import { BotonTema } from "../components/BotonTema";
 
 const ITEMS_NAV = [
@@ -16,6 +17,7 @@ const ANCHO_COLAPSADO = 84;
 
 export function OperacionesLayout() {
   const { usuario, cerrarSesion } = useAuth();
+  const { confirmar } = useConfirm();
   const [expandido, setExpandido] = useState(() => window.localStorage.getItem(CLAVE_ALMACENAMIENTO) !== "no");
 
   function alternarSidebar() {
@@ -144,8 +146,10 @@ export function OperacionesLayout() {
 
         <button
           type="button"
-          onClick={() => {
-            if (window.confirm("¿Cerrar tu sesión?")) void cerrarSesion();
+          onClick={async () => {
+            if (await confirmar({ titulo: "Cerrar sesión", mensaje: "¿Seguro que quieres cerrar tu sesión?", textoAceptar: "Cerrar sesión" })) {
+              void cerrarSesion();
+            }
           }}
           aria-label="Cerrar sesión"
           title={!expandido ? "Cerrar sesión" : undefined}
