@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { api, ErrorApi } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
+import { useConfirm } from "../../context/ConfirmContext";
 
 interface InscripcionMfa {
   factor_id: string;
@@ -110,6 +111,7 @@ export function SeguridadPage() {
 function SeccionSesiones() {
   const { cerrarSesion } = useAuth();
   const { notificar } = useToast();
+  const { confirmar } = useConfirm();
   const [sesiones, setSesiones] = useState<Sesion[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revocandoId, setRevocandoId] = useState<string | null>(null);
@@ -128,7 +130,13 @@ function SeccionSesiones() {
   }, []);
 
   async function revocar(sesion: Sesion) {
-    if (!window.confirm(`¿Cerrar la sesión de "${sesion.dispositivo_info ?? "dispositivo desconocido"}"?`)) return;
+    const acepto = await confirmar({
+      titulo: "Cerrar sesión",
+      mensaje: `¿Cerrar la sesión de "${sesion.dispositivo_info ?? "dispositivo desconocido"}"?`,
+      textoAceptar: "Cerrar sesión",
+      peligroso: true,
+    });
+    if (!acepto) return;
     setError(null);
     setRevocandoId(sesion.sesion_id);
     try {
@@ -145,7 +153,13 @@ function SeccionSesiones() {
   }
 
   async function cerrarTodas() {
-    if (!window.confirm("¿Cerrar todas las sesiones, incluida esta? Deberás iniciar sesión de nuevo.")) return;
+    const acepto = await confirmar({
+      titulo: "Cerrar todas las sesiones",
+      mensaje: "¿Cerrar todas las sesiones, incluida esta? Deberás iniciar sesión de nuevo.",
+      textoAceptar: "Cerrar todas",
+      peligroso: true,
+    });
+    if (!acepto) return;
     setCerrandoTodas(true);
     try {
       await cerrarSesion();

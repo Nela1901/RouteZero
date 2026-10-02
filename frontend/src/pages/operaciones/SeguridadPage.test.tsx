@@ -3,11 +3,14 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { SeguridadPage } from "./SeguridadPage";
 import { ToastProvider } from "../../context/ToastContext";
+import { ConfirmProvider } from "../../context/ConfirmContext";
 
 function renderConProviders() {
   return render(
     <ToastProvider>
-      <SeguridadPage />
+      <ConfirmProvider>
+        <SeguridadPage />
+      </ConfirmProvider>
     </ToastProvider>,
   );
 }
