@@ -4,7 +4,7 @@ import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 import { SelectorUbicacion } from "../../components/SelectorUbicacion";
 import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
-import { estiloBotonSecundario, soloCambios } from "../../components/utilesCrud";
+import { estiloBotonSecundario, filtrarNombreNegocio, filtrarTexto, soloCambios } from "../../components/utilesCrud";
 import {
   CampoSelect,
   CampoTexto,
@@ -247,9 +247,9 @@ function FormularioCliente({ inicial, onGuardado }: { inicial?: Cliente; onGuard
       <CampoTexto
         etiqueta="Nombre del negocio"
         valor={nombre}
-        onCambio={setNombre}
+        onCambio={(v) => setNombre(filtrarNombreNegocio(v))}
         atributos={{ maxLength: 150 }}
-        ayuda="Nombre con el que se conoce al cliente, por ejemplo: Bodega San José. No puede repetirse."
+        ayuda="Nombre con el que se conoce al cliente, por ejemplo: Bodega San José. Admite letras, números y . , - & ' ( ). No puede repetirse."
       />
       <CampoSelect
         etiqueta="Tipo de negocio"
@@ -275,7 +275,7 @@ function FormularioCliente({ inicial, onGuardado }: { inicial?: Cliente; onGuard
       <CampoTexto
         etiqueta="Punto de referencia"
         valor={referencia}
-        onCambio={setReferencia}
+        onCambio={(v) => setReferencia(filtrarTexto(v))}
         opcional
         atributos={{ maxLength: 2000 }}
         ayuda="Indicación para encontrar el lugar, por ejemplo: frente al Mercado Modelo."

@@ -256,6 +256,18 @@ describe("Conductores: detalle, edición y eliminación", () => {
     );
   });
 
+  it("el teléfono solo acepta dígitos y hasta 9", async () => {
+    const usuario = userEvent.setup();
+    renderizar(<ConductoresPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Editar Carlos Mendoza" }));
+    const telefono = within(await screen.findByRole("dialog")).getByLabelText("Teléfono de contacto");
+    await usuario.clear(telefono);
+    await usuario.type(telefono, "9a8 7-6543210099");
+
+    expect(telefono).toHaveValue("987654321");
+  });
+
   it("eliminar pide confirmación y borra al conductor", async () => {
     vi.mocked(api.delete).mockResolvedValue(undefined);
     const usuario = userEvent.setup();
@@ -308,5 +320,72 @@ describe("Pedidos: edición y cancelación", () => {
     await usuario.click(within(dialogo).getByRole("button", { name: "Guardar cambios" }));
 
     await waitFor(() => expect(api.put).toHaveBeenCalledWith("/api/pedidos/pedido-1", { peso_kg: "55.5" }));
+  });
+});
+
+describe("Campos de texto y numéricos de los formularios", () => {
+  it("el nombre del conductor no admite números ni signos", async () => {
+    responder({ "/api/conductores": [conductor] });
+    const usuario = userEvent.setup();
+    renderizar(<ConductoresPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Editar Carlos Mendoza" }));
+    const nombre = within(await screen.findByRole("dialog")).getByLabelText("Nombre completo");
+    await usuario.clear(nombre);
+    await usuario.type(nombre, "Sara 12 Hernán_@ Cañari");
+
+    expect(nombre).toHaveValue("Sara  Hernán Cañari");
+  });
+
+  it("el nombre de un negocio admite números pero no signos raros", async () => {
+    responder({ "/api/clientes": [cliente] });
+    const usuario = userEvent.setup();
+    renderizar(<ClientesPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Editar Bodega San José" }));
+    const nombre = within(await screen.findByRole("dialog")).getByLabelText("Nombre del negocio");
+    await usuario.clear(nombre);
+    await usuario.type(nombre, "Bodega 24 Horas <x>$");
+
+    expect(nombre).toHaveValue("Bodega 24 Horas x");
+  });
+
+  it("el punto de referencia descarta los caracteres especiales", async () => {
+    responder({ "/api/clientes": [cliente] });
+    const usuario = userEvent.setup();
+    renderizar(<ClientesPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Editar Bodega San José" }));
+    const referencia = within(await screen.findByRole("dialog")).getByLabelText(/Punto de referencia/);
+    await usuario.clear(referencia);
+    await usuario.type(referencia, "Av. Real #5 $10 100% <b>");
+
+    expect(referencia).toHaveValue("Av. Real #5 10 100 b");
+  });
+
+  it("los campos numéricos no admiten e, + ni -, ni más decimales de los permitidos", async () => {
+    responder({ "/api/vehiculos": [vehiculo] });
+    const usuario = userEvent.setup();
+    renderizar(<FlotaPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Editar ABC-123" }));
+    const capacidad = within(await screen.findByRole("dialog")).getByLabelText("Capacidad (kg)");
+    await usuario.clear(capacidad);
+    await usuario.type(capacidad, "-1e+5.678");
+
+    expect(capacidad).toHaveValue(15.67);
+  });
+
+  it("la placa se escribe en mayúsculas y sin signos", async () => {
+    responder({ "/api/vehiculos": [vehiculo] });
+    const usuario = userEvent.setup();
+    renderizar(<FlotaPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Editar ABC-123" }));
+    const placa = within(await screen.findByRole("dialog")).getByLabelText("Placa");
+    await usuario.clear(placa);
+    await usuario.type(placa, "ab c*1_2-3");
+
+    expect(placa).toHaveValue("ABC12-3");
   });
 });

@@ -5,7 +5,7 @@ import { useConfirm } from "../../context/ConfirmContext";
 import { SelectorUbicacion } from "../../components/SelectorUbicacion";
 import { Ayuda, CampoSelect, CampoTexto } from "../../components/ui";
 import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
-import { soloCambios } from "../../components/utilesCrud";
+import { filtrarNombreNegocio, filtrarTexto, soloCambios } from "../../components/utilesCrud";
 
 type Prioridad = "EXPRESS" | "ESTANDAR" | "ECONOMICO";
 type EstadoPedido = "PENDIENTE" | "ASIGNADO" | "EN_CAMINO" | "ENTREGADO" | "CANCELADO";
@@ -372,7 +372,8 @@ function FormularioPedido({
           <CampoTexto
             etiqueta="Descripción"
             valor={descripcion}
-            onCambio={setDescripcion}
+            onCambio={(v) => setDescripcion(filtrarTexto(v))}
+            atributos={{ maxLength: 2000 }}
             ayuda="Qué se entrega, por ejemplo: 10 cajas de gaseosa. Ayuda al conductor a reconocer el pedido."
           />
           <CampoTexto
@@ -462,7 +463,7 @@ function FormularioClienteRapido({
       <CampoTexto
         etiqueta="Nombre del negocio"
         valor={nombre}
-        onCambio={setNombre}
+        onCambio={(v) => setNombre(filtrarNombreNegocio(v))}
         ayuda="Nombre con el que se conoce al cliente, por ejemplo: Bodega San José."
       />
       <SelectorUbicacion

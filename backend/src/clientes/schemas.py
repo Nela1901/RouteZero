@@ -4,6 +4,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from src.core.texto import validar_nombre_negocio, validar_texto_libre
+
 TipoNegocio = Literal["BODEGA", "RESTAURANTE", "MERCADO", "COMERCIO", "OTRO"]
 
 
@@ -22,12 +24,13 @@ class ClienteCrear(BaseModel):
         valor = valor.strip()
         if not valor:
             raise ValueError("El nombre no puede estar vacío")
-        return valor
+        return validar_nombre_negocio(valor)
 
     @field_validator("referencia")
     @classmethod
     def _limpiar_referencia(cls, valor: str | None) -> str | None:
-        return (valor or "").strip() or None
+        valor = (valor or "").strip()
+        return validar_texto_libre(valor) if valor else None
 
     @model_validator(mode="after")
     def _horario_valido(self):
@@ -53,12 +56,13 @@ class ClienteActualizar(BaseModel):
         valor = valor.strip()
         if not valor:
             raise ValueError("El nombre no puede estar vacío")
-        return valor
+        return validar_nombre_negocio(valor)
 
     @field_validator("referencia")
     @classmethod
     def _limpiar_referencia(cls, valor: str | None) -> str | None:
-        return (valor or "").strip() or None
+        valor = (valor or "").strip()
+        return validar_texto_libre(valor) if valor else None
 
 
 class ClienteOut(BaseModel):

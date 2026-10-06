@@ -20,19 +20,29 @@ def _tabla_existe(nombre: str) -> bool:
     return fila[0][0] is not None
 
 
-def test_payload_en_nombre_de_cliente_se_guarda_como_texto_literal(client):
+def test_payload_clasico_en_nombre_de_cliente_se_rechaza_y_no_ejecuta_sql(client):
+    """El nombre de un negocio no admite `;`: la validación corta el payload antes de llegar a la base."""
     operador = login(client, "Dev-Injection", email=EMAIL_OPERADOR, password=PASSWORD_OPERADOR).json()
-    payload = PAYLOADS_CLASICOS[0]
 
     r = client.post(
         "/api/clientes",
         headers=auth(operador["access_token"]),
-        json={
-            "nombre": payload,
-            "tipo_negocio": "OTRO",
-            "latitud": "-12.0653",
-            "longitud": "-75.2049",
-        },
+        json={"nombre": PAYLOADS_CLASICOS[0], "tipo_negocio": "OTRO", "latitud": "-12.0653", "longitud": "-75.2049"},
+    )
+
+    assert r.status_code == 422
+    assert _tabla_existe("clientes")
+
+
+def test_payload_con_signos_permitidos_en_nombre_de_cliente_se_guarda_como_texto_literal(client):
+    """Un payload hecho solo con caracteres que la validación admite sí llega a la base: debe quedar como dato."""
+    operador = login(client, "Dev-Injection", email=EMAIL_OPERADOR, password=PASSWORD_OPERADOR).json()
+    payload = "Robert') DROP TABLE clientes --"
+
+    r = client.post(
+        "/api/clientes",
+        headers=auth(operador["access_token"]),
+        json={"nombre": payload, "tipo_negocio": "OTRO", "latitud": "-12.0653", "longitud": "-75.2049"},
     )
 
     assert r.status_code == 201  # se acepta como dato, no se interpreta como SQL
@@ -43,21 +53,18 @@ def test_payload_en_nombre_de_cliente_se_guarda_como_texto_literal(client):
     admin_db("DELETE FROM clientes WHERE cliente_id = %s", (cuerpo["cliente_id"],))
 
 
-def test_payload_en_descripcion_de_pedido_no_ejecuta_sql(client):
-    operador = login(client, "Dev-Injection", email=EMAIL_OPERADOR, password=PASSWORD_OPERADOR).json()
+def _pedido_con_descripcion(client, operador: dict, descripcion: str):
     cliente = client.post(
         "/api/clientes",
         headers=auth(operador["access_token"]),
         json={"nombre": "Cliente de prueba", "tipo_negocio": "OTRO", "latitud": "-12.0653", "longitud": "-75.2049"},
     ).json()
-
-    payload = PAYLOADS_CLASICOS[2]
     r = client.post(
         "/api/pedidos",
         headers=auth(operador["access_token"]),
         json={
             "cliente_id": cliente["cliente_id"],
-            "descripcion": payload,
+            "descripcion": descripcion,
             "peso_kg": "5.00",
             "latitud": "-12.0653",
             "longitud": "-75.2049",
@@ -65,13 +72,32 @@ def test_payload_en_descripcion_de_pedido_no_ejecuta_sql(client):
             "ventana_fin": "12:00:00",
         },
     )
+    return cliente, r
+
+
+def _limpiar_cliente(cliente: dict) -> None:
+    admin_db("DELETE FROM pedidos WHERE cliente_id = %s", (cliente["cliente_id"],))
+    admin_db("DELETE FROM clientes WHERE cliente_id = %s", (cliente["cliente_id"],))
+
+
+def test_payload_clasico_en_descripcion_de_pedido_se_rechaza_y_no_ejecuta_sql(client):
+    operador = login(client, "Dev-Injection", email=EMAIL_OPERADOR, password=PASSWORD_OPERADOR).json()
+    cliente, r = _pedido_con_descripcion(client, operador, PAYLOADS_CLASICOS[2])
+
+    assert r.status_code == 422  # el `=` no está permitido en una descripción
+    assert _tabla_existe("usuarios")  # el intento de vaciar usuarios.rol_id no corrió
+    _limpiar_cliente(cliente)
+
+
+def test_payload_con_signos_permitidos_en_descripcion_de_pedido_no_ejecuta_sql(client):
+    operador = login(client, "Dev-Injection", email=EMAIL_OPERADOR, password=PASSWORD_OPERADOR).json()
+    payload = "x'; DROP TABLE usuarios; --"
+    cliente, r = _pedido_con_descripcion(client, operador, payload)
 
     assert r.status_code == 201
     assert r.json()["descripcion"] == payload
-    assert _tabla_existe("usuarios")  # el intento de vaciar usuarios.rol_id no corrió
-
-    admin_db("DELETE FROM pedidos WHERE cliente_id = %s", (cliente["cliente_id"],))
-    admin_db("DELETE FROM clientes WHERE cliente_id = %s", (cliente["cliente_id"],))
+    assert _tabla_existe("usuarios")  # el DROP quedó como texto, no se ejecutó
+    _limpiar_cliente(cliente)
 
 
 def test_payload_clasico_en_el_login_no_da_bypass(client):

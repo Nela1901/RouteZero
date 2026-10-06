@@ -4,6 +4,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+from src.core.texto import validar_nombre_persona
+
 # Categorías de licencia de conducir del MTC (DS 007-2016-MTC) aplicables al reparto urbano.
 CategoriaLicencia = Literal["A-I", "A-IIa", "A-IIb", "A-IIIa", "A-IIIb", "A-IIIc", "B-IIa", "B-IIb"]
 
@@ -15,7 +17,7 @@ class ConductorCrear(BaseModel):
     nombre: str = Field(min_length=1, max_length=100)
     dni: str = Field(pattern=r"^[0-9]{8}$")
     categoria_licencia: CategoriaLicencia
-    telefono: str = Field(pattern=r"^\+?[0-9]{7,15}$")
+    telefono: str = Field(pattern=r"^[0-9]{9}$")
     correo: str | None = Field(default=None, max_length=254, pattern=_PATRON_CORREO)
     licencia_vence: date
     horario_inicio: time = time(6, 0)
@@ -29,14 +31,14 @@ class ConductorCrear(BaseModel):
         valor = valor.strip()
         if not valor:
             raise ValueError("El nombre no puede estar vacío")
-        return valor
+        return validar_nombre_persona(valor)
 
 
 class ConductorActualizar(BaseModel):
     nombre: str | None = Field(default=None, min_length=1, max_length=100)
     dni: str | None = Field(default=None, pattern=r"^[0-9]{8}$")
     categoria_licencia: CategoriaLicencia | None = None
-    telefono: str | None = Field(default=None, pattern=r"^\+?[0-9]{7,15}$")
+    telefono: str | None = Field(default=None, pattern=r"^[0-9]{9}$")
     correo: str | None = Field(default=None, max_length=254, pattern=_PATRON_CORREO)
     licencia_vence: date | None = None
     horario_inicio: time | None = None
@@ -51,7 +53,7 @@ class ConductorActualizar(BaseModel):
         valor = valor.strip()
         if not valor:
             raise ValueError("El nombre no puede estar vacío")
-        return valor
+        return validar_nombre_persona(valor)
 
 
 class ConductorOut(BaseModel):
