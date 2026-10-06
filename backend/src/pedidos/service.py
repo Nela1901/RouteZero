@@ -44,5 +44,6 @@ class ServicioPedidos:
             )
         return actualizado
 
-    def listar(self, estado: str | None, prioridad: str | None) -> list[dict]:
-        return self.repo.listar(estado, prioridad)
+    def listar(self, estado: str | None, prioridad: str | None, limite: int, desplazamiento: int) -> dict:
+        items, total = self.repo.listar(estado, prioridad, limite, desplazamiento)
+        return {"items": items, "total": total, "limite": limite, "desplazamiento": desplazamiento}

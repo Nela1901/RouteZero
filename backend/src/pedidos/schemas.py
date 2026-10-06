@@ -39,3 +39,10 @@ class PedidoOut(BaseModel):
     ventana_fin: time
     estado: str
     creado_en: datetime
+
+
+class PaginaPedidos(BaseModel):
+    items: list[PedidoOut]
+    total: int
+    limite: int
+    desplazamiento: int
