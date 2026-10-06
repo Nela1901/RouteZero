@@ -2,7 +2,7 @@ from datetime import datetime, time
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 TipoNegocio = Literal["BODEGA", "RESTAURANTE", "MERCADO", "COMERCIO", "OTRO"]
 
@@ -15,6 +15,25 @@ class ClienteCrear(BaseModel):
     longitud: Decimal = Field(ge=-180, le=180, decimal_places=8)
     horario_inicio: time = time(6, 0)
     horario_fin: time = time(21, 0)
+
+    @field_validator("nombre")
+    @classmethod
+    def _limpiar_nombre(cls, valor: str) -> str:
+        valor = valor.strip()
+        if not valor:
+            raise ValueError("El nombre no puede estar vacío")
+        return valor
+
+    @field_validator("referencia")
+    @classmethod
+    def _limpiar_referencia(cls, valor: str | None) -> str | None:
+        return (valor or "").strip() or None
+
+    @model_validator(mode="after")
+    def _horario_valido(self):
+        if self.horario_fin <= self.horario_inicio:
+            raise ValueError("El horario de fin debe ser posterior al de inicio")
+        return self
 
 
 class ClienteOut(BaseModel):

@@ -45,6 +45,13 @@ class RepositorioClientes:
         ).one_or_none()
         return self._a_dict(row) if row else None
 
+    def existe_nombre(self, nombre: str) -> bool:
+        """Comparación sin distinguir mayúsculas: "Bodega Sol" y "bodega sol" son el mismo cliente."""
+        row = self.session.execute(
+            text("SELECT 1 FROM clientes WHERE lower(nombre) = lower(:nombre)"), {"nombre": nombre}
+        ).one_or_none()
+        return row is not None
+
     def existe(self, cliente_id: str) -> bool:
         row = self.session.execute(
             text("SELECT 1 FROM clientes WHERE cliente_id = :cid"), {"cid": cliente_id}

@@ -24,7 +24,7 @@ def test_registrar_cliente_dentro_de_la_zona(client):
         "/api/clientes",
         headers=auth(estado["tok_operador"]),
         json={
-            "nombre": "Bodega Los Andes",
+            "nombre": f"Bodega Los Andes {uuid.uuid4().hex[:6]}",
             "tipo_negocio": "BODEGA",
             "referencia": "Frente al Mercado Modelo, Huancayo",
             "latitud": "-12.0653",

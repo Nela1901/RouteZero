@@ -9,6 +9,8 @@ class ServicioClientes:
         self.repo = repo
 
     def registrar(self, datos) -> dict:
+        if self.repo.existe_nombre(datos.nombre):
+            raise HTTPException(status.HTTP_409_CONFLICT, "Ya existe un cliente con ese nombre")
         if not dentro_de_zona_cobertura(datos.latitud, datos.longitud):
             raise HTTPException(
                 status.HTTP_422_UNPROCESSABLE_ENTITY,
