@@ -36,6 +36,31 @@ class ClienteCrear(BaseModel):
         return self
 
 
+class ClienteActualizar(BaseModel):
+    nombre: str | None = Field(default=None, min_length=1, max_length=150)
+    tipo_negocio: TipoNegocio | None = None
+    referencia: str | None = Field(default=None, max_length=2000)
+    latitud: Decimal | None = Field(default=None, ge=-90, le=90, decimal_places=8)
+    longitud: Decimal | None = Field(default=None, ge=-180, le=180, decimal_places=8)
+    horario_inicio: time | None = None
+    horario_fin: time | None = None
+
+    @field_validator("nombre")
+    @classmethod
+    def _limpiar_nombre(cls, valor: str | None) -> str | None:
+        if valor is None:
+            return valor
+        valor = valor.strip()
+        if not valor:
+            raise ValueError("El nombre no puede estar vacío")
+        return valor
+
+    @field_validator("referencia")
+    @classmethod
+    def _limpiar_referencia(cls, valor: str | None) -> str | None:
+        return (valor or "").strip() or None
+
+
 class ClienteOut(BaseModel):
     cliente_id: str
     nombre: str

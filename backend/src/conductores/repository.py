@@ -8,7 +8,7 @@ _COLUMNAS = (
 )
 
 # Solo estas columnas se pueden actualizar; nunca se interpola un nombre que venga del cliente.
-_ACTUALIZABLES = {"categoria_licencia", "telefono", "correo", "licencia_vence", "horario_inicio", "horario_fin", "disponible"}
+_ACTUALIZABLES = {"nombre", "dni", "categoria_licencia", "telefono", "correo", "licencia_vence", "horario_inicio", "horario_fin", "disponible"}
 
 
 class RepositorioConductores:
@@ -17,11 +17,26 @@ class RepositorioConductores:
     def __init__(self, session: Session):
         self.session = session
 
-    def existe_dni(self, dni: str) -> bool:
+    def existe_dni(self, dni: str, excluir_id: str | None = None) -> bool:
+        """`excluir_id` permite comprobar el DNI de otro conductor al editar sin chocar con el propio."""
         row = self.session.execute(
-            text("SELECT 1 FROM conductores WHERE dni = :dni"), {"dni": dni}
+            text("SELECT 1 FROM conductores WHERE dni = :dni AND (CAST(:excluir AS uuid) IS NULL OR conductor_id <> CAST(:excluir AS uuid))"),
+            {"dni": dni, "excluir": excluir_id},
         ).one_or_none()
         return row is not None
+
+    def tiene_rutas(self, conductor_id: str) -> bool:
+        """Consulta propia sobre `rutas`: este módulo no depende del código de `rutas`."""
+        row = self.session.execute(
+            text("SELECT 1 FROM rutas WHERE conductor_id = :cid LIMIT 1"), {"cid": conductor_id}
+        ).one_or_none()
+        return row is not None
+
+    def eliminar(self, conductor_id: str) -> bool:
+        resultado = self.session.execute(
+            text("DELETE FROM conductores WHERE conductor_id = :cid"), {"cid": conductor_id}
+        )
+        return resultado.rowcount > 0
 
     def crear(
         self,

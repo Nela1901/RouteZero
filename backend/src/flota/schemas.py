@@ -21,6 +21,7 @@ class VehiculoCrear(BaseModel):
 
 
 class VehiculoActualizar(BaseModel):
+    placa: str | None = Field(default=None, min_length=1, max_length=10, pattern=r"^[A-Za-z0-9-]+$")
     tipo: TipoVehiculo | None = None
     capacidad_kg: Decimal | None = Field(default=None, gt=0, le=99999.99, decimal_places=2)
     consumo_km_l: Decimal | None = Field(default=None, gt=0, le=9999.99, decimal_places=2)

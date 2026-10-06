@@ -26,6 +26,18 @@ class PedidoCrear(BaseModel):
         return self
 
 
+class PedidoActualizar(BaseModel):
+    cliente_id: str | None = Field(default=None, pattern=r"^[0-9a-fA-F-]{36}$")
+    descripcion: str | None = Field(default=None, max_length=2000)
+    peso_kg: Decimal | None = Field(default=None, gt=0, le=99999.99, decimal_places=2)
+    volumen_m3: Decimal | None = Field(default=None, gt=0, le=999.999, decimal_places=3)
+    prioridad: Prioridad | None = None
+    latitud: Decimal | None = Field(default=None, ge=-90, le=90, decimal_places=8)
+    longitud: Decimal | None = Field(default=None, ge=-180, le=180, decimal_places=8)
+    ventana_inicio: time | None = None
+    ventana_fin: time | None = None
+
+
 class PedidoOut(BaseModel):
     pedido_id: str
     cliente_id: str

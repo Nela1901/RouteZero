@@ -8,11 +8,26 @@ class RepositorioVehiculos:
     def __init__(self, session: Session):
         self.session = session
 
-    def existe_placa(self, placa: str) -> bool:
+    def existe_placa(self, placa: str, excluir_id: str | None = None) -> bool:
+        """`excluir_id` permite comprobar la placa de otro vehículo al editar sin chocar con la propia."""
         row = self.session.execute(
-            text("SELECT 1 FROM vehiculos WHERE placa = :placa"), {"placa": placa}
+            text("SELECT 1 FROM vehiculos WHERE placa = :placa AND (CAST(:excluir AS uuid) IS NULL OR vehiculo_id <> CAST(:excluir AS uuid))"),
+            {"placa": placa, "excluir": excluir_id},
         ).one_or_none()
         return row is not None
+
+    def tiene_rutas(self, vehiculo_id: str) -> bool:
+        """Consulta propia sobre `rutas`: este módulo no depende del código de `rutas`."""
+        row = self.session.execute(
+            text("SELECT 1 FROM rutas WHERE vehiculo_id = :vid LIMIT 1"), {"vid": vehiculo_id}
+        ).one_or_none()
+        return row is not None
+
+    def eliminar(self, vehiculo_id: str) -> bool:
+        resultado = self.session.execute(
+            text("DELETE FROM vehiculos WHERE vehiculo_id = :vid"), {"vid": vehiculo_id}
+        )
+        return resultado.rowcount > 0
 
     def crear(
         self,

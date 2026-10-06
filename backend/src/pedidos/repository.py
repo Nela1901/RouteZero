@@ -7,6 +7,13 @@ _COLUMNAS = (
 )
 
 
+# Solo estas columnas se pueden actualizar; nunca se interpola un nombre que venga del cliente.
+_ACTUALIZABLES = {
+    "cliente_id", "descripcion", "peso_kg", "volumen_m3", "prioridad",
+    "latitud", "longitud", "ventana_inicio", "ventana_fin",
+}
+
+
 class RepositorioPedidos:
     def __init__(self, session: Session):
         self.session = session
@@ -35,6 +42,21 @@ class RepositorioPedidos:
     def obtener(self, pedido_id: str) -> dict | None:
         row = self.session.execute(
             text(f"SELECT {_COLUMNAS} FROM pedidos WHERE pedido_id = :pid"), {"pid": pedido_id}
+        ).one_or_none()
+        return self._a_dict(row) if row else None
+
+    def actualizar(self, pedido_id: str, campos: dict) -> dict | None:
+        """Actualiza solo si el pedido sigue PENDIENTE (un pedido ya asignado no se edita)."""
+        campos = {c: v for c, v in campos.items() if c in _ACTUALIZABLES}
+        if not campos:
+            return self.obtener(pedido_id)
+        asignaciones = ", ".join(f"{c} = :{c}" for c in campos)
+        row = self.session.execute(
+            text(
+                f"UPDATE pedidos SET {asignaciones} WHERE pedido_id = :pid AND estado = 'PENDIENTE' "
+                f"RETURNING {_COLUMNAS}"
+            ),
+            {**campos, "pid": pedido_id},
         ).one_or_none()
         return self._a_dict(row) if row else None
 

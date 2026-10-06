@@ -33,6 +33,8 @@ class ConductorCrear(BaseModel):
 
 
 class ConductorActualizar(BaseModel):
+    nombre: str | None = Field(default=None, min_length=1, max_length=100)
+    dni: str | None = Field(default=None, pattern=r"^[0-9]{8}$")
     categoria_licencia: CategoriaLicencia | None = None
     telefono: str | None = Field(default=None, pattern=r"^\+?[0-9]{7,15}$")
     correo: str | None = Field(default=None, max_length=254, pattern=_PATRON_CORREO)
@@ -40,6 +42,16 @@ class ConductorActualizar(BaseModel):
     horario_inicio: time | None = None
     horario_fin: time | None = None
     disponible: bool | None = None
+
+    @field_validator("nombre")
+    @classmethod
+    def _limpiar_nombre(cls, valor: str | None) -> str | None:
+        if valor is None:
+            return valor
+        valor = valor.strip()
+        if not valor:
+            raise ValueError("El nombre no puede estar vacío")
+        return valor
 
 
 class ConductorOut(BaseModel):

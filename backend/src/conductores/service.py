@@ -62,9 +62,14 @@ class ServicioConductores:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "No se envió ningún campo para actualizar")
         if campos.get("licencia_vence"):
             _validar_licencia_vigente(campos["licencia_vence"])
+        for obligatorio in ("nombre", "dni"):
+            if obligatorio in campos and campos[obligatorio] is None:
+                raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, f"El campo {obligatorio} no puede quedar vacío")
         actual = self.repo.obtener(conductor_id)
         if actual is None:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Conductor no encontrado")
+        if "dni" in campos and self.repo.existe_dni(campos["dni"], excluir_id=conductor_id):
+            raise HTTPException(status.HTTP_409_CONFLICT, "Ya existe un conductor con ese DNI")
         if "horario_inicio" in campos or "horario_fin" in campos:
             _validar_jornada(
                 campos.get("horario_inicio") or actual["horario_inicio"],
@@ -73,6 +78,23 @@ class ServicioConductores:
         actualizado = self.repo.actualizar(conductor_id, campos)
         self.auditoria.registrar(usuario_id, "conductor_editado", "conductores", conductor_id)
         return actualizado
+
+    def obtener(self, conductor_id: str) -> dict:
+        conductor = self.repo.obtener(conductor_id)
+        if conductor is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Conductor no encontrado")
+        return conductor
+
+    def eliminar(self, conductor_id: str, usuario_id: str) -> None:
+        self.obtener(conductor_id)
+        if self.repo.tiene_rutas(conductor_id):
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                "El conductor tiene rutas registradas y no se puede eliminar; márcalo como no disponible para dejar de asignarle rutas",
+            )
+        self.repo.eliminar(conductor_id)
+        # Solo el id: el DNI es dato personal (Ley N° 29733).
+        self.auditoria.registrar(usuario_id, "conductor_eliminado", "conductores", conductor_id)
 
     def listar(self, disponible: bool | None) -> list[dict]:
         return self.repo.listar(disponible)
