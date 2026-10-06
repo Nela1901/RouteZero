@@ -12,6 +12,7 @@ export function BotonTema() {
       aria-label={esOscuro ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
       style={{
         width: 40,
+        flexShrink: 0,
         height: 40,
         borderRadius: 10,
         border: "1px solid var(--rz-panel-border)",

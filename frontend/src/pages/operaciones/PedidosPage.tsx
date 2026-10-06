@@ -3,6 +3,7 @@ import { api, mensajeDeError } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../context/ConfirmContext";
 import { SelectorUbicacion } from "../../components/SelectorUbicacion";
+import { Ayuda, CampoSelect, CampoTexto } from "../../components/ui";
 
 type Prioridad = "EXPRESS" | "ESTANDAR" | "ECONOMICO";
 type EstadoPedido = "PENDIENTE" | "ASIGNADO" | "EN_CAMINO" | "ENTREGADO" | "CANCELADO";
@@ -78,7 +79,7 @@ export function PedidosPage() {
   }
 
   return (
-    <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 1040 }}>
+    <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 1440 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <h1 style={{ fontFamily: "var(--rz-font-display)", fontSize: 22, margin: "0 0 4px" }}>Pedidos</h1>
@@ -340,7 +341,10 @@ function FormularioPedido({
       ) : (
         <form onSubmit={enviar} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))", gap: 14 }}>
           <label style={estiloEtiqueta}>
-            Cliente
+            <span>
+              Cliente
+              <Ayuda texto="Negocio al que se entrega el pedido. Si no está en la lista, usa el botón Nuevo para registrarlo." />
+            </span>
             <div style={{ display: "flex", gap: 6 }}>
               <select value={clienteId} onChange={(e) => setClienteId(e.target.value)} style={estiloInput} required>
                 {clientes.map((c) => (
@@ -354,9 +358,27 @@ function FormularioPedido({
               </button>
             </div>
           </label>
-          <CampoTexto etiqueta="Descripción" valor={descripcion} onCambio={setDescripcion} />
-          <CampoTexto etiqueta="Peso (kg)" valor={pesoKg} onCambio={setPesoKg} tipo="number" />
-          <CampoSelect etiqueta="Prioridad" valor={prioridad} opciones={PRIORIDADES} onCambio={(v) => setPrioridad(v as Prioridad)} />
+          <CampoTexto
+            etiqueta="Descripción"
+            valor={descripcion}
+            onCambio={setDescripcion}
+            ayuda="Qué se entrega, por ejemplo: 10 cajas de gaseosa. Ayuda al conductor a reconocer el pedido."
+          />
+          <CampoTexto
+            etiqueta="Peso (kg)"
+            valor={pesoKg}
+            onCambio={setPesoKg}
+            tipo="number"
+            paso="0.01"
+            ayuda="Peso total del pedido en kilogramos. Ejemplo: 25.5. El optimizador lo suma para no superar la capacidad de cada vehículo."
+          />
+          <CampoSelect
+            etiqueta="Prioridad"
+            valor={prioridad}
+            opciones={PRIORIDADES}
+            onCambio={(v) => setPrioridad(v as Prioridad)}
+            ayuda="EXPRESS se asigna a la primera ruta disponible y se entrega antes que los demás. ESTANDAR es el trato normal. ECONOMICO puede esperar y agruparse con otros pedidos."
+          />
           <SelectorUbicacion
             latitud={latitud}
             longitud={longitud}
@@ -365,8 +387,20 @@ function FormularioPedido({
               setLongitud(lon);
             }}
           />
-          <CampoTexto etiqueta="Entregar desde" valor={ventanaInicio} onCambio={setVentanaInicio} tipo="time" />
-          <CampoTexto etiqueta="Entregar hasta" valor={ventanaFin} onCambio={setVentanaFin} tipo="time" />
+          <CampoTexto
+            etiqueta="Entregar desde"
+            valor={ventanaInicio}
+            onCambio={setVentanaInicio}
+            tipo="time"
+            ayuda="Hora a partir de la cual el cliente puede recibir el pedido (ventana de tiempo de entrega)."
+          />
+          <CampoTexto
+            etiqueta="Entregar hasta"
+            valor={ventanaFin}
+            onCambio={setVentanaFin}
+            tipo="time"
+            ayuda="Hora límite de entrega. Debe ser posterior a la hora de inicio; una entrega fuera de la ventana se penaliza en la ruta."
+          />
           {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
           <div style={{ gridColumn: "1 / -1" }}>
             <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
@@ -414,7 +448,12 @@ function FormularioClienteRapido({
   return (
     <form onSubmit={enviar} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))", gap: 14 }}>
       <div style={{ gridColumn: "1 / -1", fontSize: 13, color: "var(--rz-text-muted)" }}>Registrar cliente nuevo</div>
-      <CampoTexto etiqueta="Nombre del negocio" valor={nombre} onCambio={setNombre} />
+      <CampoTexto
+        etiqueta="Nombre del negocio"
+        valor={nombre}
+        onCambio={setNombre}
+        ayuda="Nombre con el que se conoce al cliente, por ejemplo: Bodega San José."
+      />
       <SelectorUbicacion
         latitud={latitud}
         longitud={longitud}
@@ -435,30 +474,6 @@ function FormularioClienteRapido({
         )}
       </div>
     </form>
-  );
-}
-
-function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (v: string) => void; tipo?: string }) {
-  return (
-    <label style={estiloEtiqueta}>
-      {props.etiqueta}
-      <input required type={props.tipo ?? "text"} value={props.valor} onChange={(e) => props.onCambio(e.target.value)} style={estiloInput} />
-    </label>
-  );
-}
-
-function CampoSelect(props: { etiqueta: string; valor: string; opciones: string[]; onCambio: (v: string) => void }) {
-  return (
-    <label style={estiloEtiqueta}>
-      {props.etiqueta}
-      <select value={props.valor} onChange={(e) => props.onCambio(e.target.value)} style={estiloInput}>
-        {props.opciones.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-    </label>
   );
 }
 

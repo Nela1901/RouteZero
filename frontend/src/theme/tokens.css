@@ -93,3 +93,49 @@ a {
   height: 100%;
   display: block;
 }
+
+/* Encabezado del panel: se adapta al ancho que le deja el panel lateral. */
+.rz-encabezado {
+  container-type: inline-size;
+  container-name: encabezado;
+}
+
+.rz-encabezado-titulo {
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.rz-encabezado-titulo > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rz-pastilla-co2 {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* 1.º se quita el texto "evitados hoy" y el subtítulo */
+@container encabezado (max-width: 760px) {
+  .rz-pastilla-co2-texto,
+  .rz-encabezado-subtitulo {
+    display: none;
+  }
+}
+
+/* 2.º se compacta: menos relleno y título más chico */
+@container encabezado (max-width: 480px) {
+  .rz-encabezado-interior {
+    padding: 0 16px !important;
+    gap: 10px !important;
+  }
+
+  .rz-encabezado-titulo > span:first-child {
+    font-size: 15px !important;
+  }
+
+  .rz-pastilla-co2 {
+    padding: 8px 12px !important;
+  }
+}
