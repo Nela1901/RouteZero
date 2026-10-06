@@ -237,6 +237,7 @@ RouteZero/
 │   │   │       └── 04 Retrospectiva del Sprint V_1_1_0.md
 │   │   └── Sprint 2/
 │   │       ├── 01 Sprint 2 Plan de ejecución y estado V_1_2_0.md
+│   │       ├── 02 Implementación del motor de rutas V_1_0_0.md
 │   │       └── Implementación/
 │   │           ├── 01 Informe de estado del proyecto V_1_1_0.md
 │   │           ├── 02 Registro de Impedimentos V_1_0_0.md
@@ -319,6 +320,7 @@ RouteZero/
 | Documento | Ubicación |
 |---|---|
 | Sprint 2: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 2/01 Sprint 2 Plan de ejecución y estado V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_2_0.md) |
+| Implementación del motor de rutas | [`docs/03 Ejecución/Sprint 2/02 Implementación del motor de rutas V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/02%20Implementaci%C3%B3n%20del%20motor%20de%20rutas%20V_1_0_0.md) |
 
 **Seguimiento del Sprint 2** (`docs/03 Ejecución/Sprint 2/Implementación/`; revisión y retrospectiva se completan al cierre):
 
