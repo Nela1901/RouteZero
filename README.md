@@ -216,7 +216,7 @@ RouteZero/
 │   │   ├── 10. Stack tecnológico V_1_1_0.md
 │   │   ├── 11. Base de datos V_1_0_0.md
 │   │   ├── 11. Base de datos V_1_1_0.md
-│   │   ├── 11. Base de datos V_1_6_0.md
+│   │   ├── 11. Base de datos V_1_7_0.md
 │   │   ├── 12. Modelo C4 V_1_0_0.md
 │   │   ├── 12. Modelo C4 V_1_1_0.md
 │   │   └── 13. Restricciones V_1_1_0.md
@@ -278,7 +278,7 @@ RouteZero/
 | Usuarios | [`docs/01 Inicio/08. Usuarios V_1_0_0.md`](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) |
 | Reglas de negocio | [`docs/01 Inicio/09. Reglas de negocio V_1_1_0.md`](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) |
 | Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_1_0.md`](docs/01%20Inicio/10.%20Stack%20tecnológico%20V_1_1_0.md) |
-| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_6_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_6_0.md) |
+| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_7_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_7_0.md) |
 | Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_1_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_1_0.md) |
 | Restricciones | [`docs/01 Inicio/13. Restricciones V_1_1_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_1_0.md) |
 
