@@ -233,7 +233,7 @@ RouteZero/
 │   │   │   └── Implementación/
 │   │   │       ├── 01 Informe de estado del proyecto V_1_4_0.md
 │   │   │       ├── 02 Registro de Impedimentos V_1_1_0.md
-│   │   │       ├── 03 Revisión del Sprint V_1_2_0.md
+│   │   │       ├── 03 Revisión del Sprint V_1_3_0.md
 │   │   │       └── 04 Retrospectiva del Sprint V_1_2_0.md
 │   │   └── Sprint 2/
 │   │       ├── 01 Sprint 2 Plan de ejecución y estado V_1_5_0.md
@@ -312,7 +312,7 @@ RouteZero/
 |---|---|
 | Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 1/Implementación/01 Informe de estado del proyecto V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_4_0.md) |
 | Registro de Impedimentos | [`docs/03 Ejecución/Sprint 1/Implementación/02 Registro de Impedimentos V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
-| Revisión del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/03 Revisión del Sprint V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_2_0.md) |
+| Revisión del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/03 Revisión del Sprint V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_3_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/04 Retrospectiva del Sprint V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_2_0.md) |
 
 #### Sprint 2 — Personas y Algoritmo ACO (en curso)
@@ -328,7 +328,7 @@ RouteZero/
 |---|---|
 | Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 2/Implementación/01 Informe de estado del proyecto V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_4_0.md) |
 | Registro de Impedimentos | [`docs/03 Ejecución/Sprint 2/Implementación/02 Registro de Impedimentos V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_2_0.md) |
-| Revisión del Sprint | [`docs/03 Ejecución/Sprint 2/Implementación/03 Revisión del Sprint V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_2_0.md) |
+| Revisión del Sprint | [`docs/03 Ejecución/Sprint 2/Implementación/03 Revisión del Sprint V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_3_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 2/Implementación/04 Retrospectiva del Sprint V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_2_0.md) |
 
 *Sprint 3 en adelante se documentará en `docs/03 Ejecución/Sprint 3/`, siguiendo la misma estructura.*
