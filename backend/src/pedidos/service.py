@@ -1,14 +1,12 @@
 from fastapi import HTTPException, status
 
-from src.clientes.repository import RepositorioClientes
-from src.clientes.zona import dentro_de_zona_cobertura
+from src.core.zona import dentro_de_zona_cobertura
 from src.pedidos.repository import RepositorioPedidos
 
 
 class ServicioPedidos:
-    def __init__(self, repo: RepositorioPedidos, repo_clientes: RepositorioClientes):
+    def __init__(self, repo: RepositorioPedidos):
         self.repo = repo
-        self.repo_clientes = repo_clientes
 
     def registrar(self, datos) -> dict:
         if not dentro_de_zona_cobertura(datos.latitud, datos.longitud):
@@ -16,7 +14,7 @@ class ServicioPedidos:
                 status.HTTP_422_UNPROCESSABLE_ENTITY,
                 "Las coordenadas están fuera del área de cobertura del distrito de Huancayo",
             )
-        if not self.repo_clientes.existe(datos.cliente_id):
+        if not self.repo.existe_cliente(datos.cliente_id):
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Cliente no encontrado")
 
         pedido_id = self.repo.crear(

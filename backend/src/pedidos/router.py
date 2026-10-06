@@ -3,7 +3,6 @@ from typing import Literal
 from fastapi import APIRouter, Depends, Path
 from sqlalchemy.orm import Session
 
-from src.clientes.repository import RepositorioClientes
 from src.core.security import UsuarioActual, get_db_con_rls, requiere_rol
 from src.pedidos.repository import RepositorioPedidos
 from src.pedidos.schemas import PedidoCrear, PedidoOut
@@ -15,7 +14,7 @@ _UUID = r"^[0-9a-fA-F-]{36}$"
 
 
 def _servicio(db: Session) -> ServicioPedidos:
-    return ServicioPedidos(RepositorioPedidos(db), RepositorioClientes(db))
+    return ServicioPedidos(RepositorioPedidos(db))
 
 
 @router.post("", response_model=PedidoOut, status_code=201)

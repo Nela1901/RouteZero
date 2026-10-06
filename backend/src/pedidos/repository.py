@@ -25,6 +25,13 @@ class RepositorioPedidos:
         ).one()
         return str(row[0])
 
+    def existe_cliente(self, cliente_id: str) -> bool:
+        """Consulta propia sobre `clientes`: así este módulo no depende del código de `clientes`."""
+        row = self.session.execute(
+            text("SELECT 1 FROM clientes WHERE cliente_id = :cid"), {"cid": cliente_id}
+        ).one_or_none()
+        return row is not None
+
     def obtener(self, pedido_id: str) -> dict | None:
         row = self.session.execute(
             text(f"SELECT {_COLUMNAS} FROM pedidos WHERE pedido_id = :pid"), {"pid": pedido_id}
