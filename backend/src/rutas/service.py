@@ -16,10 +16,22 @@ from src.rutas.repository import RepositorioRutas
 
 PERU = timezone(timedelta(hours=-5))  # Perú no usa horario de verano
 PRESUPUESTO_MINIMO_S = 1.0
+# Tiempo que se deja dentro del presupuesto total para guardar las rutas y responder (RN-015: 45 s en total)
+RESERVA_PERSISTENCIA_S = 5.0
 
 # Una sola generación a la vez por proceso: el cálculo ocupa la CPU (0.1 en Render gratuito) y dos
 # generaciones simultáneas se estorbarían entre sí.
 BLOQUEO_GENERACION = threading.Lock()
+
+
+def memoria_pico_mb() -> float | None:
+    """Pico de memoria residente del proceso (solo disponible en Linux, como en Render)."""
+    try:
+        import resource
+
+        return round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0, 1)
+    except ImportError:
+        return None
 
 
 def hoy_en_peru() -> date:
@@ -77,11 +89,14 @@ class ServicioRutas:
         self.repo.session.commit()
 
         puntos = [(cfg.deposito_latitud, cfg.deposito_longitud)] + [(float(p["latitud"]), float(p["longitud"])) for p in pedidos]
+        t_matrices = reloj.perf_counter()
         matrices = self.red_vial.matrices(puntos)
+        matrices_s = reloj.perf_counter() - t_matrices
 
         solicitado = tiempo_max_s if tiempo_max_s is not None else cfg.optimizacion_tiempo_s
         presupuesto_total = min(solicitado, cfg.optimizacion_tiempo_max_s)
-        presupuesto_motor = max(PRESUPUESTO_MINIMO_S, presupuesto_total - (reloj.perf_counter() - inicio))
+        t_lectura = t_matrices - inicio
+        presupuesto_motor = max(PRESUPUESTO_MINIMO_S, presupuesto_total - (reloj.perf_counter() - inicio) - RESERVA_PERSISTENCIA_S)
         problema = Problema(
             pedidos=[
                 Pedido(p["pedido_id"], float(p["peso_kg"]), p["prioridad"], _segundos(p["ventana_inicio"]), _segundos(p["ventana_fin"]))
@@ -106,40 +121,58 @@ class ServicioRutas:
                 tiempo_max_s=presupuesto_motor,
             ),
         )
+        t_motor = reloj.perf_counter()
         resultado = resolver(problema)
+        motor_s = reloj.perf_counter() - t_motor
         sin_cobertura = [{"pedido_id": s.pedido_id, "motivo": s.motivo, "sugerencia": s.sugerencia} for s in resultado.sin_cobertura]
         base = {
             "fecha_jornada": fecha,
             "fuente_distancias": matrices.fuente,
             "puntos_aproximados": len(matrices.puntos_aproximados),
             "iteraciones": resultado.iteraciones,
+            "memoria_pico_mb": memoria_pico_mb(),
         }
+        tiempos = {"lectura_s": t_lectura, "matrices_s": matrices_s, "motor_s": motor_s}
 
         if resultado.imposible or not resultado.rutas:
             # No se toca nada: los borradores anteriores se conservan
             return base | {
                 "lote_id": None, "imposible": resultado.imposible, "mensaje": resultado.mensaje, "rutas": [],
                 "sin_cobertura": sin_cobertura, "comparativa_base": None,
-                "tiempo_ejecucion_s": reloj.perf_counter() - inicio,
+                "tiempo_ejecucion_s": reloj.perf_counter() - inicio, "tiempos": tiempos | {"persistencia_s": 0.0},
             }
 
         reaplicar_contexto_rls(self.repo.session, usuario_id)
         lote_id = str(uuid.uuid4())
         self.repo.bloquear_fecha(fecha)
         self.repo.borrar_borradores(fecha)
+        t_persistencia = reloj.perf_counter()
         ahorro_total_l = max(0.0, resultado.litros_base - resultado.litros)
+        filas_rutas, filas_paradas, filas_metricas = [], [], []
         for ruta in resultado.rutas:
             it = ruta.itinerario
-            ruta_id = self.repo.crear_ruta(
-                lote_id, ruta.par.vehiculo.id, ruta.par.conductor.id, fecha,
-                _hora(it.salida_s), _hora(it.regreso_s), it.distancia_m / 1000.0, int(round(it.duracion_s / 60)),
-            )
+            ruta_id = str(uuid.uuid4())
+            filas_rutas.append({
+                "ruta_id": ruta_id, "lote_id": lote_id, "vehiculo_id": ruta.par.vehiculo.id, "conductor_id": ruta.par.conductor.id,
+                "fecha_jornada": fecha, "hora_salida": _hora(it.salida_s), "hora_regreso": _hora(it.regreso_s),
+                "distancia_km": it.distancia_m / 1000.0, "tiempo_min": int(round(it.duracion_s / 60)),
+            })
             for parada in it.paradas:
-                self.repo.crear_parada(ruta_id, parada.pedido_id, parada.orden, _hora(parada.llegada_s), int(round(parada.retraso_s / 60)))
+                filas_paradas.append({
+                    "ruta_id": ruta_id, "pedido_id": parada.pedido_id, "orden_entrega": parada.orden,
+                    "hora_estimada": _hora(parada.llegada_s), "minutos_retraso": int(round(parada.retraso_s / 60)),
+                })
             a_tiempo = sum(1 for p in it.paradas if p.retraso_s <= 0)
             proporcion = it.litros / resultado.litros if resultado.litros else 0.0
-            self.repo.crear_metricas(ruta_id, it.co2_kg, it.litros, ahorro_total_l * proporcion, it.distancia_m / 1000.0,
-                                     100.0 * a_tiempo / len(it.paradas))
+            filas_metricas.append({
+                "ruta_id": ruta_id, "emision_co2_kg": it.co2_kg, "combustible_l": it.litros,
+                "combustible_ahorrado_l": ahorro_total_l * proporcion, "distancia_optimizada_km": it.distancia_m / 1000.0,
+                "cumplimiento_ventanas_pct": 100.0 * a_tiempo / len(it.paradas),
+            })
+        # Tres INSERT en bloque en lugar de uno por fila: cada consulta es un viaje a la base remota
+        self.repo.crear_rutas(filas_rutas)
+        self.repo.crear_paradas(filas_paradas)
+        self.repo.crear_metricas(filas_metricas)
         self.auditoria.registrar(usuario_id, "ruta_generada", "rutas", lote_id)
 
         rutas = self._rutas_con_paradas(self.repo.rutas_del_lote(lote_id))
@@ -157,6 +190,7 @@ class ServicioRutas:
             "lote_id": lote_id, "imposible": False, "mensaje": resultado.mensaje, "rutas": rutas,
             "sin_cobertura": sin_cobertura, "comparativa_base": comparativa,
             "tiempo_ejecucion_s": reloj.perf_counter() - inicio,
+            "tiempos": tiempos | {"persistencia_s": reloj.perf_counter() - t_persistencia},
         }
 
     # ------------------------------------------------------------------ confirmar y descartar

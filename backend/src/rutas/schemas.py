@@ -89,6 +89,9 @@ class ResultadoGeneracion(BaseModel):
     comparativa_base: ComparativaBase | None
     iteraciones: int
     tiempo_ejecucion_s: float
+    # Diagnóstico: segundos por fase y pico de memoria del proceso (solo en Linux)
+    tiempos: dict[str, float] = {}
+    memoria_pico_mb: float | None = None
 
 
 class ResultadoConfirmacion(BaseModel):
