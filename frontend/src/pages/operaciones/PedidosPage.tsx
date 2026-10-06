@@ -374,13 +374,13 @@ function FormularioPedido({
         />
       ) : (
         <form onSubmit={enviar} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))", gap: 14 }}>
-          <label style={estiloEtiqueta}>
+          <div style={estiloEtiqueta}>
             <span>
-              Cliente
+              <label htmlFor="pedido-cliente">Cliente</label>
               <Ayuda texto="Negocio al que se entrega el pedido. Si no está en la lista, usa el botón Nuevo para registrarlo." />
             </span>
             <div style={{ display: "flex", gap: 6 }}>
-              <select value={clienteId} onChange={(e) => setClienteId(e.target.value)} style={estiloInput} required>
+              <select id="pedido-cliente" value={clienteId} onChange={(e) => setClienteId(e.target.value)} style={estiloInput} required>
                 {clientes.map((c) => (
                   <option key={c.cliente_id} value={c.cliente_id}>
                     {c.nombre}
@@ -391,7 +391,7 @@ function FormularioPedido({
                 Nuevo
               </button>
             </div>
-          </label>
+          </div>
           <CampoTexto
             etiqueta="Descripción"
             valor={descripcion}

@@ -183,13 +183,13 @@ export function RutasPage() {
           </p>
         </div>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 10, flexWrap: "wrap" }}>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
             <span>
-              Fecha de la jornada
+              <label htmlFor="rutas-fecha">Fecha de la jornada</label>
               <Ayuda texto="Día para el que se planifican las rutas. Se consideran todos los pedidos pendientes; la fecha sirve para comprobar que las licencias de los conductores estén vigentes ese día." />
             </span>
-            <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} style={estiloInput} />
-          </label>
+            <input id="rutas-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} style={estiloInput} />
+          </div>
           {esAdministrador && (
             <button type="button" onClick={() => void generar()} disabled={generando} style={estiloBotonPrimario}>
               {generando ? `Calculando… ${segundos} s` : "Generar rutas"}

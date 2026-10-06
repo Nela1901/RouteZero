@@ -14,6 +14,7 @@ import { ConductorPage } from "./pages/conductor/ConductorPage";
 function PantallaCargando() {
   return (
     <div
+      role="main"
       style={{
         height: "100vh",
         display: "flex",

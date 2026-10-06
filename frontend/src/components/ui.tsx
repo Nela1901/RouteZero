@@ -72,14 +72,18 @@ export function Ayuda({ texto }: { texto: string }) {
 }
 
 export function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (v: string) => void; tipo?: string; paso?: string; opcional?: boolean; ayuda?: string; atributos?: React.InputHTMLAttributes<HTMLInputElement> }) {
+  const id = useId();
   return (
-    <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
       <span>
-        {props.etiqueta}
-        {props.opcional && <span style={{ fontWeight: 400 }}> (opcional)</span>}
+        <label htmlFor={id}>
+          {props.etiqueta}
+          {props.opcional && <span style={{ fontWeight: 400 }}> (opcional)</span>}
+        </label>
         {props.ayuda && <Ayuda texto={props.ayuda} />}
       </span>
       <input
+        id={id}
         required={!props.opcional}
         type={props.tipo ?? "text"}
         step={props.paso}
@@ -88,25 +92,26 @@ export function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (
         style={estiloInput}
         {...props.atributos}
       />
-    </label>
+    </div>
   );
 }
 
 export function CampoSelect(props: { etiqueta: string; valor: string; opciones: string[]; onCambio: (v: string) => void; ayuda?: string }) {
+  const id = useId();
   return (
-    <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
       <span>
-        {props.etiqueta}
+        <label htmlFor={id}>{props.etiqueta}</label>
         {props.ayuda && <Ayuda texto={props.ayuda} />}
       </span>
-      <select value={props.valor} onChange={(e) => props.onCambio(e.target.value)} style={estiloInput}>
+      <select id={id} value={props.valor} onChange={(e) => props.onCambio(e.target.value)} style={estiloInput}>
         {props.opciones.map((o) => (
           <option key={o} value={o}>
             {o}
           </option>
         ))}
       </select>
-    </label>
+    </div>
   );
 }
 

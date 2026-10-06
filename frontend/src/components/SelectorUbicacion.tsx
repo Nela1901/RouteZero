@@ -103,7 +103,7 @@ export function SelectorUbicacion({ latitud, longitud, onCambio }: Props) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8, gridColumn: "1 / -1" }}>
-      <label style={estiloEtiqueta}>Ubicación (busca una dirección o ajusta el punto en el mapa)</label>
+      <span style={estiloEtiqueta}>Ubicación (busca una dirección o ajusta el punto en el mapa)</span>
       <div style={{ display: "flex", gap: 6 }}>
         <input
           value={busqueda}

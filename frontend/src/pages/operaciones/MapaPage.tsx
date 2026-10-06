@@ -25,9 +25,10 @@ export function MapaPage() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
 
   useEffect(() => {
+    // El listado viene paginado ({ items, total, ... }); el mapa pide la página más grande permitida (200).
     api
-      .get<Pedido[]>("/api/pedidos")
-      .then(setPedidos)
+      .get<{ items: Pedido[] }>("/api/pedidos?limite=200")
+      .then((pagina) => setPedidos(pagina.items))
       .catch(() => setPedidos([]));
   }, []);
 
