@@ -49,8 +49,8 @@
 ## 7. Frontend
 
 - [ ] 7.1 Adaptar `PedidosPage` a la respuesta paginada con "Cargar más" y verificar con `npm run build` y una prueba manual de más de 50 pedidos
-- [ ] 7.2 Crear `RutasPage` (selector de fecha, generar con indicador de progreso, aviso de borrador, métricas, paradas por ruta, pedidos sin cobertura con motivo, confirmar y descartar con confirmación) con ayudas "i", adaptable a pantallas angostas, y registrarla en el menú y las rutas (Administrador completo, Operador solo consulta); verificar con `npm run build` y revisión a 360 px
-- [ ] 7.3 Agregar pruebas de Vitest de `RutasPage` (el Administrador ve confirmar y descartar, el Operador no, y se muestra el aviso de borrador) y verificar que `npx vitest run` pasa
+- [x] 7.2 Crear `RutasPage` (selector de fecha, generar con indicador de progreso, aviso de borrador, métricas, paradas por ruta, pedidos sin cobertura con motivo, confirmar y descartar con confirmación) con ayudas "i", adaptable a pantallas angostas, y registrarla en el menú y las rutas (Administrador completo, Operador solo consulta); verificar con `npm run build` y revisión a 360 px
+- [x] 7.3 Agregar pruebas de Vitest de `RutasPage` (el Administrador ve confirmar y descartar, el Operador no, y se muestra el aviso de borrador) y verificar que `npx vitest run` pasa
 
 ## 8. Integración y cierre
 
