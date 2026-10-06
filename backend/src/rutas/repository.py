@@ -67,36 +67,37 @@ class RepositorioRutas:
         )
         return resultado.rowcount
 
-    def crear_ruta(self, lote_id: str, vehiculo_id: str, conductor_id: str, fecha: date, hora_salida: time,
-                   hora_regreso: time, distancia_km: float, tiempo_min: int) -> str:
-        row = self.session.execute(
-            text(
-                "INSERT INTO rutas (lote_id, vehiculo_id, conductor_id, fecha_jornada, hora_salida, hora_regreso, "
-                "distancia_km, tiempo_min) VALUES (:lote, :veh, :cond, :fecha, :salida, :regreso, :km, :min) "
-                "RETURNING ruta_id"
-            ),
-            {"lote": lote_id, "veh": vehiculo_id, "cond": conductor_id, "fecha": fecha, "salida": hora_salida,
-             "regreso": hora_regreso, "km": distancia_km, "min": tiempo_min},
-        ).one()
-        return str(row[0])
-
-    def crear_parada(self, ruta_id: str, pedido_id: str, orden: int, hora_estimada: time, minutos_retraso: int) -> None:
+    def _insertar_filas(self, tabla: str, columnas: tuple, filas: list[dict]) -> None:
+        """Un solo INSERT con todas las filas. Insertar fila por fila cuesta un viaje a la base remota por
+        fila (150 paradas tardaban ~16 s); en bloque son un par de viajes. Los nombres de tabla y columnas
+        son constantes de este módulo; los valores siempre van como parámetros."""
+        if not filas:
+            return
+        valores, parametros = [], {}
+        for i, fila in enumerate(filas):
+            valores.append("(" + ", ".join(f":{c}_{i}" for c in columnas) + ")")
+            parametros.update({f"{c}_{i}": fila[c] for c in columnas})
         self.session.execute(
-            text(
-                "INSERT INTO ruta_pedidos (ruta_id, pedido_id, orden_entrega, hora_estimada, minutos_retraso) "
-                "VALUES (:ruta, :pedido, :orden, :hora, :retraso)"
-            ),
-            {"ruta": ruta_id, "pedido": pedido_id, "orden": orden, "hora": hora_estimada, "retraso": minutos_retraso},
+            text(f"INSERT INTO {tabla} ({', '.join(columnas)}) VALUES {', '.join(valores)}"), parametros  # nosec B608
         )
 
-    def crear_metricas(self, ruta_id: str, co2_kg: float, combustible_l: float, ahorrado_l: float,
-                       distancia_km: float, cumplimiento_pct: float) -> None:
-        self.session.execute(
-            text(
-                "INSERT INTO metricas_sostenibilidad (ruta_id, emision_co2_kg, combustible_l, combustible_ahorrado_l, "
-                "distancia_optimizada_km, cumplimiento_ventanas_pct) VALUES (:ruta, :co2, :comb, :ahorro, :km, :pct)"
-            ),
-            {"ruta": ruta_id, "co2": co2_kg, "comb": combustible_l, "ahorro": ahorrado_l, "km": distancia_km, "pct": cumplimiento_pct},
+    def crear_rutas(self, filas: list[dict]) -> None:
+        """Cada fila trae su `ruta_id` (generado por el servicio) para poder enlazar paradas y métricas sin
+        pedir los identificadores de vuelta."""
+        self._insertar_filas(
+            "rutas",
+            ("ruta_id", "lote_id", "vehiculo_id", "conductor_id", "fecha_jornada", "hora_salida", "hora_regreso", "distancia_km", "tiempo_min"),
+            filas,
+        )
+
+    def crear_paradas(self, filas: list[dict]) -> None:
+        self._insertar_filas("ruta_pedidos", ("ruta_id", "pedido_id", "orden_entrega", "hora_estimada", "minutos_retraso"), filas)
+
+    def crear_metricas(self, filas: list[dict]) -> None:
+        self._insertar_filas(
+            "metricas_sostenibilidad",
+            ("ruta_id", "emision_co2_kg", "combustible_l", "combustible_ahorrado_l", "distancia_optimizada_km", "cumplimiento_ventanas_pct"),
+            filas,
         )
 
     # ------------------------------------------------------------------ lotes

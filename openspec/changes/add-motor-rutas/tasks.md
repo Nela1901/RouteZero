@@ -48,14 +48,14 @@
 
 ## 7. Frontend
 
-- [ ] 7.1 Adaptar `PedidosPage` a la respuesta paginada con "Cargar más" y verificar con `npm run build` y una prueba manual de más de 50 pedidos
+- [x] 7.1 Adaptar `PedidosPage` a la respuesta paginada con "Cargar más" y verificar con `npm run build` y una prueba manual de más de 50 pedidos
 - [x] 7.2 Crear `RutasPage` (selector de fecha, generar con indicador de progreso, aviso de borrador, métricas, paradas por ruta, pedidos sin cobertura con motivo, confirmar y descartar con confirmación) con ayudas "i", adaptable a pantallas angostas, y registrarla en el menú y las rutas (Administrador completo, Operador solo consulta); verificar con `npm run build` y revisión a 360 px
 - [x] 7.3 Agregar pruebas de Vitest de `RutasPage` (el Administrador ve confirmar y descartar, el Operador no, y se muestra el aviso de borrador) y verificar que `npx vitest run` pasa
 
 ## 8. Integración y cierre
 
-- [ ] 8.1 Agregar `rutas`, `red_vial` y `algoritmo` a `--cov` en `pytest.ini` y verificar que `pytest tests` pasa con cobertura total de 80 % o más
+- [x] 8.1 Agregar `rutas`, `red_vial` y `algoritmo` a `--cov` en `pytest.ini` y verificar que `pytest tests` pasa con cobertura total de 80 % o más
 - [ ] 8.2 Desplegar en Render y medir allí el benchmark de 150 pedidos y 15 vehículos (percentil 95) y la memoria del servicio durante una generación; registrar los resultados y verificar que el tiempo total no supera 45 s
-- [ ] 8.3 Ejecutar Bandit, `pip-audit` y `npm audit` y verificar que no hay vulnerabilidades críticas
-- [ ] 8.4 Recorrer de extremo a extremo el flujo con datos reales (generar, revisar, regenerar, confirmar y descartar) como Administrador y como Operador y verificar cada escenario de las specs
+- [x] 8.3 Ejecutar Bandit, `pip-audit` y `npm audit` y verificar que no hay vulnerabilidades críticas
+- [x] 8.4 Recorrer de extremo a extremo el flujo con datos reales (generar, revisar, regenerar, confirmar y descartar) como Administrador y como Operador y verificar cada escenario de las specs
 - [ ] 8.5 Actualizar el plan de ejecución del Sprint 2 (HU-011, HT-07 y HT-08), el informe de estado y el README, y preparar los commits y el Pull Request; verificar que los enlaces del README abren las versiones nuevas
