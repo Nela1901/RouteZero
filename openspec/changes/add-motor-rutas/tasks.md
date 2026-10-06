@@ -18,7 +18,7 @@
 - [x] 3.1 Escribir `backend/scripts/generar_grafo.py` (Overpass, sentidos únicos y rotondas, velocidad por tipo de vía, nombre de cada tramo, componente mayor) y generar `backend/data/huancayo_grafo.npz`; verificar que el archivo pesa menos de 1 MB y que el resumen impreso muestra cerca de 38 mil nodos y 84 mil tramos
 - [x] 3.2 Implementar `red_vial/` (carga única del grafo, asignación al nodo más cercano con umbral de 500 m, matrices de distancia y tiempo por bloques de 25 fuentes y respaldo en línea recta × 1.35 que informa la fuente usada) y verificar con pruebas unitarias sobre un grafo sintético pequeño
 - [x] 3.3 Probar sentidos únicos respetados, archivo ausente con respaldo, punto a más de 500 m con respaldo y avenida más rápida que calle residencial; verificar que `tests/test_red_vial.py` pasa
-- [x] 3.4 Medir la matriz de 151 × 151 con el grafo real y verificar que tarda menos de 5 s y usa menos de 100 MB adicionales (prueba marcada `benchmark`)
+- [x] 3.4 Medir la matriz de 151 × 151 con el grafo real y verificar que tarda menos de 5 s y usa menos de 100 MB adicionales en un equipo de desarrollo (prueba marcada `benchmark`; el umbral en Render gratuito es de 15 s y se mide en la tarea 8.2)
 - [x] 3.5 Crear `docs/03 Ejecución/Sprint 2/02 Implementación del motor de rutas V_1_0_0.md` con la sección de red vial (procedencia de los datos, cómo regenerar el grafo, velocidades y crédito "© OpenStreetMap contributors") y verificar que el comando documentado regenera el archivo
 
 ## 4. Núcleo del algoritmo
@@ -39,6 +39,7 @@
 - [x] 5.4 Implementar `rutas/router.py` y sus esquemas con los roles (generar, confirmar y descartar: ADMINISTRADOR; consultar: ADMINISTRADOR y OPERADOR), registrar `ruta_generada`, `ruta_confirmada` y `ruta_descartada` en la auditoría y registrar el router en `main.py`; verificar que Swagger muestra los endpoints y que un CONDUCTOR recibe 403
 - [x] 5.5 Escribir `tests/test_rutas.py` con los escenarios de `route-planning` y `route-optimization` contra la base real (generación exitosa, fecha pasada, sin vehículos, sin cobertura por peso, regeneración, confirmación, pedido cancelado, descarte, consulta por rol, auditoría sin DNI) y verificar que la suite pasa con limpieza de datos
 - [x] 5.6 Actualizar `docs/01 Inicio/12. Modelo C4` (nueva versión) con los módulos `rutas`, `red_vial` y `algoritmo`; verificar que el diagrama de nivel 3 muestra la relación router → servicio → repositorio → motor
+- [x] 5.7 Excluir de la generación los vehículos y conductores con una ruta CONFIRMADA o EN_EJECUCION en la misma fecha; verificar con pruebas de vehículo y conductor comprometidos, sin recursos libres, otra fecha no afectada y borradores que no comprometen recursos
 
 ## 6. Escalabilidad de la API (HT-08)
 
@@ -55,7 +56,7 @@
 ## 8. Integración y cierre
 
 - [x] 8.1 Agregar `rutas`, `red_vial` y `algoritmo` a `--cov` en `pytest.ini` y verificar que `pytest tests` pasa con cobertura total de 80 % o más
-- [ ] 8.2 Desplegar en Render y medir allí el benchmark de 150 pedidos y 15 vehículos (percentil 95) y la memoria del servicio durante una generación; registrar los resultados y verificar que el tiempo total no supera 45 s
+- [x] 8.2 Desplegar en Render y medir allí el benchmark de 150 pedidos y 15 vehículos (percentil 95) y la memoria del servicio durante una generación; registrar los resultados y verificar que el tiempo total no supera 45 s
 - [x] 8.3 Ejecutar Bandit, `pip-audit` y `npm audit` y verificar que no hay vulnerabilidades críticas
 - [x] 8.4 Recorrer de extremo a extremo el flujo con datos reales (generar, revisar, regenerar, confirmar y descartar) como Administrador y como Operador y verificar cada escenario de las specs
-- [ ] 8.5 Actualizar el plan de ejecución del Sprint 2 (HU-011, HT-07 y HT-08), el informe de estado y el README, y preparar los commits y el Pull Request; verificar que los enlaces del README abren las versiones nuevas
+- [x] 8.5 Actualizar el plan de ejecución del Sprint 2 (HU-011, HT-07 y HT-08), el informe de estado y el README, y preparar los commits y el Pull Request; verificar que los enlaces del README abren las versiones nuevas

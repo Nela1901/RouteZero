@@ -39,6 +39,21 @@ El sistema SHALL reemplazar, al generar rutas para una fecha, únicamente los bo
 - **WHEN** existen rutas CONFIRMADA para la fecha y se genera un nuevo borrador
 - **THEN** las rutas confirmadas y sus pedidos permanecen sin cambios, y el nuevo borrador solo considera pedidos aún PENDIENTE
 
+### Requirement: Recursos comprometidos en rutas confirmadas
+El sistema SHALL excluir de una nueva generación a los vehículos y a los conductores que ya tienen una ruta CONFIRMADA o EN_EJECUCION en la misma fecha de jornada, de modo que ningún vehículo ni conductor se asigne dos veces el mismo día; los borradores PLANIFICADA no comprometen recursos porque se reemplazan al regenerar.
+
+#### Scenario: Vehículo y conductor ya confirmados
+- **WHEN** existe una ruta CONFIRMADA para la fecha con un vehículo y un conductor, y se genera un nuevo borrador para esa fecha
+- **THEN** el nuevo borrador no usa ese vehículo ni ese conductor
+
+#### Scenario: Sin recursos libres
+- **WHEN** todos los vehículos o todos los conductores elegibles ya están comprometidos en rutas confirmadas de la fecha
+- **THEN** el sistema informa que no es posible generar rutas, deja los pedidos nuevos sin cobertura por falta de recursos y conserva lo ya confirmado
+
+#### Scenario: Otra fecha
+- **WHEN** los recursos están comprometidos para una fecha y se genera un borrador para otra fecha
+- **THEN** esos recursos siguen disponibles para la otra fecha
+
 ### Requirement: Confirmación de rutas
 El sistema SHALL permitir que el Administrador confirme un lote de borradores, pasando sus rutas a estado CONFIRMADA y sus pedidos a estado ASIGNADO, siempre que todos los pedidos del lote sigan en estado PENDIENTE.
 

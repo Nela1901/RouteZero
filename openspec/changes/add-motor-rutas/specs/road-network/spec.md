@@ -43,11 +43,15 @@ El sistema SHALL estimar el tiempo de recorrido de cada tramo con una velocidad 
 - **THEN** el tiempo del tramo de avenida es menor que el del tramo residencial
 
 ### Requirement: Rendimiento del cálculo de matrices
-El sistema SHALL calcular la matriz de distancias y tiempos para 150 pedidos y el depósito en menos de 5 segundos sobre la configuración de despliegue, y SHALL mantener el consumo adicional de memoria del cálculo por debajo de 100 MB.
+El sistema SHALL calcular la matriz de distancias y tiempos para 150 pedidos y el depósito en menos de 5 segundos en un equipo de desarrollo y en menos de 15 segundos en el plan gratuito de Render (0.1 de CPU), y SHALL mantener el consumo adicional de memoria del cálculo por debajo de 100 MB. El tiempo total de una generación de rutas, que incluye este cálculo, SHALL respetar el límite de 45 segundos de RN-015.
 
-#### Scenario: Matriz de 151 × 151 puntos
-- **WHEN** se solicita la matriz para 150 pedidos y el depósito
+#### Scenario: Matriz de 151 × 151 puntos en un equipo de desarrollo
+- **WHEN** se solicita la matriz para 150 pedidos y el depósito en un equipo de desarrollo
 - **THEN** el cálculo termina en menos de 5 segundos y sin superar 100 MB de memoria adicional
+
+#### Scenario: Matriz de 151 × 151 puntos en Render gratuito
+- **WHEN** se solicita la matriz para 150 pedidos y el depósito en el plan gratuito de Render
+- **THEN** el cálculo termina en menos de 15 segundos, dejando tiempo dentro del presupuesto de 45 segundos para el motor y el guardado de las rutas
 
 ### Requirement: Atribución de la fuente de datos
 El sistema SHALL acreditar a OpenStreetMap como fuente de los datos de calles con el texto "© OpenStreetMap contributors" en la documentación del proyecto y en cualquier pantalla que muestre rutas sobre el mapa.

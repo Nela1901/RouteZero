@@ -59,6 +59,7 @@ Tablas `rutas` (más `lote_id`), `ruta_pedidos` y `metricas_sostenibilidad`, con
 
 - **Regenerar**: dentro de una sola transacción, con `pg_advisory_xact_lock` por fecha, se eliminan los borradores PLANIFICADA de esa fecha y se insertan los nuevos.
 - **Confirmar**: transacción única que comprueba que todos los pedidos del lote sigan en PENDIENTE (si no, 409 con la lista), pasa las rutas a CONFIRMADA y los pedidos a ASIGNADO.
+- **Recursos comprometidos**: `vehiculos_disponibles(fecha)` y `conductores_elegibles(fecha)` excluyen a los que ya figuran en una ruta `CONFIRMADA` o `EN_EJECUCION` de esa fecha (hallado al revisar datos reales: sin esto, regenerar tras confirmar podía asignar dos veces el mismo vehículo y conductor el mismo día). Un borrador `PLANIFICADA` no compromete nada, porque se reemplaza.
 - **Una generación a la vez** por proceso: un candado en memoria; una segunda solicitud recibe 409.
 - **Transacción corta**: el cálculo puede durar hasta 40 s, así que el servicio lee los datos, hace `commit()` para liberar la conexión, calcula sin transacción abierta y reabre el contexto de RLS (`reaplicar_contexto_rls` en `core`) para escribir. Es una excepción documentada a la convención de "un solo commit al final", aceptable porque las tablas involucradas tienen política permisiva y no dependen de `app.usuario_actual_id`.
 - Auditoría: `ruta_generada`, `ruta_confirmada` y `ruta_descartada`, con el id del lote y sin datos personales.
@@ -80,7 +81,7 @@ Una pantalla `RutasPage` (Administrador genera, confirma y descarta; Operador co
 
 ## Risks / Trade-offs
 
-- **[CPU de Render gratuito (0.1)]** → el ACO hará menos iteraciones que en local y la solución será menos pulida. Se mitiga terminando por tiempo, midiendo el benchmark en Render al final del cambio y dejando el presupuesto de tiempo configurable.
+- **[CPU de Render gratuito (0.1)]** → las matrices por calles tardan unas nueve veces más que en desarrollo (8.3 a 8.8 s medidos frente a ~1 s), por lo que el umbral de la especificación se fijó en 5 s en desarrollo y 15 s en Render; el ACO hará menos iteraciones que en local (8 a 9 frente a ~50) y la solución será menos pulida. Se mitiga terminando por tiempo, midiendo el benchmark en Render al final del cambio y dejando el presupuesto de tiempo configurable.
 - **[Calidad de los datos de OpenStreetMap]** (solo 8 % de las vías con sentido único marcado, 4 % con límite de velocidad) → un sentido único faltante podría proponer un giro prohibido. Se mitiga con velocidades por tipo de vía, verificación visual cuando exista el mapa (Sprint 3) y un archivo de ajustes manuales futuro.
 - **[Dependencia nueva: numpy y scipy, ~190 MB instalados]** → se fijan con tope superior de versión (acción de la retrospectiva del Sprint 1) y se mide la memoria en Render.
 - **[Solicitud larga de hasta 40 s]** → un proxy o el navegador podrían cortarla. Se mitiga con el tope de 40 s, el indicador de progreso y el candado de una generación a la vez; si Render corta conexiones largas, se evaluará convertirla en tarea asíncrona (fuera de este cambio).

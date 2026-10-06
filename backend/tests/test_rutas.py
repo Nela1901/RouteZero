@@ -38,8 +38,8 @@ class RepositorioDePrueba(RepositorioRutas):
     def pedidos_pendientes(self):
         return [p for p in super().pedidos_pendientes() if p["pedido_id"] in self.datos["pedidos"]]
 
-    def vehiculos_disponibles(self):
-        return [v for v in super().vehiculos_disponibles() if v["vehiculo_id"] in self.datos["vehiculos"]]
+    def vehiculos_disponibles(self, fecha):
+        return [v for v in super().vehiculos_disponibles(fecha) if v["vehiculo_id"] in self.datos["vehiculos"]]
 
     def conductores_elegibles(self, fecha):
         return [c for c in super().conductores_elegibles(fecha) if c["conductor_id"] in self.datos["conductores"]]
@@ -215,6 +215,67 @@ def test_una_segunda_generacion_simultanea_recibe_un_conflicto(datos):
     with pytest.raises(HTTPException) as e:
         generar(datos, bloqueo=candado)
     assert e.value.status_code == 409 and "en curso" in e.value.detail
+
+
+# ----------------------------------------------------------------------------------- recursos comprometidos
+def vehiculos_y_conductores_de(lote: dict) -> tuple:
+    return (
+        {x["vehiculo"]["vehiculo_id"] for x in lote["rutas"]},
+        {x["conductor"]["conductor_id"] for x in lote["rutas"]},
+    )
+
+
+def confirmar(datos: dict, lote_id: str) -> None:
+    with servicio(datos) as s:
+        s.confirmar(lote_id, UID)
+
+
+def test_un_vehiculo_y_un_conductor_confirmados_no_se_reasignan_el_mismo_dia(datos):
+    todos = list(datos["pedidos"])
+    datos["pedidos"] = todos[:2]  # dos pedidos livianos caben en un solo vehículo
+    primero = generar(datos)
+    vehiculos_1, conductores_1 = vehiculos_y_conductores_de(primero)
+    assert len(vehiculos_1) == 1
+    confirmar(datos, primero["lote_id"])
+
+    datos["pedidos"] = todos  # llegan los demás pedidos y se regenera para la misma fecha
+    segundo = generar(datos)
+    vehiculos_2, conductores_2 = vehiculos_y_conductores_de(segundo)
+    assert segundo["rutas"] and not segundo["imposible"]
+    assert vehiculos_2.isdisjoint(vehiculos_1) and conductores_2.isdisjoint(conductores_1)
+    assert set(estados_rutas(primero["lote_id"])) == {"CONFIRMADA"}
+
+
+def test_si_todos_los_recursos_estan_comprometidos_no_se_puede_generar_y_lo_confirmado_se_conserva(datos):
+    admin_db("UPDATE pedidos SET peso_kg = 100 WHERE pedido_id = ANY(%s::uuid[])", (datos["pedidos"],))  # 6 × 100 kg = 2 × 300 kg
+    primero = generar(datos)
+    vehiculos_1, _ = vehiculos_y_conductores_de(primero)
+    assert len(vehiculos_1) == 2 and not primero["sin_cobertura"]
+    confirmar(datos, primero["lote_id"])
+
+    nuevos = [insertar_pedido(datos["cliente"]) for _ in range(2)]
+    datos["pedidos"].extend(nuevos)
+    segundo = generar(datos)
+    assert segundo["imposible"] and segundo["lote_id"] is None and segundo["rutas"] == []
+    assert {s["pedido_id"] for s in segundo["sin_cobertura"]} == set(nuevos)
+    assert {s["motivo"] for s in segundo["sin_cobertura"]} == {"SIN_RECURSOS"}
+    assert set(estados_rutas(primero["lote_id"])) == {"CONFIRMADA"}
+
+
+def test_los_recursos_comprometidos_un_dia_siguen_libres_para_otra_fecha(datos):
+    primero = generar(datos)
+    confirmar(datos, primero["lote_id"])
+    nuevo = insertar_pedido(datos["cliente"])
+    datos["pedidos"].append(nuevo)  # para que la limpieza lo borre
+    otro_dia = generar(datos | {"pedidos": [nuevo]}, fecha=FECHA + timedelta(days=1))
+    assert otro_dia["rutas"] and not otro_dia["imposible"]
+
+
+def test_un_borrador_no_compromete_recursos(datos):
+    primero = generar(datos)
+    segundo = generar(datos)  # regenerar: el borrador anterior se reemplaza y sus recursos vuelven a estar libres
+    assert not segundo["imposible"]
+    assert vehiculos_y_conductores_de(segundo)[0] == vehiculos_y_conductores_de(primero)[0]
 
 
 # ----------------------------------------------------------------------------------- confirmar y descartar
