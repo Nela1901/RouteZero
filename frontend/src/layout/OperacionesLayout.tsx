@@ -6,7 +6,7 @@ import { BotonTema } from "../components/BotonTema";
 
 // `roles` ausente = visible para todo rol de operaciones. Flota es solo de ADMINISTRADOR (el API
 // responde 403 al OPERADOR), así que no se le muestra una sección vacía.
-const ITEMS_NAV: { a: string; etiqueta: string; descripcion: string; icono: () => JSX.Element; roles?: string[] }[] = [
+const ITEMS_NAV: { a: string; etiqueta: string; descripcion: string; icono: () => React.ReactNode; roles?: string[] }[] = [
   { a: "/app/mapa", etiqueta: "Mapa", descripcion: "Rutas en vivo", icono: IconoMapa },
   { a: "/app/flota", etiqueta: "Flota", descripcion: "Vehículos", icono: IconoFlota, roles: ["ADMINISTRADOR"] },
   { a: "/app/pedidos", etiqueta: "Pedidos", descripcion: "Registro y estado", icono: IconoPedidos },
