@@ -221,8 +221,8 @@ RouteZero/
 │   │   ├── 12. Modelo C4 V_1_1_0.md
 │   │   └── 13. Restricciones V_1_0_0.md
 │   ├── 02 Planificación/
-│   │   ├── 01 Transformando a ágil V_1_0_0.md
-│   │   ├── 02 Artefactos Jira V_1_0_0.md
+│   │   ├── 01 Transformando a ágil V_1_1_0.md
+│   │   ├── 02 Artefactos Jira V_1_1_0.md
 │   │   ├── 03 Registro de riesgos V_1_0_0.md
 │   │   └── 04 Presupuesto del proyecto V_1_0_0.md
 │   ├── 03 Ejecución/
@@ -288,8 +288,8 @@ RouteZero/
 
 | Documento | Ubicación |
 |---|---|
-| Transformando a Ágil | [`docs/02 Planificación/01 Transformando a ágil V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md) |
-| Artefactos Jira | [`docs/02 Planificación/02 Artefactos Jira V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md) |
+| Transformando a Ágil | [`docs/02 Planificación/01 Transformando a ágil V_1_1_0.md`](docs/02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_1_0.md) |
+| Artefactos Jira | [`docs/02 Planificación/02 Artefactos Jira V_1_1_0.md`](docs/02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_1_0.md) |
 | Registro de Riesgos | [`docs/02 Planificación/03 Registro de riesgos V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md) |
 | Presupuesto del Proyecto | [`docs/02 Planificación/04 Presupuesto del proyecto V_1_0_0.md`](docs/02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_0_0.md) |
 
