@@ -8,8 +8,12 @@
 -- se puede volver a correr para reiniciar el escenario (por ejemplo, tras confirmar rutas).
 --
 -- Escenario: 6 vehículos disponibles (+1 en mantenimiento), 5 conductores, 20 clientes y
--- 25 pedidos pendientes, más 1 pedido EXPRESS de 2,500 kg que ningún vehículo puede cargar
--- (muestra los pedidos sin cobertura con su motivo y sugerencia).
+-- 40 pedidos pendientes (25 registrados al ejecutar el script y 15 con fecha de registro 07-10-2026),
+-- más 1 pedido EXPRESS de 2,500 kg que ningún vehículo puede cargar (muestra los pedidos sin
+-- cobertura con su motivo y sugerencia).
+--
+-- Los pedidos no tienen fecha de entrega propia: el motor planifica todos los pendientes para la
+-- fecha de jornada que se elige en la pantalla Rutas.
 
 BEGIN;
 
@@ -87,14 +91,31 @@ FROM generate_series(1, 25) AS g(i)
 JOIN (SELECT cliente_id, latitud, longitud, ROW_NUMBER() OVER (ORDER BY nombre) AS orden FROM clientes) c
   ON c.orden = ((g.i - 1) % 20) + 1;
 
--- 6. Pedido que ningún vehículo puede cargar: demuestra los pedidos sin cobertura
+-- 6. Pedidos adicionales con fecha de registro 07-10-2026 (ordenan el listado de Pedidos)
+INSERT INTO pedidos (cliente_id, descripcion, peso_kg, volumen_m3, prioridad, latitud, longitud, ventana_inicio, ventana_fin, creado_en)
+SELECT
+  c.cliente_id,
+  'Pedido del 07-10 número ' || g.i,
+  20 + ((g.i * 23) % 80),
+  ROUND((0.04 + ((g.i * 11) % 18) / 100.0)::numeric, 3),
+  CASE WHEN g.i % 4 = 0 THEN 'EXPRESS' WHEN g.i % 3 = 0 THEN 'ECONOMICO' ELSE 'ESTANDAR' END,
+  c.latitud,
+  c.longitud,
+  CASE WHEN g.i % 4 = 0 THEN TIME '08:00' ELSE TIME '07:00' END,
+  CASE WHEN g.i % 4 = 0 THEN TIME '11:30' WHEN g.i % 3 = 0 THEN TIME '17:00' ELSE TIME '14:00' END,
+  TIMESTAMPTZ '2026-10-07 07:30:00-05' + (g.i * INTERVAL '9 minutes')
+FROM generate_series(1, 15) AS g(i)
+JOIN (SELECT cliente_id, latitud, longitud, ROW_NUMBER() OVER (ORDER BY nombre DESC) AS orden FROM clientes) c
+  ON c.orden = g.i;
+
+-- 7. Pedido que ningún vehículo puede cargar: demuestra los pedidos sin cobertura
 INSERT INTO pedidos (cliente_id, descripcion, peso_kg, volumen_m3, prioridad, latitud, longitud, ventana_inicio, ventana_fin)
 SELECT cliente_id, 'Carga industrial de 2,500 kg (excede toda la flota)', 2500.00, 6.000, 'EXPRESS', latitud, longitud, TIME '08:00', TIME '12:00'
 FROM clientes WHERE nombre = 'Distribuidora Mantaro';
 
 COMMIT;
 
--- Verificación rápida (debe dar 6 disponibles + 1 en mantenimiento, 5 conductores, 20 clientes y 26 pedidos pendientes)
+-- Verificación rápida (debe dar 6 disponibles + 1 en mantenimiento, 5 conductores, 20 clientes y 41 pedidos pendientes)
 SELECT
   (SELECT COUNT(*) FROM vehiculos WHERE estado = 'DISPONIBLE')    AS vehiculos_disponibles,
   (SELECT COUNT(*) FROM vehiculos WHERE estado = 'MANTENIMIENTO') AS vehiculos_en_mantenimiento,
