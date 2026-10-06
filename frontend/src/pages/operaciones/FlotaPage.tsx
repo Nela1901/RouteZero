@@ -1,6 +1,17 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api, mensajeDeError } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
+import {
+  CampoSelect,
+  CampoTexto,
+  estiloAviso,
+  estiloBotonPrimario,
+  estiloInput,
+  EstadoVencimiento,
+  FiltroChip,
+  Td,
+  Th,
+} from "../../components/ui";
 
 type EstadoVehiculo = "DISPONIBLE" | "EN_RUTA" | "MANTENIMIENTO" | "INACTIVO";
 type TipoVehiculo = "CAMIONETA" | "FURGON" | "MOTO";
@@ -14,6 +25,8 @@ interface Vehiculo {
   factor_emision_co2: string;
   anio_fabricacion: number;
   estado: EstadoVehiculo;
+  soat_vence: string | null;
+  revision_tecnica_vence: string | null;
 }
 
 const ESTADOS: EstadoVehiculo[] = ["DISPONIBLE", "EN_RUTA", "MANTENIMIENTO", "INACTIVO"];
@@ -44,11 +57,24 @@ export function FlotaPage() {
   }, []);
 
   async function cambiarEstado(vehiculoId: string, estado: EstadoVehiculo) {
+    await actualizar(vehiculoId, { estado }, `Vehículo actualizado a ${estado.replace("_", " ")}`);
+  }
+
+  async function renovarDocumento(
+    vehiculoId: string,
+    campo: "soat_vence" | "revision_tecnica_vence",
+    fecha: string,
+  ) {
+    if (!fecha) return;
+    await actualizar(vehiculoId, { [campo]: fecha }, "Fecha de vencimiento actualizada");
+  }
+
+  async function actualizar(vehiculoId: string, cambios: Record<string, string>, exito: string) {
     setError(null);
     try {
-      await api.put(`/api/vehiculos/${vehiculoId}`, { estado });
+      await api.put(`/api/vehiculos/${vehiculoId}`, cambios);
       await cargar();
-      notificar(`Vehículo actualizado a ${estado.replace("_", " ")}`, "exito");
+      notificar(exito, "exito");
     } catch (err) {
       const mensaje = mensajeDeError(err, "No se pudo actualizar el vehículo");
       setError(mensaje);
@@ -57,7 +83,7 @@ export function FlotaPage() {
   }
 
   return (
-    <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 1040 }}>
+    <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 1440 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <h1 style={{ fontFamily: "var(--rz-font-display)", fontSize: 22, margin: "0 0 4px" }}>Flota de vehículos</h1>
@@ -102,6 +128,8 @@ export function FlotaPage() {
               <Th>Tipo</Th>
               <Th>Capacidad (kg)</Th>
               <Th>Año</Th>
+              <Th>SOAT vence</Th>
+              <Th>Rev. técnica vence</Th>
               <Th>Estado</Th>
             </tr>
           </thead>
@@ -112,6 +140,20 @@ export function FlotaPage() {
                 <Td>{v.tipo}</Td>
                 <Td mono>{v.capacidad_kg}</Td>
                 <Td mono>{v.anio_fabricacion}</Td>
+                <Td mono>
+                  <CeldaDocumento
+                    etiqueta={`SOAT de ${v.placa}`}
+                    fecha={v.soat_vence}
+                    onCambio={(f) => void renovarDocumento(v.vehiculo_id, "soat_vence", f)}
+                  />
+                </Td>
+                <Td mono>
+                  <CeldaDocumento
+                    etiqueta={`Revisión técnica de ${v.placa}`}
+                    fecha={v.revision_tecnica_vence}
+                    onCambio={(f) => void renovarDocumento(v.vehiculo_id, "revision_tecnica_vence", f)}
+                  />
+                </Td>
                 <Td>
                   <select
                     value={v.estado}
@@ -136,7 +178,7 @@ export function FlotaPage() {
             ))}
             {visibles.length === 0 && (
               <tr>
-                <td colSpan={5} style={{ padding: 24, textAlign: "center", color: "var(--rz-text-muted)" }}>
+                <td colSpan={7} style={{ padding: 24, textAlign: "center", color: "var(--rz-text-muted)" }}>
                   {filtroEstado ? "No hay vehículos con ese estado." : "No hay vehículos registrados todavía."}
                 </td>
               </tr>
@@ -148,6 +190,21 @@ export function FlotaPage() {
   );
 }
 
+function CeldaDocumento(props: { etiqueta: string; fecha: string | null; onCambio: (fecha: string) => void }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <input
+        type="date"
+        aria-label={props.etiqueta}
+        value={props.fecha ?? ""}
+        onChange={(e) => props.onCambio(e.target.value)}
+        style={{ ...estiloInput, height: 30, fontSize: 12.5, padding: "0 8px" }}
+      />
+      <EstadoVencimiento fecha={props.fecha} />
+    </div>
+  );
+}
+
 function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
   const [placa, setPlaca] = useState("");
   const [tipo, setTipo] = useState<TipoVehiculo>("CAMIONETA");
@@ -155,6 +212,8 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
   const [consumoKmL, setConsumoKmL] = useState("");
   const [factorEmision, setFactorEmision] = useState("");
   const [anio, setAnio] = useState(String(new Date().getFullYear()));
+  const [soatVence, setSoatVence] = useState("");
+  const [revisionVence, setRevisionVence] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
@@ -170,6 +229,8 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
         consumo_km_l: consumoKmL,
         factor_emision_co2: factorEmision,
         anio_fabricacion: Number(anio),
+        soat_vence: soatVence,
+        revision_tecnica_vence: revisionVence,
       });
       onCreado();
     } catch (err) {
@@ -192,12 +253,65 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
         border: "1px solid var(--rz-panel-border)",
       }}
     >
-      <CampoTexto etiqueta="Placa" valor={placa} onCambio={setPlaca} />
-      <CampoSelect etiqueta="Tipo" valor={tipo} opciones={TIPOS} onCambio={(v) => setTipo(v as TipoVehiculo)} />
-      <CampoTexto etiqueta="Capacidad (kg)" valor={capacidadKg} onCambio={setCapacidadKg} tipo="number" paso="0.01" />
-      <CampoTexto etiqueta="Consumo (km/L)" valor={consumoKmL} onCambio={setConsumoKmL} tipo="number" paso="0.01" />
-      <CampoTexto etiqueta="Factor CO₂ (kg/km)" valor={factorEmision} onCambio={setFactorEmision} tipo="number" paso="0.0001" />
-      <CampoTexto etiqueta="Año de fabricación" valor={anio} onCambio={setAnio} tipo="number" paso="1" />
+      <CampoTexto
+        etiqueta="Placa"
+        valor={placa}
+        onCambio={setPlaca}
+        ayuda="Matrícula del vehículo, por ejemplo ABC-123. Se guarda en mayúsculas y debe ser única en la flota."
+      />
+      <CampoSelect
+        etiqueta="Tipo"
+        valor={tipo}
+        opciones={TIPOS}
+        onCambio={(v) => setTipo(v as TipoVehiculo)}
+        ayuda="Clase del vehículo: camioneta, furgón o moto. Sirve para repartir los pedidos según su tamaño."
+      />
+      <CampoTexto
+        etiqueta="Capacidad (kg)"
+        valor={capacidadKg}
+        onCambio={setCapacidadKg}
+        tipo="number"
+        paso="0.01"
+        ayuda="Peso máximo de carga que puede llevar, en kilogramos (figura en la tarjeta de propiedad). Ejemplo: 1500. El optimizador no le asigna más peso que este valor."
+      />
+      <CampoTexto
+        etiqueta="Consumo (km/L)"
+        valor={consumoKmL}
+        onCambio={setConsumoKmL}
+        tipo="number"
+        paso="0.01"
+        ayuda="Kilómetros que recorre con un litro de combustible. Ejemplo: 10.5. Cuanto más alto, menos combustible gasta."
+      />
+      <CampoTexto
+        etiqueta="Factor CO₂ (kg/km)"
+        valor={factorEmision}
+        onCambio={setFactorEmision}
+        tipo="number"
+        paso="0.0001"
+        ayuda="Kilogramos de CO₂ que emite por cada kilómetro. Ejemplo: 0.25. Si no lo conoces, una referencia aproximada es dividir 2.3 (gasolina) o 2.7 (diésel) entre el consumo en km/L."
+      />
+      <CampoTexto
+        etiqueta="Año de fabricación"
+        valor={anio}
+        onCambio={setAnio}
+        tipo="number"
+        paso="1"
+        ayuda="Año de fabricación que figura en la tarjeta de propiedad."
+      />
+      <CampoTexto
+        etiqueta="Vencimiento del SOAT"
+        valor={soatVence}
+        onCambio={setSoatVence}
+        tipo="date"
+        ayuda="Fecha hasta la que está vigente el Seguro Obligatorio de Accidentes de Tránsito (figura en el certificado). Se avisa 30 días antes de que venza."
+      />
+      <CampoTexto
+        etiqueta="Vencimiento de la revisión técnica"
+        valor={revisionVence}
+        onCambio={setRevisionVence}
+        tipo="date"
+        ayuda="Fecha hasta la que es válido el certificado de inspección técnica vehicular. Se avisa 30 días antes de que venza."
+      />
       {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
@@ -207,94 +321,3 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
     </form>
   );
 }
-
-function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (v: string) => void; tipo?: string; paso?: string }) {
-  return (
-    <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
-      {props.etiqueta}
-      <input
-        required
-        type={props.tipo ?? "text"}
-        step={props.paso}
-        value={props.valor}
-        onChange={(e) => props.onCambio(e.target.value)}
-        style={estiloInput}
-      />
-    </label>
-  );
-}
-
-function CampoSelect(props: { etiqueta: string; valor: string; opciones: string[]; onCambio: (v: string) => void }) {
-  return (
-    <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
-      {props.etiqueta}
-      <select value={props.valor} onChange={(e) => props.onCambio(e.target.value)} style={estiloInput}>
-        {props.opciones.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
-function FiltroChip({ etiqueta, activo, onClick }: { etiqueta: string; activo: boolean; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        padding: "6px 14px",
-        borderRadius: 999,
-        border: "1px solid " + (activo ? "var(--rz-accent-soft-border)" : "var(--rz-panel-border)"),
-        background: activo ? "var(--rz-accent-soft-bg)" : "transparent",
-        color: activo ? "var(--rz-accent)" : "var(--rz-text-muted)",
-        fontSize: 12.5,
-        cursor: "pointer",
-      }}
-    >
-      {etiqueta}
-    </button>
-  );
-}
-
-function Th({ children }: { children: React.ReactNode }) {
-  return <th style={{ padding: "10px 16px", fontWeight: 600, color: "var(--rz-text-muted)", fontSize: 12 }}>{children}</th>;
-}
-
-function Td({ children, mono }: { children: React.ReactNode; mono?: boolean }) {
-  return (
-    <td style={{ padding: "10px 16px", fontFamily: mono ? "var(--rz-font-mono)" : "inherit" }}>{children}</td>
-  );
-}
-
-const estiloBotonPrimario: React.CSSProperties = {
-  height: 40,
-  padding: "0 18px",
-  borderRadius: 12,
-  border: "none",
-  background: "var(--rz-accent)",
-  color: "var(--rz-bg)",
-  fontWeight: 700,
-  fontSize: 13.5,
-  cursor: "pointer",
-};
-
-const estiloInput: React.CSSProperties = {
-  height: 38,
-  borderRadius: 10,
-  border: "1px solid var(--rz-panel-border)",
-  background: "var(--rz-bg)",
-  color: "var(--rz-text)",
-  padding: "0 12px",
-  fontSize: 13.5,
-};
-
-const estiloAviso: React.CSSProperties = {
-  borderRadius: 10,
-  background: "var(--rz-danger-soft-bg)",
-  color: "var(--rz-danger)",
-  padding: "10px 12px",
-  fontSize: 13,
-};

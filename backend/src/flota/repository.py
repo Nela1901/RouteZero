@@ -22,12 +22,16 @@ class RepositorioVehiculos:
         consumo_km_l,
         factor_emision_co2,
         anio_fabricacion: int,
+        soat_vence=None,
+        revision_tecnica_vence=None,
     ) -> str:
         row = self.session.execute(
             text(
                 "INSERT INTO vehiculos "
-                "(placa, tipo, capacidad_kg, consumo_km_l, factor_emision_co2, \"año_fabricacion\") "
-                "VALUES (:placa, :tipo, :capacidad_kg, :consumo_km_l, :factor_emision_co2, :anio) "
+                "(placa, tipo, capacidad_kg, consumo_km_l, factor_emision_co2, \"año_fabricacion\", "
+                "soat_vence, revision_tecnica_vence) "
+                "VALUES (:placa, :tipo, :capacidad_kg, :consumo_km_l, :factor_emision_co2, :anio, "
+                ":soat, :revision) "
                 "RETURNING vehiculo_id"
             ),
             {
@@ -37,6 +41,8 @@ class RepositorioVehiculos:
                 "consumo_km_l": consumo_km_l,
                 "factor_emision_co2": factor_emision_co2,
                 "anio": anio_fabricacion,
+                "soat": soat_vence,
+                "revision": revision_tecnica_vence,
             },
         ).one()
         return str(row[0])
@@ -45,7 +51,7 @@ class RepositorioVehiculos:
         row = self.session.execute(
             text(
                 "SELECT vehiculo_id, placa, tipo, capacidad_kg, consumo_km_l, "
-                "factor_emision_co2, \"año_fabricacion\", estado, creado_en "
+                "factor_emision_co2, \"año_fabricacion\", estado, creado_en, soat_vence, revision_tecnica_vence "
                 "FROM vehiculos WHERE vehiculo_id = :vid"
             ),
             {"vid": vehiculo_id},
@@ -62,7 +68,8 @@ class RepositorioVehiculos:
             text(
                 f"UPDATE vehiculos SET {asignaciones} WHERE vehiculo_id = :vid "
                 "RETURNING vehiculo_id, placa, tipo, capacidad_kg, consumo_km_l, "
-                "factor_emision_co2, \"año_fabricacion\", estado, creado_en"
+                "factor_emision_co2, \"año_fabricacion\", estado, creado_en, "
+                "soat_vence, revision_tecnica_vence"
             ),
             parametros,
         ).one_or_none()
@@ -73,7 +80,7 @@ class RepositorioVehiculos:
             rows = self.session.execute(
                 text(
                     "SELECT vehiculo_id, placa, tipo, capacidad_kg, consumo_km_l, "
-                    "factor_emision_co2, \"año_fabricacion\", estado, creado_en "
+                    "factor_emision_co2, \"año_fabricacion\", estado, creado_en, soat_vence, revision_tecnica_vence "
                     "FROM vehiculos WHERE estado = :estado ORDER BY creado_en DESC"
                 ),
                 {"estado": estado},
@@ -82,7 +89,7 @@ class RepositorioVehiculos:
             rows = self.session.execute(
                 text(
                     "SELECT vehiculo_id, placa, tipo, capacidad_kg, consumo_km_l, "
-                    "factor_emision_co2, \"año_fabricacion\", estado, creado_en "
+                    "factor_emision_co2, \"año_fabricacion\", estado, creado_en, soat_vence, revision_tecnica_vence "
                     "FROM vehiculos ORDER BY creado_en DESC"
                 )
             ).all()
@@ -100,4 +107,6 @@ class RepositorioVehiculos:
             "anio_fabricacion": row[6],
             "estado": row[7],
             "creado_en": row[8],
+            "soat_vence": row[9],
+            "revision_tecnica_vence": row[10],
         }

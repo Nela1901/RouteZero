@@ -67,7 +67,7 @@ export function SeguridadPage() {
   }
 
   return (
-    <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 640 }}>
+    <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 1200 }}>
       <div>
         <h1 style={{ fontFamily: "var(--rz-font-display)", fontSize: 22, margin: "0 0 4px" }}>Seguridad</h1>
         <p style={{ margin: 0, fontSize: 13, color: "var(--rz-text-muted)" }}>
@@ -77,33 +77,42 @@ export function SeguridadPage() {
 
       <div
         style={{
-          borderRadius: 16,
-          border: "1px solid var(--rz-panel-border)",
-          background: "var(--rz-panel-bg)",
-          padding: 24,
-          display: "flex",
-          flexDirection: "column",
-          gap: 18,
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
+          gap: 20,
+          alignItems: "start",
         }}
       >
-        {usuario?.mfaActivo ? (
-          <EstadoActivo />
-        ) : inscripcion ? (
-          <FormularioConfirmacion
-            inscripcion={inscripcion}
-            codigo={codigo}
-            onCambioCodigo={setCodigo}
-            onEnviar={confirmarInscripcion}
-            onCancelar={cancelarInscripcion}
-            error={error}
-            enviando={enviando}
-          />
-        ) : (
-          <EstadoInicial onIniciar={iniciarInscripcion} error={error} enviando={enviando} exito={exito} />
-        )}
-      </div>
+        <div
+          style={{
+            borderRadius: 16,
+            border: "1px solid var(--rz-panel-border)",
+            background: "var(--rz-panel-bg)",
+            padding: 24,
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+          }}
+        >
+          {usuario?.mfaActivo ? (
+            <EstadoActivo />
+          ) : inscripcion ? (
+            <FormularioConfirmacion
+              inscripcion={inscripcion}
+              codigo={codigo}
+              onCambioCodigo={setCodigo}
+              onEnviar={confirmarInscripcion}
+              onCancelar={cancelarInscripcion}
+              error={error}
+              enviando={enviando}
+            />
+          ) : (
+            <EstadoInicial onIniciar={iniciarInscripcion} error={error} enviando={enviando} exito={exito} />
+          )}
+        </div>
 
-      <SeccionSesiones />
+        <SeccionSesiones />
+      </div>
     </div>
   );
 }

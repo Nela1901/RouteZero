@@ -4,11 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import { useConfirm } from "../context/ConfirmContext";
 import { BotonTema } from "../components/BotonTema";
 
-// `roles` ausente = visible para todo rol de operaciones. Flota es solo de ADMINISTRADOR (el API
+// `roles` ausente = visible para todo rol de operaciones. Flota y Conductores son solo de ADMINISTRADOR (el API
 // responde 403 al OPERADOR), así que no se le muestra una sección vacía.
 const ITEMS_NAV: { a: string; etiqueta: string; descripcion: string; icono: () => React.ReactNode; roles?: string[] }[] = [
   { a: "/app/mapa", etiqueta: "Mapa", descripcion: "Rutas en vivo", icono: IconoMapa },
   { a: "/app/flota", etiqueta: "Flota", descripcion: "Vehículos", icono: IconoFlota, roles: ["ADMINISTRADOR"] },
+  { a: "/app/conductores", etiqueta: "Conductores", descripcion: "Licencias y horarios", icono: IconoConductores, roles: ["ADMINISTRADOR"] },
   { a: "/app/pedidos", etiqueta: "Pedidos", descripcion: "Registro y estado", icono: IconoPedidos },
   { a: "/app/seguridad", etiqueta: "Seguridad", descripcion: "Verificación en 2 pasos", icono: IconoSeguridad },
 ];
@@ -208,22 +209,25 @@ export function OperacionesLayout() {
 
       <div style={{ flexGrow: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
         <header
+          className="rz-encabezado"
           style={{
             height: 76,
             flexShrink: 0,
-            display: "flex",
-            alignItems: "center",
-            padding: "0 28px",
-            gap: 20,
             borderBottom: "1px solid var(--rz-panel-border)",
             background: "var(--rz-header-bg)",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+         <div
+          className="rz-encabezado-interior"
+          style={{ height: "100%", display: "flex", alignItems: "center", padding: "0 28px", gap: 20 }}
+         >
+          <div className="rz-encabezado-titulo" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <span style={{ fontFamily: "var(--rz-font-display)", fontWeight: 700, fontSize: 18 }}>
               Panel de operaciones
             </span>
-            <span style={{ fontSize: 12.5, color: "var(--rz-text-muted)" }}>Andina Reparto S.A.C. · Huancayo</span>
+            <span className="rz-encabezado-subtitulo" style={{ fontSize: 12.5, color: "var(--rz-text-muted)" }}>
+              Andina Reparto S.A.C. · Huancayo
+            </span>
           </div>
 
           <div style={{ flexGrow: 1 }} />
@@ -231,6 +235,7 @@ export function OperacionesLayout() {
           <div
             role="status"
             aria-label="CO2 evitado hoy"
+            className="rz-pastilla-co2"
             style={{
               display: "flex",
               alignItems: "center",
@@ -248,10 +253,13 @@ export function OperacionesLayout() {
             <span style={{ fontFamily: "var(--rz-font-mono)", fontWeight: 600, fontSize: 15, color: "var(--rz-accent)" }}>
               — kg CO₂
             </span>
-            <span style={{ fontSize: 12.5, color: "var(--rz-text-muted)" }}>evitados hoy</span>
+            <span className="rz-pastilla-co2-texto" style={{ fontSize: 12.5, color: "var(--rz-text-muted)" }}>
+              evitados hoy
+            </span>
           </div>
 
           <BotonTema />
+         </div>
         </header>
 
         <main style={{ flexGrow: 1, minHeight: 0, overflow: "auto" }}>
@@ -277,6 +285,16 @@ function IconoFlota() {
       <circle cx="7.5" cy="17.5" r="2" />
       <circle cx="17.5" cy="17.5" r="2" />
       <path d="M9.5 17.5h6" />
+    </svg>
+  );
+}
+
+function IconoConductores() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
+      <path d="M16 11.5a3 3 0 100-6M18 14.3c2 .6 3.5 2.4 3.5 5.7" />
     </svg>
   );
 }
