@@ -15,11 +15,11 @@
 
 ## 3. Red vial
 
-- [ ] 3.1 Escribir `backend/scripts/generar_grafo.py` (Overpass, sentidos únicos y rotondas, velocidad por tipo de vía, nombre de cada tramo, componente mayor) y generar `backend/data/huancayo_grafo.npz`; verificar que el archivo pesa menos de 1 MB y que el resumen impreso muestra cerca de 38 mil nodos y 84 mil tramos
-- [ ] 3.2 Implementar `red_vial/` (carga única del grafo, asignación al nodo más cercano con umbral de 500 m, matrices de distancia y tiempo por bloques de 25 fuentes y respaldo en línea recta × 1.35 que informa la fuente usada) y verificar con pruebas unitarias sobre un grafo sintético pequeño
-- [ ] 3.3 Probar sentidos únicos respetados, archivo ausente con respaldo, punto a más de 500 m con respaldo y avenida más rápida que calle residencial; verificar que `tests/test_red_vial.py` pasa
-- [ ] 3.4 Medir la matriz de 151 × 151 con el grafo real y verificar que tarda menos de 5 s y usa menos de 100 MB adicionales (prueba marcada `benchmark`)
-- [ ] 3.5 Crear `docs/03 Ejecución/Sprint 2/02 Implementación del motor de rutas V_1_0_0.md` con la sección de red vial (procedencia de los datos, cómo regenerar el grafo, velocidades y crédito "© OpenStreetMap contributors") y verificar que el comando documentado regenera el archivo
+- [x] 3.1 Escribir `backend/scripts/generar_grafo.py` (Overpass, sentidos únicos y rotondas, velocidad por tipo de vía, nombre de cada tramo, componente mayor) y generar `backend/data/huancayo_grafo.npz`; verificar que el archivo pesa menos de 1 MB y que el resumen impreso muestra cerca de 38 mil nodos y 84 mil tramos
+- [x] 3.2 Implementar `red_vial/` (carga única del grafo, asignación al nodo más cercano con umbral de 500 m, matrices de distancia y tiempo por bloques de 25 fuentes y respaldo en línea recta × 1.35 que informa la fuente usada) y verificar con pruebas unitarias sobre un grafo sintético pequeño
+- [x] 3.3 Probar sentidos únicos respetados, archivo ausente con respaldo, punto a más de 500 m con respaldo y avenida más rápida que calle residencial; verificar que `tests/test_red_vial.py` pasa
+- [x] 3.4 Medir la matriz de 151 × 151 con el grafo real y verificar que tarda menos de 5 s y usa menos de 100 MB adicionales (prueba marcada `benchmark`)
+- [x] 3.5 Crear `docs/03 Ejecución/Sprint 2/02 Implementación del motor de rutas V_1_0_0.md` con la sección de red vial (procedencia de los datos, cómo regenerar el grafo, velocidades y crédito "© OpenStreetMap contributors") y verificar que el comando documentado regenera el archivo
 
 ## 4. Núcleo del algoritmo
 
