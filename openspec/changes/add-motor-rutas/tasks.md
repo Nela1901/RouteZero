@@ -2,16 +2,16 @@
 
 ## 1. Base de datos, dependencias y configuración
 
-- [ ] 1.1 Redactar el SQL de `rutas` (con `lote_id`), `ruta_pedidos` y `metricas_sostenibilidad`, el estado `CONFIRMADA`, los índices (`rutas(fecha_jornada, estado)`, `rutas(lote_id)`, `pedidos(estado, creado_en)`, `pedidos(prioridad)`, `pedidos(cliente_id)`), la política RLS permisiva y el `GRANT` a `app_backend` y `app_admin`; entregarlo a la usuaria para ejecutarlo en Supabase y verificar con una consulta que las tablas existen y que `app_backend` puede hacer `SELECT` sobre ellas
-- [ ] 1.2 Crear `docs/01 Inicio/11. Base de datos V_1_7_0.md` con las tablas, el estado, los índices y su historial de cambios, y actualizar el README; verificar que los enlaces abren la versión nueva
-- [ ] 1.3 Agregar `numpy` y `scipy` a `backend/requirements.txt` con tope superior de versión y verificar con `pip install -r requirements.txt` y `python -c "import scipy, numpy"`
-- [ ] 1.4 Agregar a `config.py` el depósito (-12.043632, -75.226373) como valor por defecto sobrescribible por `.env`, el factor de velocidad urbana (0.6), la hora de inicio de jornada (08:00), el tiempo de atención por parada (10 min) y el presupuesto de tiempo (30 s, máximo 40 s); verificar que el servidor arranca sin variables nuevas en el `.env`
+- [x] 1.1 Redactar el SQL de `rutas` (con `lote_id`), `ruta_pedidos` y `metricas_sostenibilidad`, el estado `CONFIRMADA`, los índices (`rutas(fecha_jornada, estado)`, `rutas(lote_id)`, `pedidos(estado, creado_en)`, `pedidos(prioridad)`, `pedidos(cliente_id)`), la política RLS permisiva y el `GRANT` a `app_backend` y `app_admin`; entregarlo a la usuaria para ejecutarlo en Supabase y verificar con una consulta que las tablas existen y que `app_backend` puede hacer `SELECT` sobre ellas
+- [x] 1.2 Crear `docs/01 Inicio/11. Base de datos V_1_7_0.md` con las tablas, el estado, los índices y su historial de cambios, y actualizar el README; verificar que los enlaces abren la versión nueva
+- [x] 1.3 Agregar `numpy` y `scipy` a `backend/requirements.txt` con tope superior de versión y verificar con `pip install -r requirements.txt` y `python -c "import scipy, numpy"`
+- [x] 1.4 Agregar a `config.py` el depósito (-12.043632, -75.226373) como valor por defecto sobrescribible por `.env`, el factor de velocidad urbana (0.6), la hora de inicio de jornada (08:00), el tiempo de atención por parada (10 min) y el presupuesto de tiempo (30 s, máximo 40 s); verificar que el servidor arranca sin variables nuevas en el `.env`
 
 ## 2. Independencia de módulos (HT-08)
 
-- [ ] 2.1 Mover `clientes/zona.py` a `core/zona.py` y actualizar `clientes` y `pedidos`; verificar que `tests/test_clientes.py` y `tests/test_pedidos.py` siguen pasando
-- [ ] 2.2 Reemplazar en `pedidos` el uso de `clientes.repository` por una consulta propia de existencia del cliente; verificar con `test_pedidos.py` (registro con cliente inexistente devuelve 404)
-- [ ] 2.3 Crear `tests/test_arquitectura.py`, que analiza las importaciones con `ast` y falla si un módulo de negocio importa a otro (salvo `core` y `auditoria`) o si `algoritmo` importa FastAPI, SQLAlchemy u otro módulo del backend; verificar que pasa y que falla al introducir a propósito una importación prohibida
+- [x] 2.1 Mover `clientes/zona.py` a `core/zona.py` y actualizar `clientes` y `pedidos`; verificar que `tests/test_clientes.py` y `tests/test_pedidos.py` siguen pasando
+- [x] 2.2 Reemplazar en `pedidos` el uso de `clientes.repository` por una consulta propia de existencia del cliente; verificar con `test_pedidos.py` (registro con cliente inexistente devuelve 404)
+- [x] 2.3 Crear `tests/test_arquitectura.py`, que analiza las importaciones con `ast` y falla si un módulo de negocio importa a otro (salvo `core` y `auditoria`) o si `algoritmo` importa FastAPI, SQLAlchemy u otro módulo del backend; verificar que pasa y que falla al introducir a propósito una importación prohibida
 
 ## 3. Red vial
 

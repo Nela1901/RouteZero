@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 
 from src.clientes.repository import RepositorioClientes
-from src.clientes.zona import dentro_de_zona_cobertura
+from src.core.zona import dentro_de_zona_cobertura
 
 
 class ServicioClientes:

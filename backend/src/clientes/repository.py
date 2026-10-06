@@ -52,12 +52,6 @@ class RepositorioClientes:
         ).one_or_none()
         return row is not None
 
-    def existe(self, cliente_id: str) -> bool:
-        row = self.session.execute(
-            text("SELECT 1 FROM clientes WHERE cliente_id = :cid"), {"cid": cliente_id}
-        ).one_or_none()
-        return row is not None
-
     def listar(self) -> list[dict]:
         rows = self.session.execute(
             text(
