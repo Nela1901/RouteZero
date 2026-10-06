@@ -36,12 +36,16 @@ class RepositorioRutas:
         ).all()
         return [dict(r._mapping) | {"pedido_id": str(r[0])} for r in rows]
 
-    def vehiculos_disponibles(self) -> list[dict]:
+    def vehiculos_disponibles(self, fecha: date) -> list[dict]:
+        """Vehículos en estado DISPONIBLE que no están ya comprometidos en una ruta confirmada de esa fecha."""
         rows = self.session.execute(
             text(
                 "SELECT vehiculo_id, placa, tipo, capacidad_kg, consumo_km_l, factor_emision_co2, estado "
-                "FROM vehiculos WHERE estado = 'DISPONIBLE' ORDER BY placa"
-            )
+                "FROM vehiculos WHERE estado = 'DISPONIBLE' AND vehiculo_id NOT IN "
+                "(SELECT vehiculo_id FROM rutas WHERE fecha_jornada = :fecha AND estado IN ('CONFIRMADA', 'EN_EJECUCION')) "
+                "ORDER BY placa"
+            ),
+            {"fecha": fecha},
         ).all()
         return [dict(r._mapping) | {"vehiculo_id": str(r[0])} for r in rows]
 
@@ -49,7 +53,9 @@ class RepositorioRutas:
         rows = self.session.execute(
             text(
                 "SELECT conductor_id, categoria_licencia, licencia_vence, horario_inicio, horario_fin, disponible "
-                "FROM conductores WHERE disponible AND licencia_vence > :fecha ORDER BY dni"
+                "FROM conductores WHERE disponible AND licencia_vence > :fecha AND conductor_id NOT IN "
+                "(SELECT conductor_id FROM rutas WHERE fecha_jornada = :fecha AND estado IN ('CONFIRMADA', 'EN_EJECUCION')) "
+                "ORDER BY dni"
             ),
             {"fecha": fecha},
         ).all()

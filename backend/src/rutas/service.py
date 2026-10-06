@@ -83,7 +83,7 @@ class ServicioRutas:
         inicio = reloj.perf_counter()
         cfg = self.config
         pedidos = self.repo.pedidos_pendientes()
-        vehiculos = self.repo.vehiculos_disponibles()
+        vehiculos = self.repo.vehiculos_disponibles(fecha)
         conductores = self.repo.conductores_elegibles(fecha)
         # Se libera la conexión antes del cálculo, que puede durar hasta 40 s (ver design.md, D3)
         self.repo.session.commit()
