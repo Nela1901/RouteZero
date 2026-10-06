@@ -149,6 +149,15 @@ def requiere_rol(*roles_permitidos: str):
     return _verificar
 
 
+def reaplicar_contexto_rls(session: Session, usuario_id: str) -> None:
+    """Vuelve a fijar `app.usuario_actual_id` en la transacción actual.
+
+    Hace falta cuando un servicio cierra la transacción a mitad de la petición (p. ej. antes de un
+    cálculo largo, para no mantener una conexión abierta) y luego sigue escribiendo.
+    """
+    session.execute(text("SET LOCAL app.usuario_actual_id = :usuario_id"), {"usuario_id": usuario_id})
+
+
 def get_db_con_rls(
     usuario: UsuarioActual = Depends(get_current_user_parcial),
 ) -> Generator[Session, None, None]:
