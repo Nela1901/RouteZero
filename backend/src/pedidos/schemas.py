@@ -2,7 +2,9 @@ from datetime import datetime, time
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+from src.core.texto import validar_texto_libre
 
 Prioridad = Literal["EXPRESS", "ESTANDAR", "ECONOMICO"]
 EstadoPedido = Literal["PENDIENTE", "ASIGNADO", "EN_CAMINO", "ENTREGADO", "CANCELADO"]
@@ -18,6 +20,12 @@ class PedidoCrear(BaseModel):
     longitud: Decimal = Field(ge=-180, le=180, decimal_places=8)
     ventana_inicio: time
     ventana_fin: time
+
+    @field_validator("descripcion")
+    @classmethod
+    def _validar_descripcion(cls, valor: str | None) -> str | None:
+        valor = (valor or "").strip()
+        return validar_texto_libre(valor) if valor else None
 
     @model_validator(mode="after")
     def _ventana_valida(self):
@@ -36,6 +44,12 @@ class PedidoActualizar(BaseModel):
     longitud: Decimal | None = Field(default=None, ge=-180, le=180, decimal_places=8)
     ventana_inicio: time | None = None
     ventana_fin: time | None = None
+
+    @field_validator("descripcion")
+    @classmethod
+    def _validar_descripcion(cls, valor: str | None) -> str | None:
+        valor = (valor or "").strip()
+        return validar_texto_libre(valor) if valor else None
 
 
 class PedidoOut(BaseModel):

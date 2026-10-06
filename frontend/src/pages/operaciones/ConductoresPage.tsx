@@ -3,7 +3,7 @@ import { api, mensajeDeError } from "../../api/client";
 import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
-import { estiloBotonSecundario, soloCambios } from "../../components/utilesCrud";
+import { estiloBotonSecundario, filtrarNombrePersona, soloCambios } from "../../components/utilesCrud";
 import {
   CampoSelect,
   CampoTexto,
@@ -267,7 +267,7 @@ function FormularioConductor({ inicial, onGuardado }: { inicial?: Conductor; onG
         nombre: nombre.trim(),
         dni,
         categoria_licencia: categoria,
-        telefono: telefono.replace(/\s/g, ""),
+        telefono,
         correo: correo.trim() || null,
         licencia_vence: licenciaVence,
         horario_inicio: `${horarioInicio}:00`,
@@ -314,7 +314,7 @@ function FormularioConductor({ inicial, onGuardado }: { inicial?: Conductor; onG
         border: inicial ? "none" : "1px solid var(--rz-panel-border)",
       }}
     >
-      <CampoTexto etiqueta="Nombre completo" valor={nombre} onCambio={setNombre} atributos={{ maxLength: 100 }} />
+      <CampoTexto etiqueta="Nombre completo" valor={nombre} onCambio={(v) => setNombre(filtrarNombrePersona(v))} atributos={{ maxLength: 100 }} />
       <CampoTexto
         etiqueta="DNI"
         valor={dni}
@@ -331,9 +331,10 @@ function FormularioConductor({ inicial, onGuardado }: { inicial?: Conductor; onG
       <CampoTexto
         etiqueta="Teléfono de contacto"
         valor={telefono}
-        onCambio={setTelefono}
+        onCambio={(v) => setTelefono(v.replace(/\D/g, "").slice(0, 9))}
         tipo="tel"
-        atributos={{ pattern: "\\+?[0-9 ]{7,17}", title: "Solo dígitos, entre 7 y 15", maxLength: 17 }}
+        atributos={{ inputMode: "numeric", pattern: "[0-9]{9}", title: "9 dígitos", maxLength: 9 }}
+        ayuda="Celular de 9 dígitos, sin espacios ni prefijo. Ejemplo: 987654321."
       />
       <CampoTexto
         etiqueta="Correo electrónico"

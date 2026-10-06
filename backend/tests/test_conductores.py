@@ -76,6 +76,9 @@ def test_campos_vacios_o_invalidos_dan_422(client):
         {"dni": "1234"},
         {"dni": "12345abc"},
         {"telefono": "abc"},
+        {"telefono": "98765432"},
+        {"telefono": "9876543210"},
+        {"telefono": "+51987654321"},
         {"categoria_licencia": "Z-9"},
         {"correo": "no-es-un-correo"},
     ):

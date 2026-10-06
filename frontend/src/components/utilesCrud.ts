@@ -19,3 +19,29 @@ export const estiloBotonSecundario: CSSProperties = {
   fontSize: 12.5,
   cursor: "pointer",
 };
+
+/**
+ * Filtros de escritura: se aplican mientras el usuario teclea, así un carácter no permitido simplemente no aparece.
+ * Son las mismas reglas que valida la API (backend/src/core/texto.py), que las vuelve a exigir.
+ */
+
+/** Nombre de una persona: solo letras (con tildes y ñ) y espacios. */
+export const filtrarNombrePersona = (valor: string) => valor.replace(/[^\p{L} ]/gu, "");
+
+/** Nombre de un negocio: letras, números y los signos de una razón social (. , - & ' ( )). */
+export const filtrarNombreNegocio = (valor: string) => valor.replace(/[^\p{L}\p{N} .,\-&'()]/gu, "");
+
+/** Descripciones y puntos de referencia: letras, números y puntuación básica (. , ; : - ( ) # / ° ¿ ? ¡ ! & '). */
+export const filtrarTexto = (valor: string) => valor.replace(/[^\p{L}\p{N} .,;:\-()#/°¿?¡!&']/gu, "");
+
+/** Placa: letras, números y guion, en mayúsculas. */
+export const filtrarPlaca = (valor: string) => valor.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+
+/** Recorta los decimales que sobran según el paso del campo numérico (paso 0.01 admite 2 decimales; paso 1 ninguno). */
+export function limitarDecimales(valor: string, paso?: string): string {
+  if (!paso) return valor;
+  const decimales = paso.includes(".") ? paso.split(".")[1].length : 0;
+  const [entera, fraccion] = valor.split(".");
+  if (decimales === 0) return entera;
+  return fraccion !== undefined && fraccion.length > decimales ? `${entera}.${fraccion.slice(0, decimales)}` : valor;
+}

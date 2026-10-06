@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import { limitarDecimales } from "./utilesCrud";
 
 /** Piezas de interfaz compartidas por las pantallas de gestión (flota, conductores, ...). */
 
@@ -88,7 +89,12 @@ export function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (
         type={props.tipo ?? "text"}
         step={props.paso}
         value={props.valor}
-        onChange={(e) => props.onCambio(e.target.value)}
+        onChange={(e) =>
+          props.onCambio(props.tipo === "number" ? limitarDecimales(e.target.value, props.paso) : e.target.value)
+        }
+        // Un número de negocio (peso, capacidad, año) es siempre positivo y sin notación científica.
+        onKeyDown={props.tipo === "number" ? (e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault() : undefined}
+        min={props.tipo === "number" ? (props.paso ?? "1") : undefined}
         style={estiloInput}
         {...props.atributos}
       />

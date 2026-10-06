@@ -3,7 +3,7 @@ import { api, mensajeDeError } from "../../api/client";
 import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
-import { estiloBotonSecundario, soloCambios } from "../../components/utilesCrud";
+import { estiloBotonSecundario, filtrarPlaca, soloCambios } from "../../components/utilesCrud";
 import {
   CampoSelect,
   CampoTexto,
@@ -341,7 +341,8 @@ function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGua
       <CampoTexto
         etiqueta="Placa"
         valor={placa}
-        onCambio={setPlaca}
+        onCambio={(v) => setPlaca(filtrarPlaca(v))}
+        atributos={{ maxLength: 10 }}
         ayuda="Matrícula del vehículo, por ejemplo ABC-123. Se guarda en mayúsculas y debe ser única en la flota."
       />
       <CampoSelect
@@ -378,7 +379,8 @@ function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGua
       <CampoTexto
         etiqueta="Año de fabricación"
         valor={anio}
-        onCambio={setAnio}
+        onCambio={(v) => setAnio(v.slice(0, 4))}
+        atributos={{ min: 1990, max: 2100 }}
         tipo="number"
         paso="1"
         ayuda="Año de fabricación que figura en la tarjeta de propiedad."

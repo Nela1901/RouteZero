@@ -4,6 +4,7 @@ eliminación con sus reglas (409 si el registro tiene datos relacionados, 404 si
 """
 
 import random
+import string
 import uuid
 from datetime import date, timedelta
 
@@ -48,7 +49,7 @@ def _crear_conductor(client) -> dict:
         "/api/conductores",
         headers=auth(estado["tok_admin"]),
         json={
-            "nombre": _nombre("Conductor"),
+            "nombre": "Conductor " + "".join(random.choices(string.ascii_lowercase, k=6)),
             "dni": _dni(),
             "categoria_licencia": "A-IIb",
             "telefono": "964000000",
@@ -214,7 +215,7 @@ def test_conductor_dni_repetido_da_409_y_campos_vacios_422(client):
         json={"dni": estado["conductor"]["dni"]},
     )
     assert r.status_code == 409
-    for cuerpo in ({"nombre": "   "}, {"dni": "123"}, {"nombre": None}):
+    for cuerpo in ({"nombre": "   "}, {"dni": "123"}, {"nombre": None}, {"telefono": "12345"}, {"telefono": "9999999999"}):
         r = client.put(f"/api/conductores/{otro['conductor_id']}", headers=auth(estado["tok_admin"]), json=cuerpo)
         assert r.status_code == 422, cuerpo
 
