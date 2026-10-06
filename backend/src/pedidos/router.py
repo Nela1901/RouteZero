@@ -1,11 +1,11 @@
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends, Path, Query
 from sqlalchemy.orm import Session
 
 from src.core.security import UsuarioActual, get_db_con_rls, requiere_rol
 from src.pedidos.repository import RepositorioPedidos
-from src.pedidos.schemas import PedidoCrear, PedidoOut
+from src.pedidos.schemas import PaginaPedidos, PedidoCrear, PedidoOut
 from src.pedidos.service import ServicioPedidos
 
 router = APIRouter(prefix="/api/pedidos", tags=["pedidos"])
@@ -35,11 +35,13 @@ def cancelar_pedido(
     return _servicio(db).cancelar(pedido_id)
 
 
-@router.get("", response_model=list[PedidoOut])
+@router.get("", response_model=PaginaPedidos)
 def listar_pedidos(
     estado: Literal["PENDIENTE", "ASIGNADO", "EN_CAMINO", "ENTREGADO", "CANCELADO"] | None = None,
     prioridad: Literal["EXPRESS", "ESTANDAR", "ECONOMICO"] | None = None,
+    limite: int = Query(50, ge=1, le=200, description="Pedidos por página (máximo 200)"),
+    desplazamiento: int = Query(0, ge=0, description="Pedidos que se omiten al inicio"),
     _usuario: UsuarioActual = Depends(requiere_rol("OPERADOR", "ADMINISTRADOR")),
     db: Session = Depends(get_db_con_rls),
-) -> list[dict]:
-    return _servicio(db).listar(estado, prioridad)
+) -> dict:
+    return _servicio(db).listar(estado, prioridad, limite, desplazamiento)

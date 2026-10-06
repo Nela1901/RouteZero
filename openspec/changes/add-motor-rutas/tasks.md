@@ -42,9 +42,9 @@
 
 ## 6. Escalabilidad de la API (HT-08)
 
-- [ ] 6.1 Paginar `GET /api/pedidos` (`limite` 50 por defecto y 200 máximo, `desplazamiento`, `total` en la respuesta) y verificar con pruebas de página por defecto, límite excesivo (rechazo) y filtros combinados
-- [ ] 6.2 Comprobar con `EXPLAIN` que las consultas de listado y de pedidos pendientes por fecha usan los índices nuevos; verificar que el plan muestra un recorrido por índice con 1,000 pedidos
-- [ ] 6.3 Escribir la prueba de carga (marca `carga`) que inserta 1,000 pedidos, mide el percentil 95 del listado, el registro y la cancelación y limpia después; verificar que es ≤ 2 s y documentar el resultado en el documento de implementación
+- [x] 6.1 Paginar `GET /api/pedidos` (`limite` 50 por defecto y 200 máximo, `desplazamiento`, `total` en la respuesta) y verificar con pruebas de página por defecto, límite excesivo (rechazo) y filtros combinados
+- [x] 6.2 Comprobar con `EXPLAIN` que las consultas de listado y de pedidos pendientes por fecha usan los índices nuevos; verificar que el plan muestra un recorrido por índice con 1,000 pedidos
+- [x] 6.3 Escribir la prueba de carga (marca `carga`) que inserta 1,000 pedidos, mide el percentil 95 del listado, el registro y la cancelación y limpia después; verificar que es ≤ 2 s y documentar el resultado en el documento de implementación
 
 ## 7. Frontend
 

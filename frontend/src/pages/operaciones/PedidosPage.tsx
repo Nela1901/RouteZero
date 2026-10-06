@@ -14,6 +14,13 @@ interface Cliente {
   referencia?: string | null;
 }
 
+interface PaginaPedidos {
+  items: Pedido[];
+  total: number;
+  limite: number;
+  desplazamiento: number;
+}
+
 interface Pedido {
   pedido_id: string;
   cliente_id: string;
@@ -40,18 +47,35 @@ export function PedidosPage() {
   const { notificar } = useToast();
   const { confirmar } = useConfirm();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [total, setTotal] = useState(0);
+  const [cargandoMas, setCargandoMas] = useState(false);
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<Pedido | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // La API entrega los pedidos por páginas (50 por defecto): se carga la primera y el resto con "Cargar más".
   async function cargar() {
-    const [listaPedidos, listaClientes] = await Promise.all([
-      api.get<Pedido[]>("/api/pedidos"),
+    const [pagina, listaClientes] = await Promise.all([
+      api.get<PaginaPedidos>("/api/pedidos"),
       api.get<Cliente[]>("/api/clientes"),
     ]);
-    setPedidos(listaPedidos);
+    setPedidos(pagina.items);
+    setTotal(pagina.total);
     setClientes(listaClientes);
+  }
+
+  async function cargarMas() {
+    setCargandoMas(true);
+    try {
+      const pagina = await api.get<PaginaPedidos>(`/api/pedidos?desplazamiento=${pedidos.length}`);
+      setPedidos((actuales) => [...actuales, ...pagina.items]);
+      setTotal(pagina.total);
+    } catch (err) {
+      setError(mensajeDeError(err, "No se pudieron cargar más pedidos"));
+    } finally {
+      setCargandoMas(false);
+    }
   }
 
   useEffect(() => {
@@ -158,6 +182,16 @@ export function PedidosPage() {
             )}
           </div>
         ))}
+        {pedidos.length < total && (
+          <button type="button" onClick={() => void cargarMas()} disabled={cargandoMas} style={estiloBotonSecundario}>
+            {cargandoMas ? "Cargando…" : `Cargar más (${total - pedidos.length} restantes)`}
+          </button>
+        )}
+        {pedidos.length > 0 && (
+          <div style={{ fontSize: 12, color: "var(--rz-text-muted)" }}>
+            Mostrando {pedidos.length} de {total} pedidos
+          </div>
+        )}
         {pedidos.length === 0 && (
           <div style={{ padding: 24, textAlign: "center", color: "var(--rz-text-muted)", fontSize: 13.5 }}>
             No hay pedidos registrados todavía.

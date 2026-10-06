@@ -49,7 +49,8 @@ class RepositorioPedidos:
         ).one_or_none()
         return self._a_dict(row) if row else None
 
-    def listar(self, estado: str | None, prioridad: str | None) -> list[dict]:
+    def listar(self, estado: str | None, prioridad: str | None, limite: int, desplazamiento: int) -> tuple[list[dict], int]:
+        """Una página de pedidos (más recientes primero) y el total que cumple el filtro."""
         condiciones, parametros = [], {}
         if estado:
             condiciones.append("estado = :estado")
@@ -58,10 +59,12 @@ class RepositorioPedidos:
             condiciones.append("prioridad = :prioridad")
             parametros["prioridad"] = prioridad
         where = f"WHERE {' AND '.join(condiciones)}" if condiciones else ""
+        total = self.session.execute(text(f"SELECT count(*) FROM pedidos {where}"), parametros).scalar_one()
         rows = self.session.execute(
-            text(f"SELECT {_COLUMNAS} FROM pedidos {where} ORDER BY creado_en DESC"), parametros
+            text(f"SELECT {_COLUMNAS} FROM pedidos {where} ORDER BY creado_en DESC, pedido_id LIMIT :limite OFFSET :desplazamiento"),
+            parametros | {"limite": limite, "desplazamiento": desplazamiento},
         ).all()
-        return [self._a_dict(r) for r in rows]
+        return [self._a_dict(r) for r in rows], total
 
     @staticmethod
     def _a_dict(row) -> dict:
