@@ -28,7 +28,7 @@
 - [ ] 4.3 Implementar la solución inicial voraz (express primero, capacidad, jornada) y verificar con pruebas de que ningún vehículo supera su capacidad y de que cada pedido aparece una sola vez o como sin cobertura
 - [ ] 4.4 Implementar el ACO tipo ACS con selección vectorizada, mejora local (reubicación y 2-opt) y parada por tiempo, iteraciones sin mejora o iteraciones máximas; verificar que nunca es peor que la solución voraz, que es reproducible con semilla y tope de iteraciones fijo y que respeta el presupuesto de tiempo con tolerancia de 1 s
 - [ ] 4.5 Implementar los pedidos sin cobertura con motivo (capacidad, falta de recursos, falta de tiempo) y sugerencias, incluido el caso sin vehículos; verificar con pruebas de cada motivo
-- [ ] 4.6 Crear el benchmark sintético de 150 pedidos y 15 vehículos (marca `benchmark`, percentil 95 sobre al menos 10 ejecuciones) y verificar que el tiempo total no supera 45 s en local
+- [ ] 4.6 Crear el benchmark sintético de 150 pedidos y 15 vehículos (marca `benchmark`, percentil 95 sobre al menos 10 ejecuciones) y verificar que el tiempo total no supera 45 s en local; ejecutar además el mismo caso con 5, 10 y 15 minutos de atención por parada y registrar cuánto cambian la distancia, las emisiones y las entregas tardías
 - [ ] 4.7 Agregar al documento `02 Implementación del motor de rutas` la sección del algoritmo (modelo, parámetros, supuestos de licencia y de costo) y los resultados del benchmark local; verificar que las cifras coinciden con la salida del benchmark
 
 ## 5. Módulo de rutas (backend)
