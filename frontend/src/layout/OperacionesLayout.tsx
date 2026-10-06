@@ -10,6 +10,7 @@ const ITEMS_NAV: { a: string; etiqueta: string; descripcion: string; icono: () =
   { a: "/app/mapa", etiqueta: "Mapa", descripcion: "Rutas en vivo", icono: IconoMapa },
   { a: "/app/flota", etiqueta: "Flota", descripcion: "Vehículos", icono: IconoFlota, roles: ["ADMINISTRADOR"] },
   { a: "/app/conductores", etiqueta: "Conductores", descripcion: "Licencias y horarios", icono: IconoConductores, roles: ["ADMINISTRADOR"] },
+  { a: "/app/clientes", etiqueta: "Clientes", descripcion: "Negocios y horarios", icono: IconoClientes },
   { a: "/app/pedidos", etiqueta: "Pedidos", descripcion: "Registro y estado", icono: IconoPedidos },
   { a: "/app/seguridad", etiqueta: "Seguridad", descripcion: "Verificación en 2 pasos", icono: IconoSeguridad },
 ];
@@ -295,6 +296,17 @@ function IconoConductores() {
       <circle cx="9" cy="8" r="3.5" />
       <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
       <path d="M16 11.5a3 3 0 100-6M18 14.3c2 .6 3.5 2.4 3.5 5.7" />
+    </svg>
+  );
+}
+
+function IconoClientes() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 9l1.5-5h13L20 9" />
+      <path d="M4 9a2.7 2.7 0 005.3 0 2.7 2.7 0 005.4 0A2.7 2.7 0 0020 9" />
+      <path d="M5 12v8h14v-8" />
+      <path d="M10 20v-4h4v4" />
     </svg>
   );
 }
