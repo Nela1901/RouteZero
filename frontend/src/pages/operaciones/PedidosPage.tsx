@@ -338,7 +338,7 @@ function FormularioPedido({
           onCancelar={clientes.length > 0 ? () => setMostrarClienteNuevo(false) : undefined}
         />
       ) : (
-        <form onSubmit={enviar} style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+        <form onSubmit={enviar} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))", gap: 14 }}>
           <label style={estiloEtiqueta}>
             Cliente
             <div style={{ display: "flex", gap: 6 }}>
@@ -412,7 +412,7 @@ function FormularioClienteRapido({
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+    <form onSubmit={enviar} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))", gap: 14 }}>
       <div style={{ gridColumn: "1 / -1", fontSize: 13, color: "var(--rz-text-muted)" }}>Registrar cliente nuevo</div>
       <CampoTexto etiqueta="Nombre del negocio" valor={nombre} onCambio={setNombre} />
       <SelectorUbicacion
