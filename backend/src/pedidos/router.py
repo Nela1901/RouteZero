@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.core.security import UsuarioActual, get_db_con_rls, requiere_rol
 from src.pedidos.repository import RepositorioPedidos
-from src.pedidos.schemas import PaginaPedidos, PedidoCrear, PedidoOut
+from src.pedidos.schemas import PaginaPedidos, PedidoActualizar, PedidoCrear, PedidoOut
 from src.pedidos.service import ServicioPedidos
 
 router = APIRouter(prefix="/api/pedidos", tags=["pedidos"])
@@ -24,6 +24,25 @@ def registrar_pedido(
     db: Session = Depends(get_db_con_rls),
 ) -> dict:
     return _servicio(db).registrar(body)
+
+
+@router.get("/{pedido_id}", response_model=PedidoOut)
+def ver_pedido(
+    pedido_id: str = Path(pattern=_UUID),
+    _usuario: UsuarioActual = Depends(requiere_rol("OPERADOR", "ADMINISTRADOR")),
+    db: Session = Depends(get_db_con_rls),
+) -> dict:
+    return _servicio(db).obtener(pedido_id)
+
+
+@router.put("/{pedido_id}", response_model=PedidoOut)
+def editar_pedido(
+    body: PedidoActualizar,
+    pedido_id: str = Path(pattern=_UUID),
+    _usuario: UsuarioActual = Depends(requiere_rol("OPERADOR", "ADMINISTRADOR")),
+    db: Session = Depends(get_db_con_rls),
+) -> dict:
+    return _servicio(db).editar(pedido_id, body)
 
 
 @router.delete("/{pedido_id}", response_model=PedidoOut)

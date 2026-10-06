@@ -1,6 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api, mensajeDeError } from "../../api/client";
+import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
+import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
+import { estiloBotonSecundario, soloCambios } from "../../components/utilesCrud";
 import {
   CampoSelect,
   CampoTexto,
@@ -34,9 +37,12 @@ const TIPOS: TipoVehiculo[] = ["CAMIONETA", "FURGON", "MOTO"];
 
 export function FlotaPage() {
   const { notificar } = useToast();
+  const { confirmar } = useConfirm();
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
   const [filtroEstado, setFiltroEstado] = useState<EstadoVehiculo | "">("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [detalle, setDetalle] = useState<Vehiculo | null>(null);
+  const [edicion, setEdicion] = useState<Vehiculo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Se carga la flota completa una sola vez y el filtro se aplica en el navegador: la flota es
@@ -82,6 +88,23 @@ export function FlotaPage() {
     }
   }
 
+  async function eliminar(vehiculo: Vehiculo) {
+    const acepto = await confirmar({
+      titulo: "Eliminar vehículo",
+      mensaje: `Se eliminará el vehículo ${vehiculo.placa}. Esta acción no se puede deshacer.`,
+      textoAceptar: "Eliminar",
+      peligroso: true,
+    });
+    if (!acepto) return;
+    try {
+      await api.delete(`/api/vehiculos/${vehiculo.vehiculo_id}`);
+      await cargar();
+      notificar("Vehículo eliminado", "exito");
+    } catch (err) {
+      notificar(mensajeDeError(err, "No se pudo eliminar el vehículo"), "error");
+    }
+  }
+
   return (
     <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 1440 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -98,7 +121,7 @@ export function FlotaPage() {
 
       {mostrarFormulario && (
         <FormularioVehiculo
-          onCreado={() => {
+          onGuardado={() => {
             setMostrarFormulario(false);
             void cargar();
             notificar("Vehículo registrado", "exito");
@@ -131,6 +154,7 @@ export function FlotaPage() {
               <Th>SOAT vence</Th>
               <Th>Rev. técnica vence</Th>
               <Th>Estado</Th>
+              <Th>Acciones</Th>
             </tr>
           </thead>
           <tbody>
@@ -175,11 +199,19 @@ export function FlotaPage() {
                     ))}
                   </select>
                 </Td>
+                <Td>
+                  <AccionesFila
+                    nombre={v.placa}
+                    onVer={() => setDetalle(v)}
+                    onEditar={() => setEdicion(v)}
+                    onEliminar={() => void eliminar(v)}
+                  />
+                </Td>
               </tr>
             ))}
             {visibles.length === 0 && (
               <tr>
-                <td colSpan={7} style={{ padding: 24, textAlign: "center", color: "var(--rz-text-muted)" }}>
+                <td colSpan={8} style={{ padding: 24, textAlign: "center", color: "var(--rz-text-muted)" }}>
                   {filtroEstado ? "No hay vehículos con ese estado." : "No hay vehículos registrados todavía."}
                 </td>
               </tr>
@@ -187,6 +219,38 @@ export function FlotaPage() {
           </tbody>
         </table>
       </div>
+
+      {detalle && (
+        <Modal titulo={`Vehículo ${detalle.placa}`} onCerrar={() => setDetalle(null)}>
+          <FilaDetalle etiqueta="Tipo" valor={detalle.tipo} />
+          <FilaDetalle etiqueta="Estado" valor={detalle.estado.replace("_", " ")} />
+          <FilaDetalle etiqueta="Capacidad" valor={`${detalle.capacidad_kg} kg`} />
+          <FilaDetalle etiqueta="Consumo" valor={`${detalle.consumo_km_l} km/L`} />
+          <FilaDetalle etiqueta="Factor de CO₂" valor={`${detalle.factor_emision_co2} kg/km`} />
+          <FilaDetalle etiqueta="Año de fabricación" valor={detalle.anio_fabricacion} />
+          <FilaDetalle etiqueta="SOAT vence" valor={<EstadoVencimiento fecha={detalle.soat_vence} />} />
+          <FilaDetalle
+            etiqueta="Revisión técnica vence"
+            valor={<EstadoVencimiento fecha={detalle.revision_tecnica_vence} />}
+          />
+          <button type="button" onClick={() => setDetalle(null)} style={estiloBotonSecundario}>
+            Cerrar
+          </button>
+        </Modal>
+      )}
+
+      {edicion && (
+        <Modal titulo={`Editar vehículo ${edicion.placa}`} onCerrar={() => setEdicion(null)} ancho={680}>
+          <FormularioVehiculo
+            inicial={edicion}
+            onGuardado={() => {
+              setEdicion(null);
+              void cargar();
+              notificar("Vehículo actualizado", "exito");
+            }}
+          />
+        </Modal>
+      )}
     </div>
   );
 }
@@ -206,15 +270,15 @@ function CeldaDocumento(props: { etiqueta: string; fecha: string | null; onCambi
   );
 }
 
-function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
-  const [placa, setPlaca] = useState("");
-  const [tipo, setTipo] = useState<TipoVehiculo>("CAMIONETA");
-  const [capacidadKg, setCapacidadKg] = useState("");
-  const [consumoKmL, setConsumoKmL] = useState("");
-  const [factorEmision, setFactorEmision] = useState("");
-  const [anio, setAnio] = useState(String(new Date().getFullYear()));
-  const [soatVence, setSoatVence] = useState("");
-  const [revisionVence, setRevisionVence] = useState("");
+function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGuardado: () => void }) {
+  const [placa, setPlaca] = useState(inicial?.placa ?? "");
+  const [tipo, setTipo] = useState<TipoVehiculo>(inicial?.tipo ?? "CAMIONETA");
+  const [capacidadKg, setCapacidadKg] = useState(inicial?.capacidad_kg ?? "");
+  const [consumoKmL, setConsumoKmL] = useState(inicial?.consumo_km_l ?? "");
+  const [factorEmision, setFactorEmision] = useState(inicial?.factor_emision_co2 ?? "");
+  const [anio, setAnio] = useState(inicial ? String(inicial.anio_fabricacion) : String(new Date().getFullYear()));
+  const [soatVence, setSoatVence] = useState(inicial?.soat_vence ?? "");
+  const [revisionVence, setRevisionVence] = useState(inicial?.revision_tecnica_vence ?? "");
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
@@ -223,19 +287,39 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
     setError(null);
     setEnviando(true);
     try {
-      await api.post("/api/vehiculos", {
+      const cuerpo = {
         placa: placa.trim().toUpperCase(),
         tipo,
         capacidad_kg: capacidadKg,
         consumo_km_l: consumoKmL,
         factor_emision_co2: factorEmision,
         anio_fabricacion: Number(anio),
-        soat_vence: soatVence,
-        revision_tecnica_vence: revisionVence,
-      });
-      onCreado();
+        soat_vence: soatVence || null,
+        revision_tecnica_vence: revisionVence || null,
+      };
+      if (inicial) {
+        const original = {
+          placa: inicial.placa,
+          tipo: inicial.tipo,
+          capacidad_kg: inicial.capacidad_kg,
+          consumo_km_l: inicial.consumo_km_l,
+          factor_emision_co2: inicial.factor_emision_co2,
+          anio_fabricacion: inicial.anio_fabricacion,
+          soat_vence: inicial.soat_vence,
+          revision_tecnica_vence: inicial.revision_tecnica_vence,
+        };
+        const cambios = soloCambios(original, cuerpo);
+        if (Object.keys(cambios).length === 0) {
+          setError("No hay cambios para guardar");
+          return;
+        }
+        await api.put(`/api/vehiculos/${inicial.vehiculo_id}`, cambios);
+      } else {
+        await api.post("/api/vehiculos", cuerpo);
+      }
+      onGuardado();
     } catch (err) {
-      setError(mensajeDeError(err, "No se pudo registrar el vehículo"));
+      setError(mensajeDeError(err, inicial ? "No se pudo actualizar el vehículo" : "No se pudo registrar el vehículo"));
     } finally {
       setEnviando(false);
     }
@@ -248,10 +332,10 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
         gap: 14,
-        padding: 20,
+        padding: inicial ? 0 : 20,
         borderRadius: 16,
-        background: "var(--rz-panel-bg)",
-        border: "1px solid var(--rz-panel-border)",
+        background: inicial ? "transparent" : "var(--rz-panel-bg)",
+        border: inicial ? "none" : "1px solid var(--rz-panel-border)",
       }}
     >
       <CampoTexto
@@ -304,6 +388,7 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
         valor={soatVence}
         onCambio={setSoatVence}
         tipo="date"
+        opcional={Boolean(inicial)}
         ayuda="Fecha hasta la que está vigente el Seguro Obligatorio de Accidentes de Tránsito (figura en el certificado). Se avisa 30 días antes de que venza."
       />
       <CampoTexto
@@ -311,12 +396,13 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
         valor={revisionVence}
         onCambio={setRevisionVence}
         tipo="date"
+        opcional={Boolean(inicial)}
         ayuda="Fecha hasta la que es válido el certificado de inspección técnica vehicular. Se avisa 30 días antes de que venza."
       />
       {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
-          {enviando ? "Registrando…" : "Guardar vehículo"}
+          {enviando ? "Guardando…" : inicial ? "Guardar cambios" : "Guardar vehículo"}
         </button>
       </div>
     </form>

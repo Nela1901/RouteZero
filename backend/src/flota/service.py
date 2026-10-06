@@ -26,10 +26,30 @@ class ServicioVehiculos:
         campos = datos.model_dump(exclude_unset=True)
         if not campos:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "No se envió ningún campo para actualizar")
+        if "placa" in campos:
+            if campos["placa"] is None:
+                raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "La placa no puede quedar vacía")
+            if self.repo.existe_placa(campos["placa"], excluir_id=vehiculo_id):
+                raise HTTPException(status.HTTP_409_CONFLICT, "Ya existe un vehículo con esa placa")
         actualizado = self.repo.actualizar(vehiculo_id, campos)
         if actualizado is None:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Vehículo no encontrado")
         return actualizado
+
+    def obtener(self, vehiculo_id: str) -> dict:
+        vehiculo = self.repo.obtener(vehiculo_id)
+        if vehiculo is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Vehículo no encontrado")
+        return vehiculo
+
+    def eliminar(self, vehiculo_id: str) -> None:
+        self.obtener(vehiculo_id)
+        if self.repo.tiene_rutas(vehiculo_id):
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                "El vehículo tiene rutas registradas y no se puede eliminar; márcalo como INACTIVO para dejar de usarlo",
+            )
+        self.repo.eliminar(vehiculo_id)
 
     def listar(self, estado: str | None) -> list[dict]:
         return self.repo.listar(estado)

@@ -2,6 +2,10 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 
+# Solo estas columnas se pueden actualizar; nunca se interpola un nombre que venga del cliente.
+_ACTUALIZABLES = {"nombre", "tipo_negocio", "referencia", "latitud", "longitud", "horario_inicio", "horario_fin"}
+
+
 class RepositorioClientes:
     def __init__(self, session: Session):
         self.session = session
@@ -45,12 +49,45 @@ class RepositorioClientes:
         ).one_or_none()
         return self._a_dict(row) if row else None
 
-    def existe_nombre(self, nombre: str) -> bool:
-        """Comparación sin distinguir mayúsculas: "Bodega Sol" y "bodega sol" son el mismo cliente."""
+    def existe_nombre(self, nombre: str, excluir_id: str | None = None) -> bool:
+        """Comparación sin distinguir mayúsculas: "Bodega Sol" y "bodega sol" son el mismo cliente.
+        `excluir_id` permite editar un cliente sin chocar con su propio nombre."""
         row = self.session.execute(
-            text("SELECT 1 FROM clientes WHERE lower(nombre) = lower(:nombre)"), {"nombre": nombre}
+            text(
+                "SELECT 1 FROM clientes WHERE lower(nombre) = lower(:nombre) "
+                "AND (CAST(:excluir AS uuid) IS NULL OR cliente_id <> CAST(:excluir AS uuid))"
+            ),
+            {"nombre": nombre, "excluir": excluir_id},
         ).one_or_none()
         return row is not None
+
+    def actualizar(self, cliente_id: str, campos: dict) -> dict | None:
+        campos = {c: v for c, v in campos.items() if c in _ACTUALIZABLES}
+        if not campos:
+            return self.obtener(cliente_id)
+        asignaciones = ", ".join(f"{c} = :{c}" for c in campos)
+        row = self.session.execute(
+            text(
+                f"UPDATE clientes SET {asignaciones} WHERE cliente_id = :cid "
+                "RETURNING cliente_id, nombre, tipo_negocio, referencia, latitud, longitud, "
+                "horario_inicio, horario_fin, creado_en"
+            ),
+            {**campos, "cid": cliente_id},
+        ).one_or_none()
+        return self._a_dict(row) if row else None
+
+    def tiene_pedidos(self, cliente_id: str) -> bool:
+        """Consulta propia sobre `pedidos`: este módulo no depende del código de `pedidos`."""
+        row = self.session.execute(
+            text("SELECT 1 FROM pedidos WHERE cliente_id = :cid LIMIT 1"), {"cid": cliente_id}
+        ).one_or_none()
+        return row is not None
+
+    def eliminar(self, cliente_id: str) -> bool:
+        resultado = self.session.execute(
+            text("DELETE FROM clientes WHERE cliente_id = :cid"), {"cid": cliente_id}
+        )
+        return resultado.rowcount > 0
 
     def listar(self) -> list[dict]:
         rows = self.session.execute(

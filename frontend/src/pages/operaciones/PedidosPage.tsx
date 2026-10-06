@@ -4,6 +4,8 @@ import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../context/ConfirmContext";
 import { SelectorUbicacion } from "../../components/SelectorUbicacion";
 import { Ayuda, CampoSelect, CampoTexto } from "../../components/ui";
+import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
+import { soloCambios } from "../../components/utilesCrud";
 
 type Prioridad = "EXPRESS" | "ESTANDAR" | "ECONOMICO";
 type EstadoPedido = "PENDIENTE" | "ASIGNADO" | "EN_CAMINO" | "ENTREGADO" | "CANCELADO";
@@ -52,6 +54,7 @@ export function PedidosPage() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<Pedido | null>(null);
+  const [pedidoEnEdicion, setPedidoEnEdicion] = useState<Pedido | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // La API entrega los pedidos por páginas (50 por defecto): se carga la primera y el resto con "Cargar más".
@@ -137,21 +140,15 @@ export function PedidosPage() {
         {pedidos.map((p) => (
           <div
             key={p.pedido_id}
-            role="button"
-            tabIndex={0}
-            onClick={() => setPedidoSeleccionado(p)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") setPedidoSeleccionado(p);
-            }}
             style={{
               display: "flex",
               alignItems: "center",
+              flexWrap: "wrap",
               gap: 14,
               padding: "12px 16px",
               borderRadius: 12,
               border: "1px solid var(--rz-panel-border)",
               background: "var(--rz-panel-bg)",
-              cursor: "pointer",
             }}
           >
             <span
@@ -168,18 +165,13 @@ export function PedidosPage() {
             <span style={{ fontSize: 11.5, color: "var(--rz-text-muted)", fontFamily: "var(--rz-font-mono)" }}>
               {p.estado}
             </span>
-            {p.estado === "PENDIENTE" && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  void cancelar(p.pedido_id);
-                }}
-                style={estiloBotonSecundario}
-              >
-                Cancelar
-              </button>
-            )}
+            <AccionesFila
+              nombre={p.descripcion ?? "pedido sin descripción"}
+              onVer={() => setPedidoSeleccionado(p)}
+              onEditar={p.estado === "PENDIENTE" ? () => setPedidoEnEdicion(p) : undefined}
+              onEliminar={p.estado === "PENDIENTE" ? () => void cancelar(p.pedido_id) : undefined}
+              textoEliminar="Cancelar"
+            />
           </div>
         ))}
         {pedidos.length < total && (
@@ -206,6 +198,21 @@ export function PedidosPage() {
           onCerrar={() => setPedidoSeleccionado(null)}
         />
       )}
+
+      {pedidoEnEdicion && (
+        <Modal titulo="Editar pedido" onCerrar={() => setPedidoEnEdicion(null)} ancho={680}>
+          <FormularioPedido
+            clientes={clientes}
+            inicial={pedidoEnEdicion}
+            onCreado={() => {
+              setPedidoEnEdicion(null);
+              void cargar();
+              notificar("Pedido actualizado", "exito");
+            }}
+            onClienteCreado={() => undefined}
+          />
+        </Modal>
+      )}
     </div>
   );
 }
@@ -220,120 +227,68 @@ function DetallePedido({
   onCerrar: () => void;
 }) {
   return (
-    <div
-      role="presentation"
-      onClick={onCerrar}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(10, 13, 14, 0.55)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1500,
-        padding: 20,
-      }}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Detalle del pedido"
-        onClick={(e) => e.stopPropagation()}
+    <Modal titulo={pedido.descripcion ?? "Pedido sin descripción"} onCerrar={onCerrar} ancho={440}>
+      <span
         style={{
-          width: "100%",
-          maxWidth: 440,
-          borderRadius: 18,
-          background: "var(--rz-panel-solid-bg)",
-          border: "1px solid var(--rz-panel-border)",
-          boxShadow: "0 24px 60px rgba(0, 0, 0, 0.35)",
-          padding: 24,
-          display: "flex",
-          flexDirection: "column",
-          gap: 14,
+          alignSelf: "flex-start",
+          fontSize: 11,
+          fontWeight: 700,
+          textTransform: "uppercase",
+          color: "var(--rz-accent)",
+          background: "var(--rz-accent-soft-bg)",
+          padding: "2px 10px",
+          borderRadius: 999,
         }}
       >
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
-          <div>
-            <div style={{ fontFamily: "var(--rz-font-display)", fontWeight: 700, fontSize: 17 }}>
-              {pedido.descripcion ?? "Pedido sin descripción"}
-            </div>
-            <span
-              style={{
-                display: "inline-block",
-                marginTop: 6,
-                fontSize: 11,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                color: "var(--rz-accent)",
-                background: "var(--rz-accent-soft-bg)",
-                padding: "2px 10px",
-                borderRadius: 999,
-              }}
-            >
-              {pedido.estado}
-            </span>
-          </div>
-          <button type="button" onClick={onCerrar} aria-label="Cerrar" style={estiloBotonCerrar}>
-            ✕
-          </button>
-        </div>
-
-        <FilaDetalle etiqueta="Cliente" valor={cliente?.nombre ?? pedido.cliente_id} />
-        {cliente?.referencia && <FilaDetalle etiqueta="Punto de referencia" valor={cliente.referencia} />}
-        <FilaDetalle etiqueta="Prioridad" valor={pedido.prioridad} />
-        <FilaDetalle etiqueta="Peso" valor={`${pedido.peso_kg} kg`} />
-        {pedido.volumen_m3 && <FilaDetalle etiqueta="Volumen" valor={`${pedido.volumen_m3} m³`} />}
-        <FilaDetalle
-          etiqueta="Horario de entrega"
-          valor={`${pedido.ventana_inicio.slice(0, 5)} – ${pedido.ventana_fin.slice(0, 5)}`}
-        />
-        <FilaDetalle etiqueta="Coordenadas" valor={`${pedido.latitud}, ${pedido.longitud}`} />
-        <FilaDetalle etiqueta="Registrado" valor={new Date(pedido.creado_en).toLocaleString("es-PE")} />
-
-        <button type="button" onClick={onCerrar} style={estiloBotonSecundario}>
-          Cerrar
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function FilaDetalle({ etiqueta, valor }: { etiqueta: string; valor: string }) {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", gap: 16, fontSize: 13 }}>
-      <span style={{ color: "var(--rz-text-muted)" }}>{etiqueta}</span>
-      <span style={{ fontWeight: 600, textAlign: "right" }}>{valor}</span>
-    </div>
+        {pedido.estado}
+      </span>
+      <FilaDetalle etiqueta="Cliente" valor={cliente?.nombre ?? pedido.cliente_id} />
+      {cliente?.referencia && <FilaDetalle etiqueta="Punto de referencia" valor={cliente.referencia} />}
+      <FilaDetalle etiqueta="Prioridad" valor={pedido.prioridad} />
+      <FilaDetalle etiqueta="Peso" valor={`${pedido.peso_kg} kg`} />
+      {pedido.volumen_m3 && <FilaDetalle etiqueta="Volumen" valor={`${pedido.volumen_m3} m³`} />}
+      <FilaDetalle
+        etiqueta="Horario de entrega"
+        valor={`${pedido.ventana_inicio.slice(0, 5)} – ${pedido.ventana_fin.slice(0, 5)}`}
+      />
+      <FilaDetalle etiqueta="Coordenadas" valor={`${pedido.latitud}, ${pedido.longitud}`} />
+      <FilaDetalle etiqueta="Registrado" valor={new Date(pedido.creado_en).toLocaleString("es-PE")} />
+      <button type="button" onClick={onCerrar} style={estiloBotonSecundario}>
+        Cerrar
+      </button>
+    </Modal>
   );
 }
 
 function FormularioPedido({
   clientes,
+  inicial,
   onCreado,
   onClienteCreado,
 }: {
   clientes: Cliente[];
+  inicial?: Pedido;
   onCreado: () => void;
   onClienteCreado: () => void;
 }) {
-  const [clienteId, setClienteId] = useState(clientes[0]?.cliente_id ?? "");
-  const [descripcion, setDescripcion] = useState("");
-  const [pesoKg, setPesoKg] = useState("");
-  const [prioridad, setPrioridad] = useState<Prioridad>("ESTANDAR");
-  const [latitud, setLatitud] = useState("-12.0653");
-  const [longitud, setLongitud] = useState("-75.2049");
-  const [ventanaInicio, setVentanaInicio] = useState("09:00");
-  const [ventanaFin, setVentanaFin] = useState("18:00");
+  const [clienteId, setClienteId] = useState(inicial?.cliente_id ?? clientes[0]?.cliente_id ?? "");
+  const [descripcion, setDescripcion] = useState(inicial?.descripcion ?? "");
+  const [pesoKg, setPesoKg] = useState(inicial?.peso_kg ?? "");
+  const [prioridad, setPrioridad] = useState<Prioridad>(inicial?.prioridad ?? "ESTANDAR");
+  const [latitud, setLatitud] = useState(inicial?.latitud ?? "-12.0653");
+  const [longitud, setLongitud] = useState(inicial?.longitud ?? "-75.2049");
+  const [ventanaInicio, setVentanaInicio] = useState(inicial ? inicial.ventana_inicio.slice(0, 5) : "09:00");
+  const [ventanaFin, setVentanaFin] = useState(inicial ? inicial.ventana_fin.slice(0, 5) : "18:00");
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
-  const [mostrarClienteNuevo, setMostrarClienteNuevo] = useState(clientes.length === 0);
+  const [mostrarClienteNuevo, setMostrarClienteNuevo] = useState(!inicial && clientes.length === 0);
 
   async function enviar(evento: FormEvent) {
     evento.preventDefault();
     setError(null);
     setEnviando(true);
     try {
-      await api.post("/api/pedidos", {
+      const cuerpo = {
         cliente_id: clienteId,
         descripcion: descripcion || null,
         peso_kg: pesoKg,
@@ -342,10 +297,30 @@ function FormularioPedido({
         longitud,
         ventana_inicio: `${ventanaInicio}:00`,
         ventana_fin: `${ventanaFin}:00`,
-      });
+      };
+      if (inicial) {
+        const original = {
+          cliente_id: inicial.cliente_id,
+          descripcion: inicial.descripcion,
+          peso_kg: inicial.peso_kg,
+          prioridad: inicial.prioridad,
+          latitud: inicial.latitud,
+          longitud: inicial.longitud,
+          ventana_inicio: `${inicial.ventana_inicio.slice(0, 5)}:00`,
+          ventana_fin: `${inicial.ventana_fin.slice(0, 5)}:00`,
+        };
+        const cambios = soloCambios(original, cuerpo);
+        if (Object.keys(cambios).length === 0) {
+          setError("No hay cambios para guardar");
+          return;
+        }
+        await api.put(`/api/pedidos/${inicial.pedido_id}`, cambios);
+      } else {
+        await api.post("/api/pedidos", cuerpo);
+      }
       onCreado();
     } catch (err) {
-      setError(mensajeDeError(err, "No se pudo registrar el pedido"));
+      setError(mensajeDeError(err, inicial ? "No se pudo actualizar el pedido" : "No se pudo registrar el pedido"));
     } finally {
       setEnviando(false);
     }
@@ -357,10 +332,10 @@ function FormularioPedido({
         display: "flex",
         flexDirection: "column",
         gap: 16,
-        padding: 20,
+        padding: inicial ? 0 : 20,
         borderRadius: 16,
-        background: "var(--rz-panel-bg)",
-        border: "1px solid var(--rz-panel-border)",
+        background: inicial ? "transparent" : "var(--rz-panel-bg)",
+        border: inicial ? "none" : "1px solid var(--rz-panel-border)",
       }}
     >
       {mostrarClienteNuevo ? (
@@ -387,9 +362,11 @@ function FormularioPedido({
                   </option>
                 ))}
               </select>
-              <button type="button" onClick={() => setMostrarClienteNuevo(true)} style={estiloBotonSecundario}>
-                Nuevo
-              </button>
+              {!inicial && (
+                <button type="button" onClick={() => setMostrarClienteNuevo(true)} style={estiloBotonSecundario}>
+                  Nuevo
+                </button>
+              )}
             </div>
           </div>
           <CampoTexto
@@ -438,7 +415,7 @@ function FormularioPedido({
           {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
           <div style={{ gridColumn: "1 / -1" }}>
             <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
-              {enviando ? "Registrando…" : "Guardar pedido"}
+              {enviando ? "Guardando…" : inicial ? "Guardar cambios" : "Guardar pedido"}
             </button>
           </div>
         </form>
@@ -540,18 +517,6 @@ const estiloBotonSecundario: React.CSSProperties = {
   color: "var(--rz-text)",
   fontSize: 12.5,
   cursor: "pointer",
-};
-
-const estiloBotonCerrar: React.CSSProperties = {
-  width: 28,
-  height: 28,
-  borderRadius: 8,
-  border: "1px solid var(--rz-panel-border)",
-  background: "transparent",
-  color: "var(--rz-text-muted)",
-  fontSize: 13,
-  cursor: "pointer",
-  flexShrink: 0,
 };
 
 const estiloInput: React.CSSProperties = {
