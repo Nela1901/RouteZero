@@ -3,6 +3,7 @@ acceso por rol (solo ADMINISTRADOR). Portada de `tests_manual/e2e_flota.py`.
 """
 
 import uuid
+from datetime import date, timedelta
 
 from conftest import EMAIL_OPERADOR, PASSWORD_OPERADOR, admin_db, auth, login
 
@@ -126,6 +127,57 @@ def test_operador_no_puede_registrar_vehiculos(client):
         },
     )
     assert r.status_code == 403
+
+
+def test_registrar_vehiculo_con_fechas_de_documentos(client):
+    placa = _placa_de_prueba("D")
+    soat = (date.today() + timedelta(days=200)).isoformat()
+    revision = (date.today() + timedelta(days=90)).isoformat()
+    r = client.post(
+        "/api/vehiculos",
+        headers=auth(estado["tok_admin"]),
+        json={
+            "placa": placa,
+            "tipo": "FURGON",
+            "capacidad_kg": "900.00",
+            "consumo_km_l": "9.00",
+            "factor_emision_co2": "0.2800",
+            "anio_fabricacion": 2022,
+            "soat_vence": soat,
+            "revision_tecnica_vence": revision,
+        },
+    )
+    assert r.status_code == 201
+    assert r.json()["soat_vence"] == soat
+    assert r.json()["revision_tecnica_vence"] == revision
+    admin_db("DELETE FROM vehiculos WHERE placa = %s", (placa,))
+
+
+def test_registrar_vehiculo_sin_fechas_las_deja_vacias(client):
+    r = client.get("/api/vehiculos", headers=auth(estado["tok_admin"]))
+    propio = next(v for v in r.json() if v["vehiculo_id"] == estado["vehiculo_id"])
+    assert propio["soat_vence"] is None
+    assert propio["revision_tecnica_vence"] is None
+
+
+def test_renovar_documentos_actualiza_las_fechas(client):
+    nueva = (date.today() + timedelta(days=365)).isoformat()
+    r = client.put(
+        f"/api/vehiculos/{estado['vehiculo_id']}",
+        headers=auth(estado["tok_admin"]),
+        json={"soat_vence": nueva},
+    )
+    assert r.status_code == 200
+    assert r.json()["soat_vence"] == nueva
+
+
+def test_fecha_de_documento_invalida_da_422(client):
+    r = client.put(
+        f"/api/vehiculos/{estado['vehiculo_id']}",
+        headers=auth(estado["tok_admin"]),
+        json={"soat_vence": "no-es-una-fecha"},
+    )
+    assert r.status_code == 422
 
 
 def test_limpieza(client):

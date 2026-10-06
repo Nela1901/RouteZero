@@ -17,6 +17,8 @@ class ServicioVehiculos:
             datos.consumo_km_l,
             datos.factor_emision_co2,
             datos.anio_fabricacion,
+            datos.soat_vence,
+            datos.revision_tecnica_vence,
         )
         return self.repo.obtener(vehiculo_id)
 

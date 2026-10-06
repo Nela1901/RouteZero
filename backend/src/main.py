@@ -5,6 +5,7 @@ from src.auditoria.router import router as auditoria_router
 from src.auth.router import router as mfa_router
 from src.auth.router_sesiones import router as sesiones_router
 from src.clientes.router import router as clientes_router
+from src.conductores.router import router as conductores_router
 from src.core.config import settings
 from src.core.security import UsuarioActual, get_current_user
 from src.flota.router import router as flota_router
@@ -25,6 +26,7 @@ app.add_middleware(
 app.include_router(mfa_router)
 app.include_router(sesiones_router)
 app.include_router(flota_router)
+app.include_router(conductores_router)
 app.include_router(clientes_router)
 app.include_router(pedidos_router)
 app.include_router(auditoria_router)
