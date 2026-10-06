@@ -53,7 +53,7 @@ export default function App() {
       <Route path="/app" element={<OperacionesLayout />}>
         <Route index element={<Navigate to="mapa" replace />} />
         <Route path="mapa" element={<MapaPage />} />
-        <Route path="flota" element={<FlotaPage />} />
+        {usuario.rolNombre === "ADMINISTRADOR" && <Route path="flota" element={<FlotaPage />} />}
         <Route path="pedidos" element={<PedidosPage />} />
         <Route path="seguridad" element={<SeguridadPage />} />
       </Route>

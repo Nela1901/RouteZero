@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { api, ErrorApi } from "../../api/client";
+import { api, mensajeDeError } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 
 type EstadoVehiculo = "DISPONIBLE" | "EN_RUTA" | "MANTENIMIENTO" | "INACTIVO";
@@ -26,20 +26,22 @@ export function FlotaPage() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function cargar(estado = filtroEstado) {
-    const ruta = estado ? `/api/vehiculos?estado=${estado}` : "/api/vehiculos";
-    setVehiculos(await api.get<Vehiculo[]>(ruta));
+  // Se carga la flota completa una sola vez y el filtro se aplica en el navegador: la flota es
+  // pequeña y así cambiar de filtro es instantáneo en vez de costar un viaje a la base remota.
+  async function cargar() {
+    try {
+      setVehiculos(await api.get<Vehiculo[]>("/api/vehiculos"));
+    } catch (err) {
+      setError(mensajeDeError(err, "No se pudo cargar la flota"));
+    }
   }
+
+  const visibles = filtroEstado ? vehiculos.filter((v) => v.estado === filtroEstado) : vehiculos;
 
   useEffect(() => {
     void cargar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  async function manejarCambioFiltro(estado: EstadoVehiculo | "") {
-    setFiltroEstado(estado);
-    await cargar(estado);
-  }
 
   async function cambiarEstado(vehiculoId: string, estado: EstadoVehiculo) {
     setError(null);
@@ -48,7 +50,7 @@ export function FlotaPage() {
       await cargar();
       notificar(`Vehículo actualizado a ${estado.replace("_", " ")}`, "exito");
     } catch (err) {
-      const mensaje = err instanceof ErrorApi ? String(err.detalle) : "No se pudo actualizar el vehículo";
+      const mensaje = mensajeDeError(err, "No se pudo actualizar el vehículo");
       setError(mensaje);
       notificar(mensaje, "error");
     }
@@ -81,13 +83,13 @@ export function FlotaPage() {
       {error && <div style={estiloAviso}>{error}</div>}
 
       <div style={{ display: "flex", gap: 8 }}>
-        <FiltroChip etiqueta="Todos" activo={filtroEstado === ""} onClick={() => void manejarCambioFiltro("")} />
+        <FiltroChip etiqueta="Todos" activo={filtroEstado === ""} onClick={() => setFiltroEstado("")} />
         {ESTADOS.map((estado) => (
           <FiltroChip
             key={estado}
             etiqueta={estado.replace("_", " ")}
             activo={filtroEstado === estado}
-            onClick={() => void manejarCambioFiltro(estado)}
+            onClick={() => setFiltroEstado(estado)}
           />
         ))}
       </div>
@@ -104,7 +106,7 @@ export function FlotaPage() {
             </tr>
           </thead>
           <tbody>
-            {vehiculos.map((v) => (
+            {visibles.map((v) => (
               <tr key={v.vehiculo_id} style={{ borderTop: "1px solid var(--rz-panel-border)" }}>
                 <Td mono>{v.placa}</Td>
                 <Td>{v.tipo}</Td>
@@ -132,10 +134,10 @@ export function FlotaPage() {
                 </Td>
               </tr>
             ))}
-            {vehiculos.length === 0 && (
+            {visibles.length === 0 && (
               <tr>
                 <td colSpan={5} style={{ padding: 24, textAlign: "center", color: "var(--rz-text-muted)" }}>
-                  No hay vehículos registrados todavía.
+                  {filtroEstado ? "No hay vehículos con ese estado." : "No hay vehículos registrados todavía."}
                 </td>
               </tr>
             )}
@@ -162,7 +164,7 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
     setEnviando(true);
     try {
       await api.post("/api/vehiculos", {
-        placa,
+        placa: placa.trim().toUpperCase(),
         tipo,
         capacidad_kg: capacidadKg,
         consumo_km_l: consumoKmL,
@@ -171,7 +173,7 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
       });
       onCreado();
     } catch (err) {
-      setError(err instanceof ErrorApi ? String(err.detalle) : "No se pudo registrar el vehículo");
+      setError(mensajeDeError(err, "No se pudo registrar el vehículo"));
     } finally {
       setEnviando(false);
     }
@@ -192,10 +194,10 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
     >
       <CampoTexto etiqueta="Placa" valor={placa} onCambio={setPlaca} />
       <CampoSelect etiqueta="Tipo" valor={tipo} opciones={TIPOS} onCambio={(v) => setTipo(v as TipoVehiculo)} />
-      <CampoTexto etiqueta="Capacidad (kg)" valor={capacidadKg} onCambio={setCapacidadKg} tipo="number" />
-      <CampoTexto etiqueta="Consumo (km/L)" valor={consumoKmL} onCambio={setConsumoKmL} tipo="number" />
-      <CampoTexto etiqueta="Factor CO₂ (kg/km)" valor={factorEmision} onCambio={setFactorEmision} tipo="number" />
-      <CampoTexto etiqueta="Año de fabricación" valor={anio} onCambio={setAnio} tipo="number" />
+      <CampoTexto etiqueta="Capacidad (kg)" valor={capacidadKg} onCambio={setCapacidadKg} tipo="number" paso="0.01" />
+      <CampoTexto etiqueta="Consumo (km/L)" valor={consumoKmL} onCambio={setConsumoKmL} tipo="number" paso="0.01" />
+      <CampoTexto etiqueta="Factor CO₂ (kg/km)" valor={factorEmision} onCambio={setFactorEmision} tipo="number" paso="0.0001" />
+      <CampoTexto etiqueta="Año de fabricación" valor={anio} onCambio={setAnio} tipo="number" paso="1" />
       {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
@@ -206,13 +208,14 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
   );
 }
 
-function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (v: string) => void; tipo?: string }) {
+function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (v: string) => void; tipo?: string; paso?: string }) {
   return (
     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
       {props.etiqueta}
       <input
         required
         type={props.tipo ?? "text"}
+        step={props.paso}
         value={props.valor}
         onChange={(e) => props.onCambio(e.target.value)}
         style={estiloInput}
