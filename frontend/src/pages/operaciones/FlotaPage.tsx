@@ -94,7 +94,7 @@ export function FlotaPage() {
         ))}
       </div>
 
-      <div style={{ borderRadius: 16, border: "1px solid var(--rz-panel-border)", overflow: "hidden" }}>
+      <div style={{ borderRadius: 16, border: "1px solid var(--rz-panel-border)", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13.5 }}>
           <thead>
             <tr style={{ background: "var(--rz-panel-bg)", textAlign: "left" }}>
@@ -184,7 +184,7 @@ function FormularioVehiculo({ onCreado }: { onCreado: () => void }) {
       onSubmit={enviar}
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
+        gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
         gap: 14,
         padding: 20,
         borderRadius: 16,
