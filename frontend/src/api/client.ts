@@ -32,6 +32,20 @@ export class ErrorApi extends Error {
   }
 }
 
+/** Convierte el `detail` de la API en un texto legible; FastAPI devuelve una lista de objetos en los 422. */
+export function mensajeDeError(err: unknown, porDefecto: string): string {
+  if (!(err instanceof ErrorApi)) return porDefecto;
+  if (typeof err.detalle === "string") return err.detalle;
+  if (Array.isArray(err.detalle)) {
+    const partes = err.detalle.map((e: { loc?: unknown[]; msg?: string }) => {
+      const campo = Array.isArray(e.loc) ? String(e.loc[e.loc.length - 1]) : "";
+      return campo ? `${campo}: ${e.msg ?? "valor inválido"}` : (e.msg ?? "valor inválido");
+    });
+    return `Datos inválidos — ${partes.join("; ")}`;
+  }
+  return porDefecto;
+}
+
 async function solicitud<T>(ruta: string, opciones: RequestInit = {}, reintentar = true): Promise<T> {
   const accessToken = obtenerAccessToken();
   const cabeceras = new Headers(opciones.headers);

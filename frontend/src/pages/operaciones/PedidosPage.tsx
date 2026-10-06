@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { api, ErrorApi } from "../../api/client";
+import { api, mensajeDeError } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../context/ConfirmContext";
 import { SelectorUbicacion } from "../../components/SelectorUbicacion";
@@ -71,7 +71,7 @@ export function PedidosPage() {
       await cargar();
       notificar("Pedido cancelado", "exito");
     } catch (err) {
-      const mensaje = err instanceof ErrorApi ? String(err.detalle) : "No se pudo cancelar el pedido";
+      const mensaje = mensajeDeError(err, "No se pudo cancelar el pedido");
       setError(mensaje);
       notificar(mensaje, "error");
     }
@@ -310,7 +310,7 @@ function FormularioPedido({
       });
       onCreado();
     } catch (err) {
-      setError(err instanceof ErrorApi ? String(err.detalle) : "No se pudo registrar el pedido");
+      setError(mensajeDeError(err, "No se pudo registrar el pedido"));
     } finally {
       setEnviando(false);
     }
@@ -405,7 +405,7 @@ function FormularioClienteRapido({
       });
       onCreado(cliente);
     } catch (err) {
-      setError(err instanceof ErrorApi ? String(err.detalle) : "No se pudo registrar el cliente");
+      setError(mensajeDeError(err, "No se pudo registrar el cliente"));
     } finally {
       setEnviando(false);
     }

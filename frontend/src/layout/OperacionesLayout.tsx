@@ -4,9 +4,11 @@ import { useAuth } from "../context/AuthContext";
 import { useConfirm } from "../context/ConfirmContext";
 import { BotonTema } from "../components/BotonTema";
 
-const ITEMS_NAV = [
+// `roles` ausente = visible para todo rol de operaciones. Flota es solo de ADMINISTRADOR (el API
+// responde 403 al OPERADOR), así que no se le muestra una sección vacía.
+const ITEMS_NAV: { a: string; etiqueta: string; descripcion: string; icono: () => JSX.Element; roles?: string[] }[] = [
   { a: "/app/mapa", etiqueta: "Mapa", descripcion: "Rutas en vivo", icono: IconoMapa },
-  { a: "/app/flota", etiqueta: "Flota", descripcion: "Vehículos", icono: IconoFlota },
+  { a: "/app/flota", etiqueta: "Flota", descripcion: "Vehículos", icono: IconoFlota, roles: ["ADMINISTRADOR"] },
   { a: "/app/pedidos", etiqueta: "Pedidos", descripcion: "Registro y estado", icono: IconoPedidos },
   { a: "/app/seguridad", etiqueta: "Seguridad", descripcion: "Verificación en 2 pasos", icono: IconoSeguridad },
 ];
@@ -76,7 +78,7 @@ export function OperacionesLayout() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          {ITEMS_NAV.map(({ a, etiqueta, descripcion, icono: Icono }) => (
+          {ITEMS_NAV.filter((item) => !item.roles || (usuario && item.roles.includes(usuario.rolNombre))).map(({ a, etiqueta, descripcion, icono: Icono }) => (
             <NavLink
               key={a}
               to={a}
