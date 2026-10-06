@@ -10,6 +10,7 @@ from src.core.config import settings
 from src.core.security import UsuarioActual, get_current_user
 from src.flota.router import router as flota_router
 from src.pedidos.router import router as pedidos_router
+from src.rutas.router import router as rutas_router
 
 app = FastAPI(title="RouteZero API")
 
@@ -29,6 +30,7 @@ app.include_router(flota_router)
 app.include_router(conductores_router)
 app.include_router(clientes_router)
 app.include_router(pedidos_router)
+app.include_router(rutas_router)
 app.include_router(auditoria_router)
 
 

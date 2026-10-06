@@ -33,12 +33,12 @@
 
 ## 5. Módulo de rutas (backend)
 
-- [ ] 5.1 Implementar `rutas/repository.py` con SQL parametrizado: lectura de pedidos pendientes, vehículos y conductores elegibles, escritura de rutas, paradas y métricas, y operaciones por lote; verificar con pruebas de integración contra la base real
-- [ ] 5.2 Implementar el servicio de generación (fecha no pasada, candado de una generación a la vez, lectura con `commit()` previo al cálculo, reaplicación del contexto RLS, reemplazo atómico de borradores con `pg_advisory_xact_lock`); verificar que una segunda solicitud simultánea devuelve 409 y que los borradores previos se reemplazan sin tocar rutas confirmadas
-- [ ] 5.3 Implementar confirmar (comprobación de pedidos aún PENDIENTE, rutas a CONFIRMADA y pedidos a ASIGNADO en una transacción) y descartar (rechazo si ya está confirmado); verificar el rechazo con pedido cancelado durante la revisión y con descarte de rutas confirmadas
-- [ ] 5.4 Implementar `rutas/router.py` y sus esquemas con los roles (generar, confirmar y descartar: ADMINISTRADOR; consultar: ADMINISTRADOR y OPERADOR), registrar `ruta_generada`, `ruta_confirmada` y `ruta_descartada` en la auditoría y registrar el router en `main.py`; verificar que Swagger muestra los endpoints y que un CONDUCTOR recibe 403
-- [ ] 5.5 Escribir `tests/test_rutas.py` con los escenarios de `route-planning` y `route-optimization` contra la base real (generación exitosa, fecha pasada, sin vehículos, sin cobertura por peso, regeneración, confirmación, pedido cancelado, descarte, consulta por rol, auditoría sin DNI) y verificar que la suite pasa con limpieza de datos
-- [ ] 5.6 Actualizar `docs/01 Inicio/12. Modelo C4` (nueva versión) con los módulos `rutas`, `red_vial` y `algoritmo`; verificar que el diagrama de nivel 3 muestra la relación router → servicio → repositorio → motor
+- [x] 5.1 Implementar `rutas/repository.py` con SQL parametrizado: lectura de pedidos pendientes, vehículos y conductores elegibles, escritura de rutas, paradas y métricas, y operaciones por lote; verificar con pruebas de integración contra la base real
+- [x] 5.2 Implementar el servicio de generación (fecha no pasada, candado de una generación a la vez, lectura con `commit()` previo al cálculo, reaplicación del contexto RLS, reemplazo atómico de borradores con `pg_advisory_xact_lock`); verificar que una segunda solicitud simultánea devuelve 409 y que los borradores previos se reemplazan sin tocar rutas confirmadas
+- [x] 5.3 Implementar confirmar (comprobación de pedidos aún PENDIENTE, rutas a CONFIRMADA y pedidos a ASIGNADO en una transacción) y descartar (rechazo si ya está confirmado); verificar el rechazo con pedido cancelado durante la revisión y con descarte de rutas confirmadas
+- [x] 5.4 Implementar `rutas/router.py` y sus esquemas con los roles (generar, confirmar y descartar: ADMINISTRADOR; consultar: ADMINISTRADOR y OPERADOR), registrar `ruta_generada`, `ruta_confirmada` y `ruta_descartada` en la auditoría y registrar el router en `main.py`; verificar que Swagger muestra los endpoints y que un CONDUCTOR recibe 403
+- [x] 5.5 Escribir `tests/test_rutas.py` con los escenarios de `route-planning` y `route-optimization` contra la base real (generación exitosa, fecha pasada, sin vehículos, sin cobertura por peso, regeneración, confirmación, pedido cancelado, descarte, consulta por rol, auditoría sin DNI) y verificar que la suite pasa con limpieza de datos
+- [x] 5.6 Actualizar `docs/01 Inicio/12. Modelo C4` (nueva versión) con los módulos `rutas`, `red_vial` y `algoritmo`; verificar que el diagrama de nivel 3 muestra la relación router → servicio → repositorio → motor
 
 ## 6. Escalabilidad de la API (HT-08)
 
