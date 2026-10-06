@@ -156,6 +156,7 @@ export function FlotaPage() {
                 </Td>
                 <Td>
                   <select
+                    aria-label={`Estado del vehículo ${v.placa}`}
                     value={v.estado}
                     onChange={(e) => void cambiarEstado(v.vehiculo_id, e.target.value as EstadoVehiculo)}
                     style={{

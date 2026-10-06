@@ -42,6 +42,7 @@ export function LoginPage() {
       <PanelDeMarca />
 
       <div
+        role="main"
         style={{
           flexGrow: 1,
           display: "flex",
@@ -136,13 +137,6 @@ export function LoginPage() {
           </p>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 899px) {
-          .rz-login-visual { display: none !important; }
-          .rz-login-marca-movil { display: flex !important; }
-        }
-      `}</style>
     </div>
   );
 }

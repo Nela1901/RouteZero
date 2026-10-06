@@ -85,7 +85,7 @@ export function OperacionesLayout() {
             <NavLink
               key={a}
               to={a}
-              aria-label={etiqueta}
+              aria-label={expandido ? undefined : etiqueta}
               title={!expandido ? etiqueta : undefined}
               style={({ isActive }) => ({
                 display: "flex",
@@ -104,10 +104,10 @@ export function OperacionesLayout() {
                 <Icono />
               </span>
               {expandido && (
-                <span style={{ minWidth: 0, overflow: "hidden" }}>
+                <div style={{ minWidth: 0, overflow: "hidden" }}>
                   <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--rz-text)", whiteSpace: "nowrap" }}>{etiqueta}</div>
                   <div style={{ fontSize: 11, color: "var(--rz-text-muted)", whiteSpace: "nowrap" }}>{descripcion}</div>
-                </span>
+                </div>
               )}
             </NavLink>
           ))}
