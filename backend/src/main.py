@@ -1,5 +1,6 @@
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from src.auditoria.router import router as auditoria_router
 from src.auth.router import router as mfa_router
@@ -32,6 +33,12 @@ app.include_router(clientes_router)
 app.include_router(pedidos_router)
 app.include_router(rutas_router)
 app.include_router(auditoria_router)
+
+
+@app.get("/", include_in_schema=False)
+def raiz() -> RedirectResponse:
+    """La URL pública del backend lleva a la documentación interactiva en vez de a un 404."""
+    return RedirectResponse("/docs")
 
 
 @app.get("/api/health")

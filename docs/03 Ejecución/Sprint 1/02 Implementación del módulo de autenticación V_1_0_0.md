@@ -29,7 +29,7 @@ El módulo implementa el inicio de sesión con segundo factor (MFA por TOTP) y l
 | HT-01 JWT y OWASP Top 10 | Ver sección 6 |
 | RNF-013 / Ley N° 29733 | No se guardan contraseñas ni secretos TOTP propios; hashes de tokens en lugar de tokens |
 
-Especificación completa, criterios de aceptación y tareas: [`openspec/changes/add-mfa-sesiones/`](../../../openspec/changes/add-mfa-sesiones/).
+Especificación completa, criterios de aceptación y tareas: [`openspec/changes/archive/2026-09-28-add-mfa-sesiones/`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/).
 
 ## 2. Arquitectura
 
@@ -172,7 +172,7 @@ Las decisiones se tomaron probando contra el proveedor real y, cuando la evidenc
 | Sin clave `service_role`; la tabla `sesiones_activas` es autoritativa | Revocar sesiones ajenas con la clave administrativa | El endpoint administrativo no existe (responde 404); además se elimina un secreto de alto privilegio |
 | Verificación del JWT con JWKS (ES256) | Secreto compartido HS256 | El proyecto de Supabase ya usa llaves asimétricas |
 
-Todas las alternativas y su justificación completa están en [`design.md`](../../../openspec/changes/add-mfa-sesiones/design.md).
+Todas las alternativas y su justificación completa están en [`design.md`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/design.md).
 
 ## 8. Ejecución local
 

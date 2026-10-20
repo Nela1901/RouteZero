@@ -48,7 +48,7 @@ Estados: **Completada** (cumple todos sus escenarios de aceptación), **Parcial*
 
 ## 3. Trabajo adicional al alcance comprometido
 
-Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada como el cambio OpenSpec `add-mfa-sesiones` (ver [`openspec/changes/add-mfa-sesiones/`](../../../openspec/changes/add-mfa-sesiones/)):
+Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada como el cambio OpenSpec `add-mfa-sesiones` (ver [`openspec/changes/archive/2026-09-28-add-mfa-sesiones/`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/)):
 
 - **Autenticación multifactor (MFA) con TOTP** como segundo factor del inicio de sesión.
 - **Gestión segura de sesiones**: listar, revocar una o todas, renovación con detección de robo de sesión.
@@ -101,7 +101,7 @@ Se relacionan con el [`03 Registro de riesgos`](../../02%20Planificaci%C3%B3n/03
 
 ## 7. Evidencias
 
-- Cambio OpenSpec `add-mfa-sesiones`: [`proposal.md`](../../../openspec/changes/add-mfa-sesiones/proposal.md), [`design.md`](../../../openspec/changes/add-mfa-sesiones/design.md), [`tasks.md`](../../../openspec/changes/add-mfa-sesiones/tasks.md).
+- Cambio OpenSpec `add-mfa-sesiones`: [`proposal.md`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/proposal.md), [`design.md`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/design.md), [`tasks.md`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/tasks.md).
 - Código del backend: [`backend/`](../../../backend/).
 - Plan y resultados de pruebas: [`03 Plan y resultados de pruebas`](03%20Plan%20y%20resultados%20de%20pruebas%20V_1_0_0.md).
 

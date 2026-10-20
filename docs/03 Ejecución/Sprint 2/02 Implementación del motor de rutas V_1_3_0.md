@@ -8,7 +8,7 @@
 | **Empresa ficticia** | Andina Reparto S.A.C. |
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Sprint** | Sprint 2 — Personas y Algoritmo ACO (03 oct – 16 oct 2026) |
-| **Cambio OpenSpec** | `add-motor-rutas` ([`openspec/changes/add-motor-rutas/`](../../../openspec/changes/add-motor-rutas/)) |
+| **Cambio OpenSpec** | `add-motor-rutas` ([`openspec/changes/archive/2026-10-05-add-motor-rutas/`](../../../openspec/changes/archive/2026-10-05-add-motor-rutas/)) |
 | **Fecha** | 2026-10-05 |
 | **Versión** | 1.3.0 |
 

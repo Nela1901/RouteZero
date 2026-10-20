@@ -31,7 +31,7 @@ Las pruebas del módulo de autenticación son de **integración de extremo a ext
 
 ## 2. Casos de prueba de autenticación y sesiones
 
-Automatizados en un script de extremo a extremo. Trazabilidad: HU-001, RN-001, HT-01 y los escenarios de [`specs/mfa-totp`](../../../openspec/changes/add-mfa-sesiones/specs/mfa-totp/spec.md) y [`specs/session-management`](../../../openspec/changes/add-mfa-sesiones/specs/session-management/spec.md).
+Automatizados en un script de extremo a extremo. Trazabilidad: HU-001, RN-001, HT-01 y los escenarios de [`specs/mfa-totp`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/specs/mfa-totp/spec.md) y [`specs/session-management`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/specs/session-management/spec.md).
 
 | ID | Caso | Resultado esperado | Resultado |
 |---|---|---|---|
