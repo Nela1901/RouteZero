@@ -20,7 +20,7 @@
 
 ## Historias de Usuario completadas en este Sprint
 
-Compromiso del sprint: 6 ítems y 41 Story Points. Detalle y evidencias en [`01 Sprint 2 Plan de ejecución y estado`](../01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md).
+Compromiso del sprint: 6 ítems y 41 Story Points. Detalle y evidencias en [`01 Sprint 2 Plan de ejecución y estado`](../historial/01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md).
 
 | ID | Historia | Épica | SP | Estado |
 |---|---|---|---|---|
@@ -55,7 +55,7 @@ Orden previsto para la demostración (máximo 10 minutos):
 | Lighthouse (producción, 06-10-2026) | ≥ 90 | Accesibilidad 100 y SEO 100 en las 8 pantallas, móvil y escritorio; buenas prácticas 96-100; **rendimiento 85-100** |
 | Validación W3C (validador Nu, DOM renderizado) | sin errores | 0 errores y 0 avisos en las 8 pantallas |
 
-**Salvedad sobre Lighthouse:** el rendimiento queda por debajo de 90 en Mapa (88-89) y en Pedidos (85, escritorio). La causa medida es la latencia de la API en Render gratuito (cerca de 1 s por petición); el hilo principal no se bloquea (TBT 0 ms) ni hay desplazamientos de diseño (CLS 0). Está registrado como IMP-016 en el [Registro de Impedimentos](02%20Registro%20de%20Impedimentos%20V_1_1_0.md).
+**Salvedad sobre Lighthouse:** el rendimiento queda por debajo de 90 en Mapa (88-89) y en Pedidos (85, escritorio). La causa medida es la latencia de la API en Render gratuito (cerca de 1 s por petición); el hilo principal no se bloquea (TBT 0 ms) ni hay desplazamientos de diseño (CLS 0). Está registrado como IMP-016 en el [Registro de Impedimentos](historial/02%20Registro%20de%20Impedimentos%20V_1_1_0.md).
 
 ### Trabajo adicional al compromiso
 

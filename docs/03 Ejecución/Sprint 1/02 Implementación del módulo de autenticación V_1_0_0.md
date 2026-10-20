@@ -129,7 +129,7 @@ flowchart TD
 
 ## 5. Modelo de datos
 
-Definido en [`11. Base de datos`](../../01%20Inicio/11.%20Base%20de%20datos%20V_1_2_0.md). Resumen de lo que agrega este módulo:
+Definido en [`11. Base de datos`](../../01%20Inicio/historial/11.%20Base%20de%20datos%20V_1_2_0.md). Resumen de lo que agrega este módulo:
 
 | Tabla / objeto | Propósito |
 |---|---|
