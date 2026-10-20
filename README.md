@@ -310,10 +310,10 @@ RouteZero/
 
 | Documento | Ubicación |
 |---|---|
-| Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 1/Implementación/01 Informe de estado del proyecto V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_4_0.md) |
+| Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 1/Implementación/01 Informe de estado del proyecto V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_3_0.md) |
 | Registro de Impedimentos | [`docs/03 Ejecución/Sprint 1/Implementación/02 Registro de Impedimentos V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
-| Revisión del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/03 Revisión del Sprint V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_3_0.md) |
-| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/04 Retrospectiva del Sprint V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_2_0.md) |
+| Revisión del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
+| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
 
 #### Sprint 2 — Personas y Algoritmo ACO (en curso)
 
@@ -332,6 +332,48 @@ RouteZero/
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 2/Implementación/04 Retrospectiva del Sprint V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_4_0.md) |
 
 *Sprint 3 en adelante se documentará en `docs/03 Ejecución/Sprint 3/`, siguiendo la misma estructura.*
+
+---
+
+## 💻 Instalación
+[↑ Volver a la Tabla de Contenido](#-tabla-de-contenido)
+
+Requisitos: Python 3.11 o superior, Node.js con npm y un proyecto de Supabase (PostgreSQL) cuyas credenciales van en el archivo `.env`.
+
+### 1. Variables de entorno
+
+Copiar `.env.example` a `.env` en la raíz del repositorio y completar sus valores. El `.env` nunca se sube al repositorio. El frontend lee `VITE_API_URL` de `frontend/.env.local` (por defecto `http://127.0.0.1:8000`).
+
+### 2. Backend (desde `backend/`)
+
+```bash
+python -m pip install -r requirements.txt
+uvicorn src.main:app --port 8000
+```
+
+La documentación interactiva (Swagger) queda en `http://127.0.0.1:8000/docs`. Las pruebas se ejecutan contra la base real:
+
+```bash
+python -m pytest tests
+```
+
+### 3. Frontend (desde `frontend/`)
+
+```bash
+npm install
+npm run dev
+```
+
+Para comprobar el empaquetado y las pruebas: `npm run build` y `npx vitest run`.
+
+### 4. Datos de demostración
+
+El script [`backend/scripts/datos_demo.sql`](backend/scripts/datos_demo.sql) deja la base con un escenario de ejemplo (flota, conductores, clientes y pedidos). Se ejecuta en el SQL Editor de Supabase y borra los datos de esas tablas, por lo que no debe usarse en un entorno con datos reales.
+
+### Sistema desplegado
+
+- Frontend: [https://route-zero-omega.vercel.app](https://route-zero-omega.vercel.app)
+- Backend: [https://routezero-7k7j.onrender.com](https://routezero-7k7j.onrender.com), que redirige a su documentación interactiva. Si el servicio estaba inactivo, la primera respuesta tarda unos segundos.
 
 ---
 

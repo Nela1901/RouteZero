@@ -50,7 +50,7 @@ Estados: **Completada** (cumple todos sus escenarios de aceptación), **Parcial*
 
 ## 3. Trabajo adicional al alcance comprometido
 
-Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada como el cambio OpenSpec `add-mfa-sesiones` (ver [`openspec/changes/add-mfa-sesiones/`](../../../openspec/changes/add-mfa-sesiones/)):
+Durante el sprint se agregó una mejora de seguridad sobre EP-01, gestionada como el cambio OpenSpec `add-mfa-sesiones` (ver [`openspec/changes/archive/2026-09-28-add-mfa-sesiones/`](../../../openspec/changes/archive/2026-09-28-add-mfa-sesiones/)):
 
 - **Autenticación multifactor (MFA) con TOTP**, con pantalla propia de inscripción (código QR) además de la verificación en el login.
 - **Gestión segura de sesiones**: listar, revocar una o todas (con confirmación), renovación con detección de robo de sesión — con pantalla propia en el frontend.
