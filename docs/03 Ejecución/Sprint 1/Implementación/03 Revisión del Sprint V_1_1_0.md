@@ -49,10 +49,10 @@ Demostración a los stakeholders de las funcionalidades implementadas, realizada
 
 ## Pendientes
 
-- Nueva versión de [`11. Base de datos`](../../../01%20Inicio/historial/11.%20Base%20de%20datos%20V_1_4_0.md) que documente los módulos de flota, clientes y pedidos (ya implementados, pero el documento aún no los refleja).
+- Nueva versión de [`11. Base de datos`](../../../01%20Inicio/historial%20Inicio/11.%20Base%20de%20datos%20V_1_4_0.md) que documente los módulos de flota, clientes y pedidos (ya implementados, pero el documento aún no los refleja).
 - Ampliar la cobertura de pruebas automatizadas del frontend (Jest/Vitest) a los módulos de Flota y Pedidos — hoy solo cubre los componentes de MFA.
 - Ejecutar y documentar auditorías de Lighthouse (≥ 90) y validación W3C sobre el frontend desplegado.
-- Resolver IMP-006 (posible caché del `token_version` en el Custom Access Token Hook de Supabase) — ver [`02 Registro de Impedimentos`](historial/02%20Registro%20de%20Impedimentos%20V_1_0_0.md).
+- Resolver IMP-006 (posible caché del `token_version` en el Custom Access Token Hook de Supabase) — ver [`02 Registro de Impedimentos`](historial%20Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_0_0.md).
 - Motor de optimización de rutas (VRPTW + Green VRP con ACO) y módulo de conductores, planificados para el Sprint 2.
 - Mejorar la captura de coordenadas en el registro de pedidos: reemplazar el ingreso manual de latitud/longitud por un buscador de direcciones con geocodificación (Nominatim/OpenStreetMap) más la posibilidad de ajustar el punto sobre el mapa, detectado como hueco de usabilidad durante la demostración interna.
 

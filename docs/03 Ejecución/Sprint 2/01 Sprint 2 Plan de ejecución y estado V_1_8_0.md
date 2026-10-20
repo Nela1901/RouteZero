@@ -18,7 +18,7 @@
 
 ## 1. Objetivo del Sprint
 
-Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../02%20Planificaci%C3%B3n/historial/02%20Artefactos%20Jira%20V_1_0_0.md)):
+Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../02%20Planificaci%C3%B3n/historial%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md)):
 
 > *Implementar la gestión de conductores y clientes (EP-04) e iniciar el desarrollo del motor de optimización ACO para la generación de rutas VRPTW + Green VRP (EP-05).*
 
@@ -41,7 +41,7 @@ Estados: **Completada** (cumple todos sus escenarios de aceptación), **Parcial*
 
 ### 2.1 Diferencias entre Jira y la documentación de planificación
 
-Al confirmar el tablero de Jira contra [`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/historial/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md) se encontraron **los mismos ítems** en los sprints 2, 3 y 4, pero con Story Points distintos en algunos:
+Al confirmar el tablero de Jira contra [`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/historial%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md) se encontraron **los mismos ítems** en los sprints 2, 3 y 4, pero con Story Points distintos en algunos:
 
 | Ítem | SP en la documentación | SP en Jira | Efecto en el total |
 |---|---|---|---|
@@ -54,13 +54,13 @@ El Sprint 4 (HU-015, HU-016, HU-017, HT-11, HT-12; 18 SP) coincide por completo.
 
 ## 3. Trabajo adicional al alcance comprometido
 
-Antes de iniciar los ítems del sprint se atendieron observaciones surgidas de las pruebas del Sprint 1 (ver [`02 Registro de Impedimentos`](Implementaci%C3%B3n/historial/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)):
+Antes de iniciar los ítems del sprint se atendieron observaciones surgidas de las pruebas del Sprint 1 (ver [`02 Registro de Impedimentos`](Implementaci%C3%B3n/historial%20Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)):
 
 - **Flota**: el filtro por estado tardaba en responder (cada cambio de filtro hacía un viaje a la base de datos remota); ahora la flota se carga una vez y se filtra en el navegador.
 - **Flota**: el registro de vehículos mostraba un mensaje ilegible (`[object Object]`) ante errores de validación; ahora se muestra el campo inválido y su motivo. Además se ajustó la entrada de decimales de los campos numéricos y se normaliza la placa (sin espacios, en mayúsculas).
 - **Motor de rutas sobre calles reales de OpenStreetMap** (en lugar de una distancia aproximada), con flujo borrador → confirmar, exclusión de los recursos ya comprometidos en rutas confirmadas y medición en Render (ver `02 Implementación del motor de rutas V_1_3_0`). La medición reveló un cuello de botella en el guardado de resultados que llevaba la generación a 64 s; corregido, queda en 29.1 s con un pico de memoria de 199 a 210 MB.
 - **Corrección de medición:** el archivo `pytest.ini` no incluía `src.conductores` entre los módulos medidos, por lo que la cobertura reportada antes de esta versión (95 %) no contaba conductores. Ya está incluido.
-- **Documentos y vencimientos** (valor agregado sobre RF-008, fuera de Jira): correo del conductor y vencimiento de su licencia, y fechas de vencimiento del SOAT y la revisión técnica de cada vehículo, con aviso visual a 30 días o menos y marca de "Vencida". Detalle del modelo en [`11. Base de datos V_1_5_0`](../../01%20Inicio/historial/11.%20Base%20de%20datos%20V_1_6_0.md).
+- **Documentos y vencimientos** (valor agregado sobre RF-008, fuera de Jira): correo del conductor y vencimiento de su licencia, y fechas de vencimiento del SOAT y la revisión técnica de cada vehículo, con aviso visual a 30 días o menos y marca de "Vencida". Detalle del modelo en [`11. Base de datos V_1_5_0`](../../01%20Inicio/historial%20Inicio/11.%20Base%20de%20datos%20V_1_6_0.md).
 - **CRUD completo en flota, conductores, clientes y pedidos**: cada pantalla permite ver el detalle, editar y eliminar (además de registrar). La API suma el detalle por id en los cuatro módulos, la edición de clientes y de pedidos pendientes, la edición de la placa de un vehículo y del nombre y DNI de un conductor, y la eliminación de vehículos, conductores y clientes, que responde 409 con el motivo si el registro tiene rutas o pedidos relacionados; un pedido solo se edita mientras está pendiente y "eliminar" un pedido sigue siendo cancelarlo. En la interfaz, los botones de cada fila son íconos de trazo propios (ver, editar y eliminar) con nombre accesible, la edición y el detalle se abren en una ventana modal y al editar solo se envían los campos modificados. Incluye `tests/test_crud_completo.py` y 15 pruebas de Vitest nuevas (`CrudPages.test.tsx`).
 - **Validación de caracteres en los formularios** (flota, conductores, clientes y pedidos): lo que se escribe se filtra en la interfaz y la API lo vuelve a exigir con un 422. El nombre de un conductor admite solo letras y espacios; el nombre de un negocio, letras, números y los signos de una razón social (`. , - & ' ( )`); las descripciones y puntos de referencia, letras, números y puntuación básica (`. , ; : - ( ) # / ° ¿ ? ¡ ! & '`); la placa, mayúsculas, números y guion. Los campos numéricos no admiten `e`, `+` ni `-`, se recortan los decimales sobrantes y el año va de 1990 a 2100. El teléfono del conductor exige exactamente 9 dígitos, igual que el DNI exige 8. Las reglas están en `backend/src/core/texto.py` y en `frontend/src/components/utilesCrud.ts`. Las dos pruebas de inyección SQL se actualizaron: el payload clásico ahora se rechaza con 422 y uno hecho solo con signos permitidos se guarda como texto literal, lo que sigue demostrando que las consultas son parametrizadas. Incluye `tests/test_validacion_texto.py` y 13 pruebas de Vitest nuevas.
 - **Ayudas en los formularios**: ícono "i" con una explicación breve en los campos de Flota, Conductores y Pedidos (capacidad, consumo, factor de CO₂, prioridad, ventanas de entrega).
@@ -71,7 +71,7 @@ Antes de iniciar los ítems del sprint se atendieron observaciones surgidas de l
 
 ## 4. Definition of Done — metas del sprint
 
-Criterios del DoD global ([`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/historial/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md), sección 5), aplicados a lo que entregue este sprint:
+Criterios del DoD global ([`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/historial%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md), sección 5), aplicados a lo que entregue este sprint:
 
 | # | Criterio | Meta | Estado |
 |---|---|---|---|

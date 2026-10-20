@@ -3,7 +3,7 @@
 ## 1. Base de datos, dependencias y configuración
 
 - [x] 1.1 Redactar el SQL de `rutas` (con `lote_id`), `ruta_pedidos` y `metricas_sostenibilidad`, el estado `CONFIRMADA`, los índices (`rutas(fecha_jornada, estado)`, `rutas(lote_id)`, `pedidos(estado, creado_en)`, `pedidos(prioridad)`, `pedidos(cliente_id)`), la política RLS permisiva y el `GRANT` a `app_backend` y `app_admin`; entregarlo a la usuaria para ejecutarlo en Supabase y verificar con una consulta que las tablas existen y que `app_backend` puede hacer `SELECT` sobre ellas
-- [x] 1.2 Crear `docs/01 Inicio/historial/11. Base de datos V_1_7_0.md` con las tablas, el estado, los índices y su historial de cambios, y actualizar el README; verificar que los enlaces abren la versión nueva
+- [x] 1.2 Crear `docs/01 Inicio/historial Inicio/11. Base de datos V_1_7_0.md` con las tablas, el estado, los índices y su historial de cambios, y actualizar el README; verificar que los enlaces abren la versión nueva
 - [x] 1.3 Agregar `numpy` y `scipy` a `backend/requirements.txt` con tope superior de versión y verificar con `pip install -r requirements.txt` y `python -c "import scipy, numpy"`
 - [x] 1.4 Agregar a `config.py` el depósito (-12.043632, -75.226373) como valor por defecto sobrescribible por `.env`, el factor de velocidad urbana (0.6), la hora de inicio de jornada (08:00), el tiempo de atención por parada (10 min) y el presupuesto de tiempo (30 s, máximo 40 s); verificar que el servidor arranca sin variables nuevas en el `.env`
 
@@ -19,7 +19,7 @@
 - [x] 3.2 Implementar `red_vial/` (carga única del grafo, asignación al nodo más cercano con umbral de 500 m, matrices de distancia y tiempo por bloques de 25 fuentes y respaldo en línea recta × 1.35 que informa la fuente usada) y verificar con pruebas unitarias sobre un grafo sintético pequeño
 - [x] 3.3 Probar sentidos únicos respetados, archivo ausente con respaldo, punto a más de 500 m con respaldo y avenida más rápida que calle residencial; verificar que `tests/test_red_vial.py` pasa
 - [x] 3.4 Medir la matriz de 151 × 151 con el grafo real y verificar que tarda menos de 5 s y usa menos de 100 MB adicionales en un equipo de desarrollo (prueba marcada `benchmark`; el umbral en Render gratuito es de 15 s y se mide en la tarea 8.2)
-- [x] 3.5 Crear `docs/03 Ejecución/Sprint 2/historial/02 Implementación del motor de rutas V_1_0_0.md` con la sección de red vial (procedencia de los datos, cómo regenerar el grafo, velocidades y crédito "© OpenStreetMap contributors") y verificar que el comando documentado regenera el archivo
+- [x] 3.5 Crear `docs/03 Ejecución/Sprint 2/historial Sprint 2/02 Implementación del motor de rutas V_1_0_0.md` con la sección de red vial (procedencia de los datos, cómo regenerar el grafo, velocidades y crédito "© OpenStreetMap contributors") y verificar que el comando documentado regenera el archivo
 
 ## 4. Núcleo del algoritmo
 
