@@ -215,13 +215,13 @@ RouteZero/
 │   │   ├── 11. Base de datos V_1_8_0.md
 │   │   ├── 12. Modelo C4 V_1_2_0.md
 │   │   ├── 13. Restricciones V_1_1_0.md
-│   │   └── historial/   (20 versiones anteriores)
+│   │   └── historial Inicio/   (20 versiones anteriores)
 │   ├── 02 Planificación/
 │   │   ├── 01 Transformando a ágil V_1_1_0.md
 │   │   ├── 02 Artefactos Jira V_1_1_0.md
 │   │   ├── 03 Registro de riesgos V_1_0_0.md
 │   │   ├── 04 Presupuesto del proyecto V_1_1_0.md
-│   │   └── historial/   (3 versiones anteriores)
+│   │   └── historial Planificación/   (3 versiones anteriores)
 │   ├── 03 Ejecución/
 │   │   ├── Sprint 1/
 │   │   │   ├── 01 Sprint 1 Plan de ejecución y estado V_1_5_0.md
@@ -232,8 +232,8 @@ RouteZero/
 │   │   │   │   ├── 02 Registro de Impedimentos V_1_1_0.md
 │   │   │   │   ├── 03 Revisión del Sprint V_1_1_0.md
 │   │   │   │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
-│   │   │   │   └── historial/   (6 versiones anteriores)
-│   │   │   └── historial/   (5 versiones anteriores)
+│   │   │   │   └── historial Implementación/   (6 versiones anteriores)
+│   │   │   └── historial Sprint 1/   (5 versiones anteriores)
 │   │   └── Sprint 2/
 │   │       ├── 01 Sprint 2 Plan de ejecución y estado V_1_8_0.md
 │   │       ├── 02 Implementación del motor de rutas V_1_4_0.md
@@ -242,8 +242,8 @@ RouteZero/
 │   │       │   ├── 02 Registro de Impedimentos V_1_2_0.md
 │   │       │   ├── 03 Revisión del Sprint V_1_6_0.md
 │   │       │   ├── 04 Retrospectiva del Sprint V_1_4_0.md
-│   │       │   └── historial/   (18 versiones anteriores)
-│   │       └── historial/   (12 versiones anteriores)
+│   │       │   └── historial Implementación/   (18 versiones anteriores)
+│   │       └── historial Sprint 2/   (12 versiones anteriores)
 │   ├── 04 Seguimiento_Control/   (pendiente)
 │   └── 05 Cierre/   (pendiente)
 ├── backend/
@@ -266,7 +266,7 @@ RouteZero/
 └── README.md
 ```
 
-Cada carpeta de documentos muestra solo la **última versión** de cada archivo. Las versiones anteriores se conservan en la subcarpeta `historial/` de esa misma carpeta, con el mismo nombre, para no perder la trazabilidad.
+Cada carpeta de documentos muestra solo la **última versión** de cada archivo. Las versiones anteriores se conservan en una subcarpeta de esa misma carpeta, con el mismo nombre, para no perder la trazabilidad. La subcarpeta se llama `historial` seguido del nombre de la carpeta a la que pertenece: `historial Inicio`, `historial Planificación`, `historial Sprint 1` y `historial Sprint 2` (plan de ejecución e implementación técnica de cada sprint) e `historial Implementación` (informe de estado, registro de impedimentos, revisión y retrospectiva de cada sprint).
 
 Antes de abrir un Pull Request con cambios en la documentación se ejecuta `python scripts/verificar_enlaces.py`, que revisa todos los enlaces, las secciones enlazadas y el enlace de retorno de cada documento.
 

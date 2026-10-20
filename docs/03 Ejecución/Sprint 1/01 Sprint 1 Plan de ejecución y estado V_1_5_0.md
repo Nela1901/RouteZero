@@ -18,7 +18,7 @@
 
 ## 1. Objetivo del Sprint
 
-Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../02%20Planificaci%C3%B3n/historial/02%20Artefactos%20Jira%20V_1_0_0.md)):
+Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../02%20Planificaci%C3%B3n/historial%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_0_0.md)):
 
 > *Implementar la base del sistema RouteZero: autenticación JWT con control de acceso por roles (EP-01), gestión de flota de vehículos (EP-02) y registro de pedidos con coordenadas GPS (EP-03).*
 
@@ -65,7 +65,7 @@ También se agregó un módulo mínimo `clientes/` (registrar y listar) como pre
 
 ## 4. Definition of Done — estado del proyecto
 
-Criterios del DoD global ([`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/historial/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md), sección 5):
+Criterios del DoD global ([`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/historial%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_0_0.md), sección 5):
 
 | # | Criterio | Meta | Estado |
 |---|---|---|---|
