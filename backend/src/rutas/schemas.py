@@ -176,3 +176,64 @@ class ResultadoEntrega(BaseModel):
     pedido_id: str
     estado_entrega: str
     estado_ruta: str  # EN_EJECUCION | COMPLETADA
+
+
+# ---------------------------------------------------------------------------------- HU-013: mapa
+class DepositoOut(BaseModel):
+    latitud: float
+    longitud: float
+
+
+class TramoMapa(BaseModel):
+    desde: int  # orden de la parada de origen (0 = depósito)
+    hasta: int  # orden de la parada de destino (0 = regreso al depósito)
+    distancia_km: float
+    duracion_min: float
+    en_punta: bool  # el tramo sale en una franja de hora punta
+    puntos: list[list[float]]  # [lat, lon]
+
+
+class ParadaMapa(BaseModel):
+    orden: int
+    pedido_id: str
+    cliente: str
+    prioridad: str
+    latitud: Decimal
+    longitud: Decimal
+    hora_estimada: time | None
+    minutos_retraso: int
+    estado_entrega: str = "PENDIENTE"
+    pedido_estado: str = "ASIGNADO"
+
+
+class RutaMapa(BaseModel):
+    ruta_id: str
+    lote_id: str
+    estado: str
+    reemplaza_ruta_id: str | None = None
+    vehiculo: VehiculoRuta
+    conductor: ConductorRuta
+    hora_salida: time | None
+    hora_regreso: time | None
+    paradas: list[ParadaMapa]
+    tramos: list[TramoMapa]
+
+
+class MapaOut(BaseModel):
+    fecha_jornada: date
+    deposito: DepositoOut
+    rutas: list[RutaMapa]
+
+
+class ViaCongestion(BaseModel):
+    calle: str
+    nivel: Literal["VERDE", "AMARILLO", "ROJO"]
+    factor: float  # cuántas veces más lenta que de costumbre
+    motivos: list[str]  # "hora punta", "incidente"
+    segmentos: list[list[list[float]]]  # cada segmento: dos puntos [lat, lon]
+
+
+class CongestionOut(BaseModel):
+    hora: time
+    en_punta: bool
+    vias: list[ViaCongestion]

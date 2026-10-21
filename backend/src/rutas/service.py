@@ -12,17 +12,22 @@ from src.auditoria.repository import RepositorioAuditoria
 from src.core.config import Settings, settings
 from src.core.security import reaplicar_contexto_rls
 from src.red_vial.matrices import RedVial
+from src.rutas import congestion
 from src.rutas.repository import RepositorioRutas
+from src.rutas.trazado import trazar
 
 PERU = timezone(timedelta(hours=-5))  # Perú no usa horario de verano
 PRESUPUESTO_MINIMO_S = 1.0
 # Tiempo que se deja dentro del presupuesto total para guardar las rutas y responder (RN-015: 45 s en total)
 RESERVA_PERSISTENCIA_S = 5.0
 
-# RN-012: la re-optimización debe responder en 30 s como máximo
+# RN-012: la re-optimización debe responder en 30 s como máximo. Se apunta a 25 s para dejar holgura frente a la
+# lentitud de Render y de la red (medido: el motor usa todo su presupuesto).
 LIMITE_REOPTIMIZACION_S = 30.0
-# Nombre de cada vía de la RN-012 tal como se busca en el grafo (sin tildes ni mayúsculas)
-CLAVE_CALLE_EN_GRAFO = {"Av. Ferrocarril": "ferrocarril", "Av. Giráldez": "giraldez", "Calle Real": "calle real"}
+PRESUPUESTO_REOPTIMIZACION_S = 25.0
+# El mapa vuelve a pedir el trazado cada 30 s: se guarda lo ya calculado por ruta (paradas en orden + incidentes)
+_CACHE_TRAZADOS: dict = {}
+_MAX_TRAZADOS_EN_CACHE = 512
 
 # Una sola generación a la vez por proceso: el cálculo ocupa la CPU (0.1 en Render gratuito) y dos
 # generaciones simultáneas se estorbarían entre sí.
@@ -90,12 +95,14 @@ class ServicioRutas:
         pedidos = self.repo.pedidos_pendientes()
         vehiculos = self.repo.vehiculos_disponibles(fecha)
         conductores = self.repo.conductores_elegibles(fecha)
+        incidentes = self.repo.incidentes(True)
         # Se libera la conexión antes del cálculo, que puede durar hasta 40 s (ver design.md, D3)
         self.repo.session.commit()
 
         puntos = [(cfg.deposito_latitud, cfg.deposito_longitud)] + [(float(p["latitud"]), float(p["longitud"])) for p in pedidos]
         t_matrices = reloj.perf_counter()
-        matrices = self.red_vial.matrices(puntos)
+        normal, punta = congestion.factores_de_matrices(incidentes)
+        matrices = self.red_vial.matrices(puntos, congestion=normal, congestion_punta=punta)
         matrices_s = reloj.perf_counter() - t_matrices
 
         solicitado = tiempo_max_s if tiempo_max_s is not None else cfg.optimizacion_tiempo_s
@@ -124,7 +131,9 @@ class ServicioRutas:
                 hora_inicio_jornada_s=_segundos(cfg.hora_inicio_jornada),
                 atencion_s=cfg.tiempo_atencion_min * 60,
                 tiempo_max_s=presupuesto_motor,
+                franjas_punta=congestion.FRANJAS_PUNTA,
             ),
+            tiempo_punta_s=matrices.tiempo_punta_s,
         )
         t_motor = reloj.perf_counter()
         resultado = resolver(problema)
@@ -369,18 +378,16 @@ class ServicioRutas:
                 nodo, trabajo = 0, 0.0
             arranques[r["vehiculo_id"]] = Arranque(nodo, float(ahora_s), float(trabajo))
 
-        factores: dict[str, float] = {}
-        for i in incidentes:
-            clave = CLAVE_CALLE_EN_GRAFO[i["calle"]]
-            factores[clave] = max(factores.get(clave, 1.0), i["factor"])
         t_matrices = reloj.perf_counter()
-        matrices = self.red_vial.matrices(puntos, congestion=factores or None)
+        normal, punta = congestion.factores_de_matrices(incidentes)
+        matrices = self.red_vial.matrices(puntos, congestion=normal, congestion_punta=punta)
         matrices_s = reloj.perf_counter() - t_matrices
 
-        solicitado = tiempo_max_s if tiempo_max_s is not None else LIMITE_REOPTIMIZACION_S
+        solicitado = tiempo_max_s if tiempo_max_s is not None else PRESUPUESTO_REOPTIMIZACION_S
         presupuesto_total = min(solicitado, LIMITE_REOPTIMIZACION_S)
         presupuesto_motor = max(PRESUPUESTO_MINIMO_S, presupuesto_total - (reloj.perf_counter() - inicio) - RESERVA_PERSISTENCIA_S)
         parametros.tiempo_max_s = presupuesto_motor
+        parametros.franjas_punta = congestion.FRANJAS_PUNTA
         pares = [
             Par(
                 Vehiculo(r["vehiculo_id"], r["placa"], r["tipo"], float(r["capacidad_kg"]), float(r["consumo_km_l"]),
@@ -393,7 +400,7 @@ class ServicioRutas:
         problema = Problema(
             pedidos=pedidos, vehiculos=[p.vehiculo for p in pares], conductores=[p.conductor for p in pares],
             distancia_m=matrices.distancia_m, tiempo_s=matrices.tiempo_s, parametros=parametros,
-            pares_fijos=pares, arranques=arranques, plan_vigente=plan,
+            pares_fijos=pares, arranques=arranques, plan_vigente=plan, tiempo_punta_s=matrices.tiempo_punta_s,
         )
         t_motor = reloj.perf_counter()
         resultado = resolver(problema)
@@ -491,3 +498,68 @@ class ServicioRutas:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Incidente no encontrado o ya resuelto")
         self.auditoria.registrar(usuario_id, "incidente_resuelto", "rutas", incidente_id)
         return incidente
+
+    # ------------------------------------------------------------------ mapa (HU-013)
+    def mapa(self, fecha: date) -> dict:
+        """Rutas de la jornada con sus paradas y el trazado por calles de cada tramo, para dibujarlas."""
+        cfg = self.config
+        rutas = [r for r in self.repo.rutas_de_la_fecha(fecha) if r["estado"] != "CANCELADA"]
+        paradas = self.repo.paradas_de([r["ruta_id"] for r in rutas])
+        incidentes = self.repo.incidentes(True)
+        deposito = (cfg.deposito_latitud, cfg.deposito_longitud)
+        atencion_s = cfg.tiempo_atencion_min * 60
+        salida_defecto = _segundos(cfg.hora_inicio_jornada)
+        grafo = self.red_vial.grafo
+        salida = []
+        for r in rutas:
+            ps = paradas.get(r["ruta_id"], [])
+            vigentes = [p for p in ps]
+            clave = (r["ruta_id"], congestion.firma(incidentes), tuple((p["pedido_id"], p["orden_entrega"]) for p in vigentes), id(grafo))
+            tramos = _CACHE_TRAZADOS.get(clave)
+            if tramos is None:
+                puntos = [deposito] + [(float(p["latitud"]), float(p["longitud"])) for p in vigentes] + [deposito]
+                salidas = [float(_segundos(r["hora_salida"])) if r["hora_salida"] else float(salida_defecto)]
+                salidas += [_segundos(p["hora_estimada"]) + atencion_s if p["hora_estimada"] else salidas[-1] for p in vigentes]
+                tramos = trazar(grafo, puntos, salidas, incidentes, cfg.factor_velocidad_urbana)
+                for i, t in enumerate(tramos):
+                    t["desde"] = 0 if i == 0 else vigentes[i - 1]["orden_entrega"]
+                    t["hasta"] = vigentes[i]["orden_entrega"] if i < len(vigentes) else 0
+                if len(_CACHE_TRAZADOS) >= _MAX_TRAZADOS_EN_CACHE:
+                    _CACHE_TRAZADOS.clear()
+                _CACHE_TRAZADOS[clave] = tramos
+            ruta = self._a_ruta_out(r, ps)
+            salida.append({
+                "ruta_id": r["ruta_id"], "lote_id": r["lote_id"], "estado": r["estado"], "reemplaza_ruta_id": r["reemplaza_ruta_id"],
+                "vehiculo": ruta["vehiculo"], "conductor": ruta["conductor"], "hora_salida": r["hora_salida"],
+                "hora_regreso": r["hora_regreso"], "paradas": ruta["paradas"], "tramos": tramos,
+            })
+        return {"fecha_jornada": fecha, "deposito": {"latitud": deposito[0], "longitud": deposito[1]}, "rutas": salida}
+
+    def congestion(self, hora: time | None) -> dict:
+        """Estado de las tres vías de la RN-012 a una hora (por defecto, la actual): nivel, motivo y su geometría."""
+        segundos = _segundos(hora) if hora is not None else _segundos(datetime.now(PERU).time())
+        incidentes = self.repo.incidentes(True)
+        grafo = self.red_vial.grafo
+        vias = []
+        for via in congestion.VIAS:
+            factor, motivos = congestion.factor_efectivo(via, segundos, incidentes)
+            vias.append({
+                "calle": via, "nivel": congestion.nivel(factor), "factor": round(factor, 2), "motivos": motivos,
+                "segmentos": _segmentos_de_via(grafo, congestion.CLAVE_EN_GRAFO[via]),
+            })
+        return {"hora": _hora(segundos), "en_punta": congestion.en_punta(segundos), "vias": vias}
+
+
+@lru_cache(maxsize=8)
+def _segmentos_de_via_cache(grafo, clave: str) -> tuple:
+    return tuple(
+        ((round(float(a[0]), 5), round(float(a[1]), 5)), (round(float(b[0]), 5), round(float(b[1]), 5)))
+        for a, b in grafo.tramos_de_calle(clave)
+    )
+
+
+def _segmentos_de_via(grafo, clave: str) -> list:
+    """Segmentos de la vía como [[lat, lon], [lat, lon]]; la geometría no cambia, se calcula una vez por proceso."""
+    if grafo is None:
+        return []
+    return [[list(a), list(b)] for a, b in _segmentos_de_via_cache(grafo, clave)]
