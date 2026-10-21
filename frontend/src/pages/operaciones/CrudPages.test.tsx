@@ -297,8 +297,17 @@ describe("Pedidos: edición y cancelación", () => {
     expect(screen.getByRole("button", { name: "Cancelar Diez cajas de gaseosa" })).toBeInTheDocument();
   });
 
-  it("un pedido asignado solo se puede ver", async () => {
+  it("un pedido asignado se puede ver y cancelar, pero no editar", async () => {
     simular("ASIGNADO");
+    renderizar(<PedidosPage />);
+
+    expect(await screen.findByRole("button", { name: "Ver detalle de Diez cajas de gaseosa" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Editar Diez cajas de gaseosa" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cancelar Diez cajas de gaseosa" })).toBeInTheDocument();
+  });
+
+  it("un pedido entregado solo se puede ver", async () => {
+    simular("ENTREGADO");
     renderizar(<PedidosPage />);
 
     expect(await screen.findByRole("button", { name: "Ver detalle de Diez cajas de gaseosa" })).toBeInTheDocument();

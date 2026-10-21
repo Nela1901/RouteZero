@@ -17,7 +17,7 @@ vi.mock("../../context/AuthContext", () => ({
 
 vi.mock("../../api/client", async (importOriginal) => {
   const real = await importOriginal<typeof import("../../api/client")>();
-  return { ...real, api: { post: vi.fn(), get: vi.fn(), put: vi.fn(), delete: vi.fn() } };
+  return { ...real, api: { post: vi.fn(), get: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn() } };
 });
 
 import { api } from "../../api/client";
@@ -57,10 +57,12 @@ function renderPagina() {
   );
 }
 
-function rutasEnLaApi(lista: Ruta[]) {
+function rutasEnLaApi(lista: Ruta[], incidentes: unknown[] = [], estadoDetalle = "PLANIFICADA", paradasDetalle?: Ruta["paradas"]) {
   vi.mocked(api.get).mockImplementation(async (url: string) => {
+    if (url === "/api/rutas/incidentes") return incidentes;
     if (url.startsWith("/api/rutas/ruta-1")) {
-      return ruta("PLANIFICADA", {
+      if (paradasDetalle) return ruta(estadoDetalle, { paradas: paradasDetalle });
+      return ruta(estadoDetalle, {
         paradas: [
           { orden: 1, pedido_id: "p1", cliente: "Bodega San José", descripcion: null, peso_kg: "25.00", prioridad: "EXPRESS", hora_estimada: "08:20:00", minutos_retraso: 0 },
           { orden: 2, pedido_id: "p2", cliente: "Calzados Puno", descripcion: null, peso_kg: "40.00", prioridad: "ESTANDAR", hora_estimada: "09:05:00", minutos_retraso: 12 },
@@ -76,6 +78,7 @@ describe("RutasPage", () => {
     rolActual.valor = "ADMINISTRADOR";
     vi.mocked(api.get).mockReset();
     vi.mocked(api.post).mockReset();
+    vi.mocked(api.patch).mockReset();
     vi.mocked(api.delete).mockReset();
   });
 
@@ -214,5 +217,165 @@ describe("RutasPage", () => {
     expect(screen.getByText(/EXPRESS/)).toBeInTheDocument();
     expect(screen.getByText(/Calzados Puno/)).toBeInTheDocument();
     expect(screen.getByText(/\+12 min/)).toBeInTheDocument();
+  });
+
+  // ------------------------------------------------------------------ HU-012
+  it("el Administrador puede re-optimizar cuando hay rutas en curso; el Operador no", async () => {
+    rutasEnLaApi([ruta("CONFIRMADA")]);
+    const { unmount } = renderPagina();
+    expect(await screen.findByRole("button", { name: "Re-optimizar rutas" })).toBeInTheDocument();
+    unmount();
+
+    rolActual.valor = "OPERADOR";
+    renderPagina();
+    await screen.findByText("ABC-101");
+    expect(screen.queryByRole("button", { name: "Re-optimizar rutas" })).not.toBeInTheDocument();
+  });
+
+  it("sin rutas en curso no se ofrece re-optimizar", async () => {
+    rutasEnLaApi([ruta("PLANIFICADA")]);
+    renderPagina();
+    await screen.findByText("ABC-101");
+    expect(screen.queryByRole("button", { name: "Re-optimizar rutas" })).not.toBeInTheDocument();
+  });
+
+  it("al re-optimizar envía la fecha y la hora de referencia y resume el resultado", async () => {
+    rutasEnLaApi([ruta("EN_EJECUCION")]);
+    vi.mocked(api.post).mockResolvedValue({
+      lote_id: "lote-2",
+      sin_rutas_activas: false,
+      mensaje: "",
+      hora_considerada: "10:00:00",
+      rutas: [],
+      sin_cobertura: [{ pedido_id: "99999999-aaaa", motivo: "FLOTA_INSUFICIENTE", sugerencia: "Incorpore más vehículos." }],
+      pedidos_nuevos: 2,
+      pedidos_retirados: 1,
+      incidentes_aplicados: ["Av. Ferrocarril"],
+      tiempo_ejecucion_s: 12.3,
+      dentro_del_limite: true,
+    });
+    const usuario = userEvent.setup();
+    renderPagina();
+
+    await usuario.type(await screen.findByLabelText(/hora de referencia/i), "10:00");
+    await usuario.click(screen.getByRole("button", { name: "Re-optimizar rutas" }));
+
+    await waitFor(() =>
+      expect(api.post).toHaveBeenCalledWith("/api/rutas/reoptimizar", { fecha_jornada: expect.any(String), hora_actual: "10:00" }),
+    );
+    expect(await screen.findByText(/dentro del límite de 30 s/i)).toBeInTheDocument();
+    expect(screen.getByText(/2 pedido\(s\) nuevo\(s\) integrado\(s\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Incidentes aplicados: Av\. Ferrocarril/)).toBeInTheDocument();
+    expect(screen.getByText(/1 pedido\(s\) sin cobertura/)).toBeInTheDocument();
+  });
+
+  it("sin rutas activas muestra el mensaje de la API que sugiere generar rutas", async () => {
+    rutasEnLaApi([ruta("EN_EJECUCION")]);
+    vi.mocked(api.post).mockResolvedValue({
+      lote_id: null,
+      sin_rutas_activas: true,
+      mensaje: "No hay rutas activas para re-optimizar en esa fecha. Genere nuevas rutas desde el módulo de rutas.",
+      hora_considerada: null,
+      rutas: [],
+      sin_cobertura: [],
+      pedidos_nuevos: 0,
+      pedidos_retirados: 0,
+      incidentes_aplicados: [],
+      tiempo_ejecucion_s: 0,
+      dentro_del_limite: true,
+    });
+    const usuario = userEvent.setup();
+    renderPagina();
+
+    await usuario.click(await screen.findByRole("button", { name: "Re-optimizar rutas" }));
+    expect(await screen.findByText(/genere nuevas rutas/i)).toBeInTheDocument();
+  });
+
+  it("un borrador de re-optimización se distingue del borrador de una generación", async () => {
+    rutasEnLaApi([ruta("PLANIFICADA", { reemplaza_ruta_id: "ruta-original" })]);
+    renderPagina();
+    expect(await screen.findByText(/re-optimización sin confirmar/i)).toBeInTheDocument();
+    expect(screen.queryByText(/borrador sin confirmar/i)).not.toBeInTheDocument();
+  });
+
+  const paradasEnCurso: Ruta["paradas"] = [
+    { orden: 1, pedido_id: "p1", cliente: "Bodega San José", descripcion: null, peso_kg: "25.00", prioridad: "ESTANDAR", hora_estimada: "08:20:00", minutos_retraso: 0, estado_entrega: "ENTREGADO", pedido_estado: "ENTREGADO" },
+    { orden: 2, pedido_id: "p2", cliente: "Calzados Puno", descripcion: null, peso_kg: "40.00", prioridad: "ESTANDAR", hora_estimada: "09:05:00", minutos_retraso: 0, estado_entrega: "PENDIENTE", pedido_estado: "ASIGNADO" },
+    { orden: 3, pedido_id: "p3", cliente: "Minimarket Real", descripcion: null, peso_kg: "10.00", prioridad: "ESTANDAR", hora_estimada: "09:40:00", minutos_retraso: 0, estado_entrega: "PENDIENTE", pedido_estado: "CANCELADO" },
+  ];
+
+  it("en una ruta en curso se registran las entregas pendientes, no las hechas ni las canceladas", async () => {
+    rutasEnLaApi([ruta("EN_EJECUCION")], [], "EN_EJECUCION", paradasEnCurso);
+    vi.mocked(api.patch).mockResolvedValue({ ruta_id: "ruta-1", pedido_id: "p2", estado_entrega: "ENTREGADO", estado_ruta: "EN_EJECUCION" });
+    const usuario = userEvent.setup();
+    renderPagina();
+
+    await usuario.click(await screen.findByRole("button", { name: /ver paradas/i }));
+    expect(await screen.findByText("Entregado", { selector: "span" })).toBeInTheDocument();
+    expect(screen.getByText("Pedido cancelado")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Marcar entregado Bodega San José" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Marcar entregado Minimarket Real" })).not.toBeInTheDocument();
+
+    await usuario.click(screen.getByRole("button", { name: "Marcar entregado Calzados Puno" }));
+    await waitFor(() =>
+      expect(api.patch).toHaveBeenCalledWith("/api/rutas/ruta-1/paradas/p2/entrega", { estado: "ENTREGADO" }),
+    );
+  });
+
+  it("también se puede marcar una entrega como fallida, y el Operador puede registrar entregas", async () => {
+    rolActual.valor = "OPERADOR";
+    rutasEnLaApi([ruta("CONFIRMADA")], [], "CONFIRMADA", paradasEnCurso);
+    vi.mocked(api.patch).mockResolvedValue({ ruta_id: "ruta-1", pedido_id: "p2", estado_entrega: "FALLIDO", estado_ruta: "EN_EJECUCION" });
+    const usuario = userEvent.setup();
+    renderPagina();
+
+    await usuario.click(await screen.findByRole("button", { name: /ver paradas/i }));
+    await usuario.click(await screen.findByRole("button", { name: "Marcar fallido Calzados Puno" }));
+    await waitFor(() => expect(api.patch).toHaveBeenCalledWith("/api/rutas/ruta-1/paradas/p2/entrega", { estado: "FALLIDO" }));
+  });
+
+  it("un borrador no muestra botones de entrega", async () => {
+    rutasEnLaApi([ruta("PLANIFICADA")], [], "PLANIFICADA", paradasEnCurso);
+    const usuario = userEvent.setup();
+    renderPagina();
+    await usuario.click(await screen.findByRole("button", { name: /ver paradas/i }));
+    await screen.findByText(/Calzados Puno/);
+    expect(screen.queryByRole("button", { name: /marcar entregado/i })).not.toBeInTheDocument();
+  });
+
+  // ------------------------------------------------------------------ incidentes de tráfico
+  const incidenteActivo = { incidente_id: "inc-1", calle: "Av. Ferrocarril", factor: 3, descripcion: null, activo: true, creado_en: "2026-10-21T10:00:00Z" };
+
+  it("lista los incidentes activos; el Administrador los registra y resuelve", async () => {
+    rutasEnLaApi([ruta("CONFIRMADA")], [incidenteActivo]);
+    vi.mocked(api.post).mockResolvedValue({});
+    vi.mocked(api.delete).mockResolvedValue({});
+    const usuario = userEvent.setup();
+    renderPagina();
+
+    expect(await screen.findByText(/3 veces más lento/)).toBeInTheDocument();
+    await usuario.selectOptions(screen.getByLabelText("Vía"), "Calle Real");
+    await usuario.selectOptions(screen.getByLabelText("Congestión"), "5 veces más lento");
+    await usuario.click(screen.getByRole("button", { name: "Registrar incidente" }));
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith("/api/rutas/incidentes", { calle: "Calle Real", factor: 5 }));
+
+    await usuario.click(screen.getByRole("button", { name: "Resolver incidente de Av. Ferrocarril" }));
+    await waitFor(() => expect(api.delete).toHaveBeenCalledWith("/api/rutas/incidentes/inc-1"));
+  });
+
+  it("el Operador ve los incidentes pero no puede registrarlos ni resolverlos", async () => {
+    rolActual.valor = "OPERADOR";
+    rutasEnLaApi([ruta("CONFIRMADA")], [incidenteActivo]);
+    renderPagina();
+
+    expect(await screen.findByText(/3 veces más lento/)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Registrar incidente" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /resolver incidente/i })).not.toBeInTheDocument();
+  });
+
+  it("sin incidentes lo dice", async () => {
+    rutasEnLaApi([ruta("CONFIRMADA")]);
+    renderPagina();
+    expect(await screen.findByText(/no hay incidentes de tráfico activos/i)).toBeInTheDocument();
   });
 });

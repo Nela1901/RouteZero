@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 import { Ayuda, estiloAviso, estiloBotonPrimario, estiloInput } from "../../components/ui";
+import { IncidentesPanel } from "./IncidentesPanel";
 
 interface Parada {
   orden: number;
@@ -14,6 +15,8 @@ interface Parada {
   prioridad: string;
   hora_estimada: string | null;
   minutos_retraso: number;
+  estado_entrega?: "PENDIENTE" | "ENTREGADO" | "FALLIDO";
+  pedido_estado?: string;
 }
 
 interface Metricas {
@@ -38,6 +41,7 @@ export interface Ruta {
   cantidad_paradas: number;
   metricas: Metricas | null;
   paradas: Parada[];
+  reemplaza_ruta_id?: string | null;
 }
 
 interface SinCobertura {
@@ -57,6 +61,28 @@ interface ResultadoGeneracion {
   comparativa_base: { mejora_distancia_pct: number; mejora_co2_pct: number } | null;
   tiempo_ejecucion_s: number;
 }
+
+interface ResultadoReoptimizacion {
+  lote_id: string | null;
+  sin_rutas_activas: boolean;
+  mensaje: string;
+  hora_considerada: string | null;
+  rutas: Ruta[];
+  sin_cobertura: SinCobertura[];
+  pedidos_nuevos: number;
+  pedidos_retirados: number;
+  incidentes_aplicados: string[];
+  tiempo_ejecucion_s: number;
+  dentro_del_limite: boolean;
+}
+
+const ETIQUETAS_ESTADO: Record<string, string> = {
+  PLANIFICADA: "Borrador",
+  CONFIRMADA: "Confirmada",
+  EN_EJECUCION: "En ejecución",
+  COMPLETADA: "Completada",
+  CANCELADA: "Cancelada",
+};
 
 const MOTIVOS: Record<string, string> = {
   PESO_EXCEDE_CAPACIDAD: "Pesa más que cualquier vehículo",
@@ -82,6 +108,8 @@ export function RutasPage() {
   const [fecha, setFecha] = useState(hoyLocal());
   const [rutas, setRutas] = useState<Ruta[]>([]);
   const [resultado, setResultado] = useState<ResultadoGeneracion | null>(null);
+  const [reoptimizacion, setReoptimizacion] = useState<ResultadoReoptimizacion | null>(null);
+  const [horaReferencia, setHoraReferencia] = useState("");
   const [generando, setGenerando] = useState(false);
   const [segundos, setSegundos] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -96,6 +124,7 @@ export function RutasPage() {
 
   useEffect(() => {
     setResultado(null);
+    setReoptimizacion(null);
     setError(null);
     void cargar(fecha);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,6 +140,30 @@ export function RutasPage() {
 
   const borradores = rutas.filter((r) => r.estado === "PLANIFICADA");
   const lote = borradores[0]?.lote_id ?? null;
+  const esReoptimizacion = borradores.some((r) => r.reemplaza_ruta_id);
+  const hayRutasActivas = rutas.some((r) => r.estado === "CONFIRMADA" || r.estado === "EN_EJECUCION");
+  const puedeRegistrarEntregas = usuario?.rolNombre === "ADMINISTRADOR" || usuario?.rolNombre === "OPERADOR";
+
+  async function reoptimizar() {
+    setError(null);
+    setGenerando(true);
+    try {
+      const cuerpo: Record<string, unknown> = { fecha_jornada: fecha };
+      if (horaReferencia) cuerpo.hora_actual = horaReferencia;
+      const respuesta = await api.post<ResultadoReoptimizacion>("/api/rutas/reoptimizar", cuerpo);
+      setReoptimizacion(respuesta);
+      setResultado(null);
+      await cargar();
+      if (respuesta.sin_rutas_activas) notificar("No hay rutas activas para re-optimizar", "error");
+      else notificar("Re-optimización lista como borrador: revísela y confírmela", "exito");
+    } catch (err) {
+      const mensaje = mensajeDeError(err, "No se pudo re-optimizar");
+      setError(mensaje);
+      notificar(mensaje, "error");
+    } finally {
+      setGenerando(false);
+    }
+  }
 
   async function generar() {
     setError(null);
@@ -118,6 +171,7 @@ export function RutasPage() {
     try {
       const respuesta = await api.post<ResultadoGeneracion>("/api/rutas/generar", { fecha_jornada: fecha });
       setResultado(respuesta);
+      setReoptimizacion(null);
       await cargar();
       if (respuesta.imposible) notificar("No fue posible generar rutas", "error");
       else notificar("Rutas generadas como borrador: revíselas y confírmelas", "exito");
@@ -134,15 +188,18 @@ export function RutasPage() {
     if (!lote) return;
     const acepto = await confirmar({
       titulo: "Confirmar rutas",
-      mensaje: "Los pedidos de estas rutas pasarán a ASIGNADO y los conductores podrán verlas. ¿Confirmar?",
+      mensaje: esReoptimizacion
+        ? "Las paradas pendientes de las rutas en curso se reemplazarán por este nuevo plan; lo ya entregado no cambia. ¿Confirmar?"
+        : "Los pedidos de estas rutas pasarán a ASIGNADO y los conductores podrán verlas. ¿Confirmar?",
       textoAceptar: "Confirmar rutas",
     });
     if (!acepto) return;
     setError(null);
     try {
       await api.post(`/api/rutas/lotes/${lote}/confirmar`);
-      notificar("Rutas confirmadas", "exito");
+      notificar(esReoptimizacion ? "Re-optimización confirmada" : "Rutas confirmadas", "exito");
       setResultado(null);
+      setReoptimizacion(null);
       await cargar();
     } catch (err) {
       const mensaje = mensajeDeError(err, "No se pudieron confirmar las rutas");
@@ -165,6 +222,7 @@ export function RutasPage() {
       await api.delete(`/api/rutas/lotes/${lote}`);
       notificar("Borrador descartado", "exito");
       setResultado(null);
+      setReoptimizacion(null);
       await cargar();
     } catch (err) {
       const mensaje = mensajeDeError(err, "No se pudo descartar el borrador");
@@ -190,6 +248,20 @@ export function RutasPage() {
             </span>
             <input id="rutas-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} style={estiloInput} />
           </div>
+          {esAdministrador && hayRutasActivas && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
+              <span>
+                <label htmlFor="rutas-hora">Hora de referencia (opcional)</label>
+                <Ayuda texto="Solo para pruebas y demostraciones: la hora que se toma como «ahora» al re-optimizar. Si se deja vacía se usa la hora real." />
+              </span>
+              <input id="rutas-hora" type="time" value={horaReferencia} onChange={(e) => setHoraReferencia(e.target.value)} style={estiloInput} />
+            </div>
+          )}
+          {esAdministrador && hayRutasActivas && (
+            <button type="button" onClick={() => void reoptimizar()} disabled={generando} style={estiloBotonSecundarioAlto}>
+              Re-optimizar rutas
+            </button>
+          )}
           {esAdministrador && (
             <button type="button" onClick={() => void generar()} disabled={generando} style={estiloBotonPrimario}>
               {generando ? `Calculando… ${segundos} s` : "Generar rutas"}
@@ -221,8 +293,17 @@ export function RutasPage() {
           }}
         >
           <div style={{ fontSize: 13.5 }}>
-            <strong>Borrador sin confirmar.</strong> Estas rutas todavía no se han enviado a los conductores y los pedidos siguen
-            pendientes.
+            {esReoptimizacion ? (
+              <>
+                <strong>Re-optimización sin confirmar.</strong> Al confirmarla reemplazará las paradas pendientes de las rutas en
+                curso; lo ya entregado no cambia.
+              </>
+            ) : (
+              <>
+                <strong>Borrador sin confirmar.</strong> Estas rutas todavía no se han enviado a los conductores y los pedidos siguen
+                pendientes.
+              </>
+            )}
           </div>
           {esAdministrador && (
             <div style={{ display: "flex", gap: 8 }}>
@@ -238,10 +319,12 @@ export function RutasPage() {
       )}
 
       {resultado && <ResumenGeneracion resultado={resultado} />}
+      {reoptimizacion && <ResumenReoptimizacion resultado={reoptimizacion} />}
+      <IncidentesPanel esAdministrador={esAdministrador} />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))", gap: 14, alignItems: "start" }}>
         {rutas.map((r) => (
-          <TarjetaRuta key={r.ruta_id} ruta={r} />
+          <TarjetaRuta key={r.ruta_id} ruta={r} puedeRegistrarEntregas={puedeRegistrarEntregas} onCambio={() => void cargar()} />
         ))}
       </div>
       {rutas.length === 0 && !generando && (
@@ -290,12 +373,67 @@ function ResumenGeneracion({ resultado }: { resultado: ResultadoGeneracion }) {
   );
 }
 
-function TarjetaRuta({ ruta }: { ruta: Ruta }) {
+function ResumenReoptimizacion({ resultado }: { resultado: ResultadoReoptimizacion }) {
+  if (resultado.sin_rutas_activas) {
+    return (
+      <div role="status" style={{ ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
+        {resultado.mensaje}
+      </div>
+    );
+  }
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ fontSize: 13, color: "var(--rz-text-muted)", lineHeight: 1.6 }}>
+        Re-optimizado en {numero(resultado.tiempo_ejecucion_s)} s
+        {resultado.dentro_del_limite ? " (dentro del límite de 30 s)" : " (superó el límite de 30 s)"}, tomando como hora{" "}
+        <strong>{hora(resultado.hora_considerada)}</strong>. {resultado.pedidos_nuevos} pedido(s) nuevo(s) integrado(s) y{" "}
+        {resultado.pedidos_retirados} retirado(s) por cancelación.
+        {resultado.incidentes_aplicados.length > 0 && <> Incidentes aplicados: {resultado.incidentes_aplicados.join(", ")}.</>}
+      </div>
+      {resultado.mensaje && <div style={{ fontSize: 13 }}>{resultado.mensaje}</div>}
+      {resultado.sin_cobertura.length > 0 && (
+        <div style={{ ...estiloAviso, display: "flex", flexDirection: "column", gap: 6 }}>
+          <strong>{resultado.sin_cobertura.length} pedido(s) sin cobertura</strong>
+          {resultado.sin_cobertura.map((s) => (
+            <div key={s.pedido_id} style={{ fontSize: 12.5 }}>
+              <span style={{ fontFamily: "var(--rz-font-mono)" }}>{s.pedido_id.slice(0, 8)}</span> — {MOTIVOS[s.motivo] ?? s.motivo}.{" "}
+              {s.sugerencia}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TarjetaRuta({
+  ruta,
+  puedeRegistrarEntregas,
+  onCambio,
+}: {
+  ruta: Ruta;
+  puedeRegistrarEntregas: boolean;
+  onCambio: () => void;
+}) {
+  const { notificar } = useToast();
   const [abierta, setAbierta] = useState(false);
   const [paradas, setParadas] = useState<Parada[]>(ruta.paradas);
   const [cargando, setCargando] = useState(false);
   const m = ruta.metricas;
   const borrador = ruta.estado === "PLANIFICADA";
+  const activa = ruta.estado === "CONFIRMADA" || ruta.estado === "EN_EJECUCION";
+
+  async function marcar(p: Parada, estado: "ENTREGADO" | "FALLIDO") {
+    try {
+      await api.patch(`/api/rutas/${ruta.ruta_id}/paradas/${p.pedido_id}/entrega`, { estado });
+      notificar(estado === "ENTREGADO" ? `Entrega a ${p.cliente} registrada` : `Entrega fallida a ${p.cliente} registrada`, "exito");
+      const detalle = await api.get<Ruta>(`/api/rutas/${ruta.ruta_id}`);
+      setParadas(detalle.paradas);
+      onCambio();
+    } catch (err) {
+      notificar(mensajeDeError(err, "No se pudo registrar la entrega"), "error");
+    }
+  }
 
   async function alternar() {
     const abrir = !abierta;
@@ -342,7 +480,7 @@ function TarjetaRuta({ ruta }: { ruta: Ruta }) {
             whiteSpace: "nowrap",
           }}
         >
-          {borrador ? "Borrador" : ruta.estado === "CONFIRMADA" ? "Confirmada" : ruta.estado}
+          {ETIQUETAS_ESTADO[ruta.estado] ?? ruta.estado}
         </span>
       </div>
 
@@ -362,20 +500,40 @@ function TarjetaRuta({ ruta }: { ruta: Ruta }) {
       {abierta && (
         <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
           {cargando && <li style={{ fontSize: 12.5, color: "var(--rz-text-muted)" }}>Cargando…</li>}
-          {paradas.map((p) => (
-            <li key={p.pedido_id} style={{ display: "flex", gap: 10, fontSize: 12.5, alignItems: "baseline" }}>
-              <span style={{ fontFamily: "var(--rz-font-mono)", color: "var(--rz-text-muted)", minWidth: 22 }}>{p.orden}.</span>
-              <span style={{ flexGrow: 1, minWidth: 0 }}>
-                {p.cliente}
-                {p.prioridad === "EXPRESS" && <strong style={{ color: "var(--rz-danger)" }}> · EXPRESS</strong>}
-                <span style={{ color: "var(--rz-text-muted)" }}> · {numero(p.peso_kg, 0)} kg</span>
-              </span>
-              <span style={{ fontFamily: "var(--rz-font-mono)", whiteSpace: "nowrap" }}>
-                {hora(p.hora_estimada)}
-                {p.minutos_retraso > 0 && <span style={{ color: "var(--rz-danger)" }}> +{p.minutos_retraso} min</span>}
-              </span>
-            </li>
-          ))}
+          {paradas.map((p) => {
+            const cancelada = p.pedido_estado === "CANCELADO";
+            const estadoEntrega = p.estado_entrega ?? "PENDIENTE";
+            return (
+              <li key={p.pedido_id} style={{ display: "flex", gap: 10, fontSize: 12.5, alignItems: "baseline", flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "var(--rz-font-mono)", color: "var(--rz-text-muted)", minWidth: 22 }}>{p.orden}.</span>
+                <span style={{ flexGrow: 1, minWidth: 0, textDecoration: cancelada ? "line-through" : "none" }}>
+                  {p.cliente}
+                  {p.prioridad === "EXPRESS" && <strong style={{ color: "var(--rz-danger)" }}> · EXPRESS</strong>}
+                  <span style={{ color: "var(--rz-text-muted)" }}> · {numero(p.peso_kg, 0)} kg</span>
+                </span>
+                <span style={{ fontFamily: "var(--rz-font-mono)", whiteSpace: "nowrap" }}>
+                  {hora(p.hora_estimada)}
+                  {p.minutos_retraso > 0 && <span style={{ color: "var(--rz-danger)" }}> +{p.minutos_retraso} min</span>}
+                </span>
+                {cancelada && <span style={{ color: "var(--rz-danger)", fontWeight: 600 }}>Pedido cancelado</span>}
+                {!cancelada && estadoEntrega !== "PENDIENTE" && (
+                  <span style={{ fontWeight: 600, color: estadoEntrega === "ENTREGADO" ? "var(--rz-accent)" : "var(--rz-danger)" }}>
+                    {estadoEntrega === "ENTREGADO" ? "Entregado" : "Fallido"}
+                  </span>
+                )}
+                {!cancelada && estadoEntrega === "PENDIENTE" && activa && puedeRegistrarEntregas && (
+                  <span style={{ display: "flex", gap: 6 }}>
+                    <button type="button" onClick={() => void marcar(p, "ENTREGADO")} aria-label={`Marcar entregado ${p.cliente}`} style={estiloBotonMini}>
+                      Entregado
+                    </button>
+                    <button type="button" onClick={() => void marcar(p, "FALLIDO")} aria-label={`Marcar fallido ${p.cliente}`} style={estiloBotonMini}>
+                      Fallido
+                    </button>
+                  </span>
+                )}
+              </li>
+            );
+          })}
         </ol>
       )}
     </div>
@@ -390,6 +548,29 @@ function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
     </div>
   );
 }
+
+const estiloBotonMini: React.CSSProperties = {
+  height: 28,
+  padding: "0 10px",
+  borderRadius: 8,
+  border: "1px solid var(--rz-panel-border)",
+  background: "transparent",
+  color: "var(--rz-text)",
+  fontSize: 12,
+  cursor: "pointer",
+};
+
+const estiloBotonSecundarioAlto: React.CSSProperties = {
+  height: 40,
+  padding: "0 18px",
+  borderRadius: 12,
+  border: "1px solid var(--rz-accent)",
+  background: "transparent",
+  color: "var(--rz-accent)",
+  fontWeight: 700,
+  fontSize: 13.5,
+  cursor: "pointer",
+};
 
 const estiloBotonSecundario: React.CSSProperties = {
   height: 36,
