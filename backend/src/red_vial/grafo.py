@@ -6,6 +6,7 @@ corto entre nodos. No depende de FastAPI ni de la base de datos.
 """
 
 import math
+import unicodedata
 from functools import lru_cache
 from pathlib import Path
 
@@ -15,6 +16,11 @@ from scipy.spatial import cKDTree
 
 RUTA_POR_DEFECTO = Path(__file__).resolve().parents[2] / "data" / "huancayo_grafo.npz"
 METROS_POR_GRADO = 111_320.0
+
+
+def normalizar_calle(texto: str) -> str:
+    """Minúsculas y sin tildes, para comparar nombres de calle ("Giráldez" con "Giraldez")."""
+    return unicodedata.normalize("NFD", str(texto)).encode("ascii", "ignore").decode().lower().strip()
 
 
 def _csr_minimo(u: np.ndarray, v: np.ndarray, peso: np.ndarray, n: int) -> csr_matrix:
@@ -43,6 +49,32 @@ class Grafo:
         # Proyección plana (metros) alrededor de la latitud media: suficiente a escala de ciudad.
         self._coseno = math.cos(math.radians(float(self.coords[:, 0].mean())))
         self._arbol = cKDTree(self._proyectar(self.coords))
+
+    def tiempo_con_congestion(self, factores: dict[str, float] | None) -> csr_matrix:
+        """Matriz de tiempos con los tramos de las calles indicadas multiplicados por su factor (>1 = más lento).
+
+        `factores` va de nombre de calle a factor. Un nombre coincide con todo tramo cuyo nombre lo contenga
+        sin importar mayúsculas ni tildes ("ferrocarril" alcanza "Avenida Ferrocarril" y "Av. Ferrocarril").
+        Sin factores devuelve la matriz base, sin recalcular nada."""
+        if not factores:
+            return self.por_tiempo
+        multiplicador = np.ones(len(self.seg))
+        normalizados = [normalizar_calle(n) for n in self.nombres]
+        for calle, factor in factores.items():
+            clave = normalizar_calle(calle)
+            ids = [i for i, n in enumerate(normalizados) if clave and clave in n]
+            if ids:
+                multiplicador[np.isin(self.nombre_id, ids)] *= factor
+        return _csr_minimo(self.u, self.v, self.seg * multiplicador, self.n)
+
+    def tramos_de_calle(self, calle: str) -> list[list[tuple[float, float]]]:
+        """Segmentos (origen y destino en lat, lon) de las calles cuyo nombre contiene `calle`, para dibujarlas."""
+        clave = normalizar_calle(calle)
+        ids = [i for i, n in enumerate(self.nombres) if clave and clave in normalizar_calle(n)]
+        if not ids:
+            return []
+        indices = np.flatnonzero(np.isin(self.nombre_id, ids))
+        return [[tuple(self.coords[self.u[i]]), tuple(self.coords[self.v[i]])] for i in indices]
 
     def _proyectar(self, puntos: np.ndarray) -> np.ndarray:
         puntos = np.asarray(puntos, dtype=np.float64)

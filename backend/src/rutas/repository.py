@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 _COLUMNAS_RUTA = (
     "r.ruta_id, r.lote_id, r.fecha_jornada, r.estado, r.hora_salida, r.hora_regreso, r.distancia_km, r.tiempo_min, "
-    "v.vehiculo_id, v.placa, v.tipo, c.conductor_id, c.nombre AS conductor_nombre, "
+    "r.reemplaza_ruta_id, v.vehiculo_id, v.placa, v.tipo, c.conductor_id, c.nombre AS conductor_nombre, "
     "m.emision_co2_kg, m.combustible_l, m.combustible_ahorrado_l, m.distancia_optimizada_km, m.cumplimiento_ventanas_pct, "
     "(SELECT count(*) FROM ruta_pedidos rp WHERE rp.ruta_id = r.ruta_id) AS cantidad_paradas"
 )
@@ -151,6 +151,8 @@ class RepositorioRutas:
             d = dict(r._mapping)
             d["ruta_id"], d["lote_id"] = str(d["ruta_id"]), str(d["lote_id"])
             d["vehiculo_id"], d["conductor_id"] = str(d["vehiculo_id"]), str(d["conductor_id"])
+            if d["reemplaza_ruta_id"] is not None:
+                d["reemplaza_ruta_id"] = str(d["reemplaza_ruta_id"])
             rutas.append(d)
         return rutas
 
@@ -169,8 +171,8 @@ class RepositorioRutas:
             return {}
         rows = self.session.execute(
             text(
-                "SELECT rp.ruta_id, rp.orden_entrega, rp.pedido_id, rp.hora_estimada, rp.minutos_retraso, "
-                "p.descripcion, p.peso_kg, p.prioridad, p.latitud, p.longitud, cl.nombre AS cliente "
+                "SELECT rp.ruta_id, rp.orden_entrega, rp.pedido_id, rp.hora_estimada, rp.minutos_retraso, rp.estado_entrega, "
+                "p.descripcion, p.peso_kg, p.prioridad, p.latitud, p.longitud, p.estado AS pedido_estado, cl.nombre AS cliente "
                 "FROM ruta_pedidos rp JOIN pedidos p ON p.pedido_id = rp.pedido_id "
                 "JOIN clientes cl ON cl.cliente_id = p.cliente_id "
                 "WHERE rp.ruta_id = ANY(CAST(:ids AS uuid[])) ORDER BY rp.ruta_id, rp.orden_entrega"
@@ -183,3 +185,223 @@ class RepositorioRutas:
             d["ruta_id"], d["pedido_id"] = str(d["ruta_id"]), str(d["pedido_id"])
             salida.setdefault(d["ruta_id"], []).append(d)
         return salida
+
+    # ------------------------------------------------------------------ re-optimización (HU-012)
+    def rutas_activas(self, fecha: date) -> list[dict]:
+        """Rutas confirmadas o en ejecución de la fecha, con los datos de su vehículo y su conductor."""
+        rows = self.session.execute(
+            text(
+                "SELECT r.ruta_id, r.estado, r.hora_salida, v.vehiculo_id, v.placa, v.tipo, v.capacidad_kg, v.consumo_km_l, "
+                "v.factor_emision_co2, v.estado AS vehiculo_estado, c.conductor_id, c.categoria_licencia, c.licencia_vence, "
+                "c.horario_inicio, c.horario_fin, c.disponible "
+                "FROM rutas r JOIN vehiculos v ON v.vehiculo_id = r.vehiculo_id JOIN conductores c ON c.conductor_id = r.conductor_id "
+                "WHERE r.fecha_jornada = :fecha AND r.estado IN ('CONFIRMADA', 'EN_EJECUCION') ORDER BY v.placa"
+            ),
+            {"fecha": fecha},
+        ).all()
+        salida = []
+        for r in rows:
+            d = dict(r._mapping)
+            for clave in ("ruta_id", "vehiculo_id", "conductor_id"):
+                d[clave] = str(d[clave])
+            salida.append(d)
+        return salida
+
+    def paradas_para_reoptimizar(self, ruta_ids: list[str]) -> dict[str, list[dict]]:
+        """Paradas de las rutas con el estado de su entrega y los datos del pedido que necesita el motor."""
+        if not ruta_ids:
+            return {}
+        rows = self.session.execute(
+            text(
+                "SELECT rp.ruta_id, rp.pedido_id, rp.orden_entrega, rp.estado_entrega, rp.entregado_en, p.estado AS pedido_estado, "
+                "p.peso_kg, p.prioridad, p.latitud, p.longitud, p.ventana_inicio, p.ventana_fin "
+                "FROM ruta_pedidos rp JOIN pedidos p ON p.pedido_id = rp.pedido_id "
+                "WHERE rp.ruta_id = ANY(CAST(:ids AS uuid[])) ORDER BY rp.ruta_id, rp.orden_entrega"
+            ),
+            {"ids": ruta_ids},
+        ).all()
+        salida: dict[str, list[dict]] = {}
+        for r in rows:
+            d = dict(r._mapping)
+            d["ruta_id"], d["pedido_id"] = str(d["ruta_id"]), str(d["pedido_id"])
+            salida.setdefault(d["ruta_id"], []).append(d)
+        return salida
+
+    def borrar_borradores_de_reemplazo(self, ruta_ids: list[str]) -> int:
+        """Elimina los borradores de re-optimización anteriores de esas rutas en curso."""
+        return self.session.execute(
+            text("DELETE FROM rutas WHERE reemplaza_ruta_id = ANY(CAST(:ids AS uuid[])) AND estado = 'PLANIFICADA'"), {"ids": ruta_ids}
+        ).rowcount
+
+    def crear_rutas_de_reemplazo(self, filas: list[dict]) -> None:
+        self._insertar_filas(
+            "rutas",
+            ("ruta_id", "lote_id", "vehiculo_id", "conductor_id", "fecha_jornada", "hora_salida", "hora_regreso", "distancia_km",
+             "tiempo_min", "reemplaza_ruta_id"),
+            filas,
+        )
+
+    def reemplazos_del_lote(self, lote_id: str) -> list[dict]:
+        """Borradores del lote que reemplazan a una ruta en curso (vacío si el lote es una generación normal)."""
+        rows = self.session.execute(
+            text(
+                "SELECT ruta_id, reemplaza_ruta_id, hora_regreso, distancia_km, tiempo_min FROM rutas "
+                "WHERE lote_id = :lote AND reemplaza_ruta_id IS NOT NULL ORDER BY ruta_id"
+            ),
+            {"lote": lote_id},
+        ).all()
+        return [
+            dict(r._mapping) | {"ruta_id": str(r[0]), "reemplaza_ruta_id": str(r[1])} for r in rows
+        ]
+
+    def bloquear_rutas_originales(self, ids: list[str]) -> list[dict]:
+        rows = self.session.execute(
+            text("SELECT ruta_id, estado FROM rutas WHERE ruta_id = ANY(CAST(:ids AS uuid[])) ORDER BY ruta_id FOR UPDATE"), {"ids": ids}
+        ).all()
+        return [{"ruta_id": str(r[0]), "estado": r[1]} for r in rows]
+
+    def pedidos_invalidos_del_reemplazo(self, lote_id: str) -> list[str]:
+        """Pedidos de los borradores que ya no se pueden asignar: no están pendientes ni siguen asignados a una de
+        las rutas en curso que se reemplazan (p. ej. se cancelaron después de re-optimizar). Bloquea sus filas."""
+        rows = self.session.execute(
+            text(
+                "SELECT p.pedido_id FROM ruta_pedidos rp JOIN rutas d ON d.ruta_id = rp.ruta_id "
+                "JOIN pedidos p ON p.pedido_id = rp.pedido_id "
+                "WHERE d.lote_id = :lote AND d.reemplaza_ruta_id IS NOT NULL AND NOT (p.estado = 'PENDIENTE' OR "
+                "(p.estado = 'ASIGNADO' AND EXISTS (SELECT 1 FROM ruta_pedidos o WHERE o.pedido_id = p.pedido_id "
+                "AND o.estado_entrega = 'PENDIENTE' AND o.ruta_id IN "
+                "(SELECT reemplaza_ruta_id FROM rutas WHERE lote_id = :lote)))) "
+                "ORDER BY p.pedido_id FOR UPDATE OF p"
+            ),
+            {"lote": lote_id},
+        ).all()
+        return [str(r[0]) for r in rows]
+
+    def confirmar_reemplazo(self, lote_id: str, reemplazos: list[dict]) -> tuple[int, int]:
+        """Pasa las paradas pendientes de cada ruta en curso a las del borrador de su re-optimización.
+        Devuelve (rutas actualizadas, pedidos nuevos asignados)."""
+        nuevos = self.session.execute(
+            text(
+                "UPDATE pedidos SET estado = 'ASIGNADO' WHERE estado = 'PENDIENTE' AND pedido_id IN "
+                "(SELECT rp.pedido_id FROM ruta_pedidos rp JOIN rutas r ON r.ruta_id = rp.ruta_id WHERE r.lote_id = :lote)"
+            ),
+            {"lote": lote_id},
+        ).rowcount
+        originales = [r["reemplaza_ruta_id"] for r in reemplazos]
+        # Primero se vacían las paradas pendientes de todas las rutas: un pedido puede cambiar de ruta
+        self.session.execute(
+            text("DELETE FROM ruta_pedidos WHERE ruta_id = ANY(CAST(:ids AS uuid[])) AND estado_entrega = 'PENDIENTE'"), {"ids": originales}
+        )
+        for r in reemplazos:
+            original, borrador = r["reemplaza_ruta_id"], r["ruta_id"]
+            hechas = self.session.execute(
+                text("SELECT coalesce(max(orden_entrega), 0) FROM ruta_pedidos WHERE ruta_id = :ruta"), {"ruta": original}
+            ).scalar_one()
+            self.session.execute(
+                text("UPDATE ruta_pedidos SET ruta_id = :original, orden_entrega = orden_entrega + :hechas WHERE ruta_id = :borrador"),
+                {"original": original, "borrador": borrador, "hechas": hechas},
+            )
+            self.session.execute(
+                text(
+                    "DELETE FROM metricas_sostenibilidad WHERE ruta_id = :original AND "
+                    "EXISTS (SELECT 1 FROM metricas_sostenibilidad WHERE ruta_id = :borrador)"
+                ),
+                {"original": original, "borrador": borrador},
+            )
+            self.session.execute(
+                text("UPDATE metricas_sostenibilidad SET ruta_id = :original WHERE ruta_id = :borrador"),
+                {"original": original, "borrador": borrador},
+            )
+            quedan = self.session.execute(
+                text("SELECT count(*) FROM ruta_pedidos WHERE ruta_id = :ruta AND estado_entrega = 'PENDIENTE'"), {"ruta": original}
+            ).scalar_one()
+            estado = None
+            if quedan == 0:  # sin paradas por atender: terminó si ya atendió alguna, y si no se cancela
+                estado = "COMPLETADA" if hechas else "CANCELADA"
+            self.session.execute(
+                text(
+                    "UPDATE rutas SET hora_regreso = :hr, distancia_km = :dk, tiempo_min = :tm, estado = coalesce(:estado, estado) "
+                    "WHERE ruta_id = :original"
+                ),
+                {"hr": r["hora_regreso"], "dk": r["distancia_km"], "tm": r["tiempo_min"], "estado": estado, "original": original},
+            )
+            self.session.execute(text("DELETE FROM rutas WHERE ruta_id = :borrador"), {"borrador": borrador})
+        return len(reemplazos), nuevos
+
+    # ------------------------------------------------------------------ entregas (HU-012)
+    def obtener_parada(self, ruta_id: str, pedido_id: str) -> dict | None:
+        row = self.session.execute(
+            text(
+                "SELECT rp.estado_entrega, r.estado AS estado_ruta FROM ruta_pedidos rp JOIN rutas r ON r.ruta_id = rp.ruta_id "
+                "WHERE rp.ruta_id = :ruta AND rp.pedido_id = :pedido"
+            ),
+            {"ruta": ruta_id, "pedido": pedido_id},
+        ).one_or_none()
+        return dict(row._mapping) if row else None
+
+    def marcar_entrega(self, ruta_id: str, pedido_id: str, estado: str) -> bool:
+        """Marca la parada solo si sigue pendiente y su ruta está activa. Devuelve si hubo cambio."""
+        return bool(
+            self.session.execute(
+                text(
+                    "UPDATE ruta_pedidos rp SET estado_entrega = :estado, entregado_en = CURRENT_TIMESTAMP FROM rutas r "
+                    "WHERE rp.ruta_id = r.ruta_id AND rp.ruta_id = :ruta AND rp.pedido_id = :pedido "
+                    "AND rp.estado_entrega = 'PENDIENTE' AND r.estado IN ('CONFIRMADA', 'EN_EJECUCION')"
+                ),
+                {"estado": estado, "ruta": ruta_id, "pedido": pedido_id},
+            ).rowcount
+        )
+
+    def marcar_pedido_entregado(self, pedido_id: str) -> None:
+        self.session.execute(
+            text("UPDATE pedidos SET estado = 'ENTREGADO' WHERE pedido_id = :pedido AND estado IN ('ASIGNADO', 'EN_CAMINO')"),
+            {"pedido": pedido_id},
+        )
+
+    def actualizar_estado_de_ruta(self, ruta_id: str) -> str:
+        """EN_EJECUCION mientras queden paradas por atender (sin contar pedidos cancelados); COMPLETADA al terminar."""
+        pendientes = self.session.execute(
+            text(
+                "SELECT count(*) FROM ruta_pedidos rp JOIN pedidos p ON p.pedido_id = rp.pedido_id "
+                "WHERE rp.ruta_id = :ruta AND rp.estado_entrega = 'PENDIENTE' AND p.estado <> 'CANCELADO'"
+            ),
+            {"ruta": ruta_id},
+        ).scalar_one()
+        estado = "EN_EJECUCION" if pendientes else "COMPLETADA"
+        self.session.execute(text("UPDATE rutas SET estado = :estado WHERE ruta_id = :ruta"), {"estado": estado, "ruta": ruta_id})
+        return estado
+
+    # ------------------------------------------------------------------ incidentes de tráfico (RN-012)
+    _COLUMNAS_INCIDENTE = "incidente_id, calle, factor, descripcion, activo, creado_en, resuelto_en"
+
+    def _incidente(self, row) -> dict:
+        d = dict(row._mapping)
+        d["incidente_id"], d["factor"] = str(d["incidente_id"]), float(d["factor"])
+        return d
+
+    def crear_incidente(self, usuario_id: str, calle: str, factor: float, descripcion: str | None) -> dict:
+        row = self.session.execute(
+            text(
+                "INSERT INTO incidentes_trafico (calle, factor, descripcion, registrado_por) "  # nosec B608
+                f"VALUES (:calle, :factor, :descripcion, :usuario) RETURNING {self._COLUMNAS_INCIDENTE}"
+            ),
+            {"calle": calle, "factor": factor, "descripcion": descripcion, "usuario": usuario_id},
+        ).one()
+        return self._incidente(row)
+
+    def incidentes(self, solo_activos: bool = True) -> list[dict]:
+        condicion = "WHERE activo" if solo_activos else ""
+        rows = self.session.execute(
+            text(f"SELECT {self._COLUMNAS_INCIDENTE} FROM incidentes_trafico {condicion} ORDER BY creado_en DESC")  # nosec B608
+        ).all()
+        return [self._incidente(r) for r in rows]
+
+    def resolver_incidente(self, incidente_id: str) -> dict | None:
+        row = self.session.execute(
+            text(
+                "UPDATE incidentes_trafico SET activo = FALSE, resuelto_en = CURRENT_TIMESTAMP "  # nosec B608
+                f"WHERE incidente_id = :id AND activo RETURNING {self._COLUMNAS_INCIDENTE}"
+            ),
+            {"id": incidente_id},
+        ).one_or_none()
+        return self._incidente(row) if row else None

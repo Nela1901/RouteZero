@@ -90,6 +90,15 @@ class Parametros:
     reserva_mejora_local: float = 0.15    # fracción del tiempo que se deja para pulir la mejor solución
 
 
+@dataclass(frozen=True)
+class Arranque:
+    """Desde dónde y cuándo parte un vehículo que ya está en ruta (re-optimización, HU-012)."""
+
+    nodo: int               # índice de la matriz donde está el vehículo (0 = depósito)
+    salida_s: float         # instante desde el que puede atender nuevas paradas
+    trabajo_s: float = 0.0  # trabajo continuo acumulado desde su último descanso (RN-003)
+
+
 @dataclass
 class Problema:
     pedidos: list
@@ -98,6 +107,10 @@ class Problema:
     distancia_m: np.ndarray
     tiempo_s: np.ndarray
     parametros: Parametros
+    # Solo para re-optimizar rutas en curso; sin ellos el motor trabaja como en una generación nueva.
+    pares_fijos: list | None = None                    # pares vehículo-conductor ya asignados (no se vuelven a emparejar)
+    arranques: dict = field(default_factory=dict)      # id de vehículo -> Arranque
+    plan_vigente: dict = field(default_factory=dict)   # id de vehículo -> ids de pedido en el orden actual
 
 
 @dataclass

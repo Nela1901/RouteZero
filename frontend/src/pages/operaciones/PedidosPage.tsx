@@ -85,10 +85,13 @@ export function PedidosPage() {
     void cargar();
   }, []);
 
-  async function cancelar(pedidoId: string) {
+  async function cancelar(pedidoId: string, estado: EstadoPedido) {
     const acepto = await confirmar({
       titulo: "Cancelar pedido",
-      mensaje: "¿Cancelar este pedido? Esta acción no se puede deshacer.",
+      mensaje:
+        estado === "ASIGNADO"
+          ? "Este pedido ya está en una ruta. Se cancelará y se retirará de la ruta al re-optimizar. Esta acción no se puede deshacer. ¿Cancelar?"
+          : "¿Cancelar este pedido? Esta acción no se puede deshacer.",
       textoAceptar: "Cancelar pedido",
       peligroso: true,
     });
@@ -169,7 +172,7 @@ export function PedidosPage() {
               nombre={p.descripcion ?? "pedido sin descripción"}
               onVer={() => setPedidoSeleccionado(p)}
               onEditar={p.estado === "PENDIENTE" ? () => setPedidoEnEdicion(p) : undefined}
-              onEliminar={p.estado === "PENDIENTE" ? () => void cancelar(p.pedido_id) : undefined}
+              onEliminar={p.estado === "PENDIENTE" || p.estado === "ASIGNADO" ? () => void cancelar(p.pedido_id, p.estado) : undefined}
               textoEliminar="Cancelar"
             />
           </div>

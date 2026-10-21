@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from src.algoritmo.modelo import Itinerario, Par, Parada, Parametros, Problema
+from src.algoritmo.modelo import Arranque, Itinerario, Par, Parada, Parametros, Problema
 
 EPS = 1e-9
 
@@ -48,22 +48,29 @@ class ContextoPar:
     consumo_km_l: float
     factor_co2: float
     costo_por_km: float  # costo de distancia + combustible + CO2 por kilómetro recorrido
+    nodo_inicio: int = 0            # índice de la matriz de donde parte (0 = depósito)
+    trabajo_inicial_s: float = 0.0  # trabajo continuo ya acumulado al partir
 
     @classmethod
-    def crear(cls, par: Par, p: Parametros) -> "ContextoPar":
+    def crear(cls, par: Par, p: Parametros, arranque: Arranque | None = None) -> "ContextoPar":
         salida = max(float(p.hora_inicio_jornada_s), float(par.conductor.inicio_s))
-        limite = min(salida + p.jornada_max_s, float(par.conductor.fin_s))
+        limite = min(salida + p.jornada_max_s, float(par.conductor.fin_s))  # la jornada cuenta desde la salida original
         v = par.vehiculo
         por_km = p.peso_distancia + p.peso_combustible / v.consumo_km_l + p.peso_co2 * v.factor_co2_kg_km
-        return cls(par, salida, limite, v.capacidad_kg, v.consumo_km_l, v.factor_co2_kg_km, por_km)
+        if arranque is None:
+            return cls(par, salida, limite, v.capacidad_kg, v.consumo_km_l, v.factor_co2_kg_km, por_km)
+        return cls(
+            par, max(salida, float(arranque.salida_s)), limite, v.capacidad_kg, v.consumo_km_l, v.factor_co2_kg_km, por_km,
+            arranque.nodo, float(arranque.trabajo_s),
+        )
 
 
 def simular_ruta(secuencia: list, ctx: ContextoPar, d: Datos) -> Itinerario:
     """Itinerario de una ruta que visita los pedidos de `secuencia` (índices de pedido) en ese orden."""
     p = d.p
     t = ctx.salida_s
-    trabajo = 0.0
-    pos = 0
+    trabajo = ctx.trabajo_inicial_s
+    pos = ctx.nodo_inicio
     metros = 0.0
     carga = 0.0
     descansos = 0

@@ -40,7 +40,9 @@ def _por_bloques(matriz_dispersa, fuentes: np.ndarray) -> np.ndarray:
     return salida
 
 
-def calcular_matrices(puntos, grafo: Grafo | None, factor_velocidad: float, umbral_m: float = UMBRAL_SNAP_M) -> Matrices:
+def calcular_matrices(
+    puntos, grafo: Grafo | None, factor_velocidad: float, umbral_m: float = UMBRAL_SNAP_M, congestion: dict[str, float] | None = None
+) -> Matrices:
     """Matrices (n × n) de distancia (m) y tiempo (s) entre los puntos (lat, lon).
 
     - Con grafo: camino más corto por calles; cada punto se asigna a su nodo más cercano y se suman
@@ -48,6 +50,8 @@ def calcular_matrices(puntos, grafo: Grafo | None, factor_velocidad: float, umbr
     - Los puntos a más de `umbral_m` de una calle, y todos los puntos si no hay grafo, usan
       línea recta × 1.35.
     El tiempo usa la velocidad base de cada tipo de vía dividida por `factor_velocidad`.
+    - `congestion` (nombre de calle -> factor de lentitud) encarece solo el tiempo de esas calles (RN-012);
+      las distancias no cambian. Sin grafo no tiene efecto.
     """
     puntos = np.asarray(puntos, dtype=np.float64).reshape(-1, 2)
     n = len(puntos)
@@ -64,7 +68,7 @@ def calcular_matrices(puntos, grafo: Grafo | None, factor_velocidad: float, umbr
 
     unicos, inverso = np.unique(nodos[resuelto], return_inverse=True)
     dist_u = _por_bloques(grafo.por_distancia, unicos)
-    tiempo_u = _por_bloques(grafo.por_tiempo, unicos) / factor_velocidad
+    tiempo_u = _por_bloques(grafo.tiempo_con_congestion(congestion), unicos) / factor_velocidad
 
     # Posición de cada punto resuelto dentro de `unicos`; los no resueltos apuntan a 0 y se descartan después
     pos = np.zeros(n, dtype=np.int64)
@@ -96,5 +100,5 @@ class RedVial:
     def cargar(cls, factor_velocidad: float, ruta: Path | None = None) -> "RedVial":
         return cls(cargar_grafo(ruta), factor_velocidad)
 
-    def matrices(self, puntos) -> Matrices:
-        return calcular_matrices(puntos, self.grafo, self.factor_velocidad)
+    def matrices(self, puntos, congestion: dict[str, float] | None = None) -> Matrices:
+        return calcular_matrices(puntos, self.grafo, self.factor_velocidad, congestion=congestion)
