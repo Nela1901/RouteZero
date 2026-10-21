@@ -24,11 +24,12 @@ class Solucion:
     itinerarios: list = field(default_factory=list)
     costo: float = 0.0
 
-    def arcos(self) -> list:
-        """Pares (desde, hacia) en índices de matriz, incluidos los viajes desde y hacia el depósito."""
+    def arcos(self, contextos: list | None = None) -> list:
+        """Pares (desde, hacia) en índices de matriz, incluidos los viajes desde y hacia el depósito.
+        Con `contextos`, cada ruta parte del nodo de arranque de su vehículo (re-optimización)."""
         salida = []
-        for _, secuencia in self.rutas:
-            anterior = 0
+        for k, secuencia in self.rutas:
+            anterior = contextos[k].nodo_inicio if contextos else 0
             for c in secuencia:
                 salida.append((anterior, c + 1))
                 anterior = c + 1
@@ -45,7 +46,7 @@ def construir(d: Datos, contextos: list, tau, rng, q0: float = 1.0, alfa: float 
         if not libres.any():
             break
         secuencia: list[int] = []
-        t, trabajo, pos, carga = ctx.salida_s, 0.0, 0, 0.0
+        t, trabajo, pos, carga = ctx.salida_s, ctx.trabajo_inicial_s, ctx.nodo_inicio, 0.0
         while True:
             idx = np.flatnonzero(libres)
             if idx.size == 0:

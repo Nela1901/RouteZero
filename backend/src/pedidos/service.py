@@ -81,11 +81,13 @@ class ServicioPedidos:
         actual = self.repo.obtener(pedido_id)
         if actual is None:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Pedido no encontrado")
-        actualizado = self.repo.cambiar_estado(pedido_id, "CANCELADO", desde_estados=["PENDIENTE"])
+        # HU-012: un pedido ASIGNADO también se cancela. Su parada sigue en la ruta hasta que se re-optimice y se
+        # confirme el nuevo plan; la re-optimización la retira.
+        actualizado = self.repo.cambiar_estado(pedido_id, "CANCELADO", desde_estados=["PENDIENTE", "ASIGNADO"])
         if actualizado is None:
             raise HTTPException(
                 status.HTTP_409_CONFLICT,
-                "El pedido ya fue asignado a una ruta; debe re-optimizarse la ruta para cancelarlo",
+                "Solo se puede cancelar un pedido pendiente o asignado; este ya fue entregado o cancelado",
             )
         return actualizado
 

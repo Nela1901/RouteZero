@@ -6,7 +6,7 @@ from functools import lru_cache
 
 from fastapi import HTTPException, status
 
-from src.algoritmo.modelo import Conductor, Parametros, Pedido, Problema, Vehiculo
+from src.algoritmo.modelo import Arranque, Conductor, Par, Parametros, Pedido, Problema, Vehiculo
 from src.algoritmo.motor import resolver
 from src.auditoria.repository import RepositorioAuditoria
 from src.core.config import Settings, settings
@@ -18,6 +18,11 @@ PERU = timezone(timedelta(hours=-5))  # Perú no usa horario de verano
 PRESUPUESTO_MINIMO_S = 1.0
 # Tiempo que se deja dentro del presupuesto total para guardar las rutas y responder (RN-015: 45 s en total)
 RESERVA_PERSISTENCIA_S = 5.0
+
+# RN-012: la re-optimización debe responder en 30 s como máximo
+LIMITE_REOPTIMIZACION_S = 30.0
+# Nombre de cada vía de la RN-012 tal como se busca en el grafo (sin tildes ni mayúsculas)
+CLAVE_CALLE_EN_GRAFO = {"Av. Ferrocarril": "ferrocarril", "Av. Giráldez": "giraldez", "Calle Real": "calle real"}
 
 # Una sola generación a la vez por proceso: el cálculo ocupa la CPU (0.1 en Render gratuito) y dos
 # generaciones simultáneas se estorbarían entre sí.
@@ -200,6 +205,9 @@ class ServicioRutas:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Lote de rutas no encontrado")
         if any(e != "PLANIFICADA" for e in estados):
             raise HTTPException(status.HTTP_409_CONFLICT, "Las rutas de este lote ya fueron confirmadas")
+        reemplazos = self.repo.reemplazos_del_lote(lote_id)
+        if reemplazos:
+            return self._confirmar_reemplazo(lote_id, reemplazos, usuario_id)
         no_pendientes = [p["pedido_id"] for p in self.repo.bloquear_pedidos_del_lote(lote_id) if p["estado"] != "PENDIENTE"]
         if no_pendientes:
             raise HTTPException(
@@ -210,6 +218,25 @@ class ServicioRutas:
         rutas, pedidos = self.repo.confirmar_lote(lote_id)
         self.auditoria.registrar(usuario_id, "ruta_confirmada", "rutas", lote_id)
         return {"lote_id": lote_id, "rutas_confirmadas": rutas, "pedidos_asignados": pedidos}
+
+    def _confirmar_reemplazo(self, lote_id: str, reemplazos: list[dict], usuario_id: str) -> dict:
+        """Confirma una re-optimización: las paradas pendientes de cada ruta en curso pasan a las del borrador."""
+        ids = [r["reemplaza_ruta_id"] for r in reemplazos]
+        originales = self.repo.bloquear_rutas_originales(ids)
+        if len(originales) != len(set(ids)) or any(o["estado"] not in ("CONFIRMADA", "EN_EJECUCION") for o in originales):
+            raise HTTPException(
+                status.HTTP_409_CONFLICT, "Las rutas en curso cambiaron después de re-optimizar. Vuelva a re-optimizar."
+            )
+        invalidos = self.repo.pedidos_invalidos_del_reemplazo(lote_id)
+        if invalidos:
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                f"No se puede confirmar: {len(invalidos)} pedido(s) cambiaron de estado después de re-optimizar "
+                "(cancelados o ya entregados). Vuelva a re-optimizar.",
+            )
+        rutas, nuevos = self.repo.confirmar_reemplazo(lote_id, reemplazos)
+        self.auditoria.registrar(usuario_id, "reoptimizacion_confirmada", "rutas", lote_id)
+        return {"lote_id": lote_id, "rutas_confirmadas": rutas, "pedidos_asignados": nuevos}
 
     def descartar(self, lote_id: str, usuario_id: str) -> dict:
         estados = self.repo.estados_del_lote(lote_id)
@@ -243,7 +270,7 @@ class ServicioRutas:
             "vehiculo": {"vehiculo_id": r["vehiculo_id"], "placa": r["placa"], "tipo": r["tipo"]},
             "conductor": {"conductor_id": r["conductor_id"], "nombre": r["conductor_nombre"]},
             "hora_salida": r["hora_salida"], "hora_regreso": r["hora_regreso"], "distancia_km": r["distancia_km"],
-            "tiempo_min": r["tiempo_min"], "cantidad_paradas": r["cantidad_paradas"],
+            "tiempo_min": r["tiempo_min"], "cantidad_paradas": r["cantidad_paradas"], "reemplaza_ruta_id": r["reemplaza_ruta_id"],
             "metricas": {
                 "emision_co2_kg": r["emision_co2_kg"], "combustible_l": r["combustible_l"],
                 "combustible_ahorrado_l": r["combustible_ahorrado_l"], "distancia_km": r["distancia_optimizada_km"],
@@ -252,7 +279,215 @@ class ServicioRutas:
             "paradas": [
                 {"orden": p["orden_entrega"], "pedido_id": p["pedido_id"], "cliente": p["cliente"], "descripcion": p["descripcion"],
                  "peso_kg": p["peso_kg"], "prioridad": p["prioridad"], "latitud": p["latitud"], "longitud": p["longitud"],
-                 "hora_estimada": p["hora_estimada"], "minutos_retraso": p["minutos_retraso"]}
+                 "hora_estimada": p["hora_estimada"], "minutos_retraso": p["minutos_retraso"], "estado_entrega": p["estado_entrega"],
+                 "pedido_estado": p["pedido_estado"]}
                 for p in paradas
             ],
         }
+
+    # ------------------------------------------------------------------ re-optimizar (HU-012)
+    def reoptimizar(self, fecha: date, tiempo_max_s: float | None, hora_actual: time | None, usuario_id: str) -> dict:
+        if fecha < self.hoy():
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "La fecha de la jornada no puede ser pasada")
+        if not self.bloqueo.acquire(blocking=False):
+            raise HTTPException(status.HTTP_409_CONFLICT, "Ya hay un cálculo de rutas en curso; espere a que termine")
+        try:
+            return self._reoptimizar(fecha, tiempo_max_s, hora_actual, usuario_id)
+        finally:
+            self.bloqueo.release()
+
+    def _reoptimizar(self, fecha: date, tiempo_max_s: float | None, hora_actual: time | None, usuario_id: str) -> dict:
+        """Recalcula lo que falta de las rutas en curso: congela lo ya atendido, retira los pedidos cancelados,
+        integra los pendientes nuevos y aplica los incidentes de tráfico activos. El resultado queda como
+        borrador por ruta; el administrador lo confirma o lo descarta."""
+        inicio = reloj.perf_counter()
+        cfg = self.config
+        rutas = self.repo.rutas_activas(fecha)
+        base = {
+            "fecha_jornada": fecha, "hora_considerada": None, "pedidos_nuevos": 0, "pedidos_retirados": 0,
+            "incidentes_aplicados": [], "comparativa": None, "fuente_distancias": "calles", "iteraciones": 0,
+        }
+        if not rutas:
+            return base | {
+                "lote_id": None, "sin_rutas_activas": True, "rutas": [], "sin_cobertura": [],
+                "mensaje": "No hay rutas activas para re-optimizar en esa fecha. Genere nuevas rutas desde el módulo de rutas.",
+                "tiempo_ejecucion_s": reloj.perf_counter() - inicio, "dentro_del_limite": True, "tiempos": {},
+            }
+        paradas = self.repo.paradas_para_reoptimizar([r["ruta_id"] for r in rutas])
+        nuevos = self.repo.pedidos_pendientes()
+        incidentes = self.repo.incidentes(True)
+        # Se libera la conexión antes del cálculo, igual que al generar
+        self.repo.session.commit()
+
+        if hora_actual is not None:
+            ahora_s = _segundos(hora_actual)
+        elif fecha == self.hoy():
+            ahora_s = _segundos(datetime.now(PERU).time())
+        else:
+            ahora_s = 0  # jornada futura: todavía no empezó nada
+        ahora_s = max(ahora_s, _segundos(cfg.hora_inicio_jornada))
+
+        puntos = [(cfg.deposito_latitud, cfg.deposito_longitud)]
+        pedidos: list[Pedido] = []
+        vistos: set[str] = set()
+
+        def agregar(p: dict) -> None:
+            if p["pedido_id"] in vistos:
+                return
+            vistos.add(p["pedido_id"])
+            pedidos.append(Pedido(p["pedido_id"], float(p["peso_kg"]), p["prioridad"], _segundos(p["ventana_inicio"]), _segundos(p["ventana_fin"])))
+            puntos.append((float(p["latitud"]), float(p["longitud"])))
+
+        plan: dict[str, list[str]] = {}
+        retirados = 0
+        for r in rutas:
+            pendientes = [p for p in paradas.get(r["ruta_id"], []) if p["estado_entrega"] == "PENDIENTE"]
+            vigentes = [p for p in pendientes if p["pedido_estado"] != "CANCELADO"]
+            retirados += len(pendientes) - len(vigentes)
+            plan[r["vehiculo_id"]] = [p["pedido_id"] for p in vigentes]
+            for p in vigentes:
+                agregar(p)
+        antes = len(pedidos)
+        for p in nuevos:
+            agregar(p)
+        pedidos_nuevos = len(pedidos) - antes
+
+        # Cada vehículo parte de su última parada atendida (o del depósito si todavía no entregó nada)
+        parametros = Parametros(
+            fecha=fecha, hora_inicio_jornada_s=_segundos(cfg.hora_inicio_jornada), atencion_s=cfg.tiempo_atencion_min * 60,
+        )
+        arranques: dict[str, Arranque] = {}
+        for r in rutas:
+            hechas = [p for p in paradas.get(r["ruta_id"], []) if p["estado_entrega"] != "PENDIENTE"]
+            if hechas:
+                ultima = max(hechas, key=lambda p: p["orden_entrega"])
+                nodo = len(puntos)
+                puntos.append((float(ultima["latitud"]), float(ultima["longitud"])))
+                salida_original = _segundos(r["hora_salida"]) if r["hora_salida"] else parametros.hora_inicio_jornada_s
+                trabajo = min(max(ahora_s - salida_original, 0), parametros.descanso_cada_s)
+            else:
+                nodo, trabajo = 0, 0.0
+            arranques[r["vehiculo_id"]] = Arranque(nodo, float(ahora_s), float(trabajo))
+
+        factores: dict[str, float] = {}
+        for i in incidentes:
+            clave = CLAVE_CALLE_EN_GRAFO[i["calle"]]
+            factores[clave] = max(factores.get(clave, 1.0), i["factor"])
+        t_matrices = reloj.perf_counter()
+        matrices = self.red_vial.matrices(puntos, congestion=factores or None)
+        matrices_s = reloj.perf_counter() - t_matrices
+
+        solicitado = tiempo_max_s if tiempo_max_s is not None else LIMITE_REOPTIMIZACION_S
+        presupuesto_total = min(solicitado, LIMITE_REOPTIMIZACION_S)
+        presupuesto_motor = max(PRESUPUESTO_MINIMO_S, presupuesto_total - (reloj.perf_counter() - inicio) - RESERVA_PERSISTENCIA_S)
+        parametros.tiempo_max_s = presupuesto_motor
+        pares = [
+            Par(
+                Vehiculo(r["vehiculo_id"], r["placa"], r["tipo"], float(r["capacidad_kg"]), float(r["consumo_km_l"]),
+                         float(r["factor_emision_co2"]), r["vehiculo_estado"]),
+                Conductor(r["conductor_id"], r["categoria_licencia"], r["licencia_vence"], _segundos(r["horario_inicio"]),
+                          _segundos(r["horario_fin"]), r["disponible"]),
+            )
+            for r in rutas
+        ]
+        problema = Problema(
+            pedidos=pedidos, vehiculos=[p.vehiculo for p in pares], conductores=[p.conductor for p in pares],
+            distancia_m=matrices.distancia_m, tiempo_s=matrices.tiempo_s, parametros=parametros,
+            pares_fijos=pares, arranques=arranques, plan_vigente=plan,
+        )
+        t_motor = reloj.perf_counter()
+        resultado = resolver(problema)
+        motor_s = reloj.perf_counter() - t_motor
+
+        reaplicar_contexto_rls(self.repo.session, usuario_id)
+        lote_id = str(uuid.uuid4())
+        self.repo.bloquear_fecha(fecha)
+        self.repo.borrar_borradores_de_reemplazo([r["ruta_id"] for r in rutas])
+        t_persistencia = reloj.perf_counter()
+        por_vehiculo = {x.par.vehiculo.id: x for x in resultado.rutas}
+        ahorro_total_l = max(0.0, resultado.litros_base - resultado.litros)
+        filas_rutas, filas_paradas, filas_metricas = [], [], []
+        for r in rutas:
+            ruta_id = str(uuid.uuid4())
+            calculada = por_vehiculo.get(r["vehiculo_id"])
+            if calculada is None:  # sin paradas pendientes: el borrador la deja vacía y, al confirmar, la ruta termina
+                filas_rutas.append({
+                    "ruta_id": ruta_id, "lote_id": lote_id, "vehiculo_id": r["vehiculo_id"], "conductor_id": r["conductor_id"],
+                    "fecha_jornada": fecha, "hora_salida": _hora(ahora_s), "hora_regreso": _hora(ahora_s), "distancia_km": 0.0,
+                    "tiempo_min": 0, "reemplaza_ruta_id": r["ruta_id"],
+                })
+                continue
+            it = calculada.itinerario
+            filas_rutas.append({
+                "ruta_id": ruta_id, "lote_id": lote_id, "vehiculo_id": r["vehiculo_id"], "conductor_id": r["conductor_id"],
+                "fecha_jornada": fecha, "hora_salida": _hora(it.salida_s), "hora_regreso": _hora(it.regreso_s),
+                "distancia_km": it.distancia_m / 1000.0, "tiempo_min": int(round(it.duracion_s / 60)),
+                "reemplaza_ruta_id": r["ruta_id"],
+            })
+            for parada in it.paradas:
+                filas_paradas.append({
+                    "ruta_id": ruta_id, "pedido_id": parada.pedido_id, "orden_entrega": parada.orden,
+                    "hora_estimada": _hora(parada.llegada_s), "minutos_retraso": int(round(parada.retraso_s / 60)),
+                })
+            a_tiempo = sum(1 for p in it.paradas if p.retraso_s <= 0)
+            proporcion = it.litros / resultado.litros if resultado.litros else 0.0
+            filas_metricas.append({
+                "ruta_id": ruta_id, "emision_co2_kg": it.co2_kg, "combustible_l": it.litros,
+                "combustible_ahorrado_l": ahorro_total_l * proporcion, "distancia_optimizada_km": it.distancia_m / 1000.0,
+                "cumplimiento_ventanas_pct": 100.0 * a_tiempo / len(it.paradas),
+            })
+        self.repo.crear_rutas_de_reemplazo(filas_rutas)
+        self.repo.crear_paradas(filas_paradas)
+        self.repo.crear_metricas(filas_metricas)
+        self.auditoria.registrar(usuario_id, "ruta_reoptimizada", "rutas", lote_id)
+
+        borradores = self._rutas_con_paradas(self.repo.rutas_del_lote(lote_id))
+        sin_cobertura = [{"pedido_id": s.pedido_id, "motivo": s.motivo, "sugerencia": s.sugerencia} for s in resultado.sin_cobertura]
+        total_s = reloj.perf_counter() - inicio
+        sin_nada_que_hacer = not pedidos
+        return base | {
+            "lote_id": lote_id, "sin_rutas_activas": False, "rutas": borradores, "sin_cobertura": sin_cobertura,
+            "mensaje": "No quedan paradas pendientes: al confirmar, las rutas terminan." if sin_nada_que_hacer else resultado.mensaje,
+            "hora_considerada": _hora(ahora_s), "pedidos_nuevos": pedidos_nuevos, "pedidos_retirados": retirados,
+            "incidentes_aplicados": sorted({i["calle"] for i in incidentes}),
+            "comparativa": None if sin_nada_que_hacer else {
+                "costo_base": resultado.costo_base, "costo": resultado.costo,
+                "distancia_base_km": resultado.distancia_base_m / 1000.0, "distancia_km": resultado.distancia_m / 1000.0,
+            },
+            "fuente_distancias": matrices.fuente, "iteraciones": resultado.iteraciones, "tiempo_ejecucion_s": total_s,
+            "dentro_del_limite": total_s <= LIMITE_REOPTIMIZACION_S,
+            "tiempos": {"matrices_s": matrices_s, "motor_s": motor_s, "persistencia_s": reloj.perf_counter() - t_persistencia},
+        }
+
+    # ------------------------------------------------------------------ entregas (HU-012)
+    def marcar_entrega(self, ruta_id: str, pedido_id: str, estado: str, usuario_id: str) -> dict:
+        parada = self.repo.obtener_parada(ruta_id, pedido_id)
+        if parada is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Parada no encontrada en esa ruta")
+        if parada["estado_ruta"] not in ("CONFIRMADA", "EN_EJECUCION"):
+            raise HTTPException(status.HTTP_409_CONFLICT, "La ruta no está activa: solo se registran entregas de rutas confirmadas")
+        if parada["estado_entrega"] != "PENDIENTE":
+            raise HTTPException(status.HTTP_409_CONFLICT, f"La parada ya fue registrada como {parada['estado_entrega']}")
+        if not self.repo.marcar_entrega(ruta_id, pedido_id, estado):
+            raise HTTPException(status.HTTP_409_CONFLICT, "La parada cambió mientras se registraba; vuelva a consultarla")
+        if estado == "ENTREGADO":
+            self.repo.marcar_pedido_entregado(pedido_id)
+        estado_ruta = self.repo.actualizar_estado_de_ruta(ruta_id)
+        self.auditoria.registrar(usuario_id, "entrega_registrada", "rutas", f"{ruta_id}:{pedido_id}:{estado}")
+        return {"ruta_id": ruta_id, "pedido_id": pedido_id, "estado_entrega": estado, "estado_ruta": estado_ruta}
+
+    # ------------------------------------------------------------------ incidentes de tráfico (RN-012)
+    def registrar_incidente(self, calle: str, factor: float, descripcion: str | None, usuario_id: str) -> dict:
+        incidente = self.repo.crear_incidente(usuario_id, calle, factor, descripcion)
+        self.auditoria.registrar(usuario_id, "incidente_registrado", "rutas", incidente["incidente_id"])
+        return incidente
+
+    def listar_incidentes(self, solo_activos: bool) -> list[dict]:
+        return self.repo.incidentes(solo_activos)
+
+    def resolver_incidente(self, incidente_id: str, usuario_id: str) -> dict:
+        incidente = self.repo.resolver_incidente(incidente_id)
+        if incidente is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Incidente no encontrado o ya resuelto")
+        self.auditoria.registrar(usuario_id, "incidente_resuelto", "rutas", incidente_id)
+        return incidente

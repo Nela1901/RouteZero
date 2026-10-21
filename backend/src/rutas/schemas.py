@@ -1,5 +1,7 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from decimal import Decimal
+
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -40,6 +42,8 @@ class ParadaOut(BaseModel):
     longitud: Decimal
     hora_estimada: time | None
     minutos_retraso: int
+    estado_entrega: str = "PENDIENTE"  # PENDIENTE | ENTREGADO | FALLIDO
+    pedido_estado: str = "ASIGNADO"    # un pedido CANCELADO sigue en la ruta hasta que se re-optimice
 
 
 class RutaOut(BaseModel):
@@ -56,6 +60,8 @@ class RutaOut(BaseModel):
     cantidad_paradas: int
     metricas: MetricasRuta | None
     paradas: list[ParadaOut] = []
+    # Solo en el borrador de una re-optimización: ruta en curso a la que reemplazará al confirmarse
+    reemplaza_ruta_id: str | None = None
 
 
 class SinCoberturaOut(BaseModel):
@@ -103,3 +109,70 @@ class ResultadoConfirmacion(BaseModel):
 class ResultadoDescarte(BaseModel):
     lote_id: str
     rutas_eliminadas: int
+
+
+# ---------------------------------------------------------------------------------- HU-012: re-optimización
+CalleIncidente = Literal["Av. Ferrocarril", "Av. Giráldez", "Calle Real"]  # RN-012
+
+
+class Reoptimizar(BaseModel):
+    fecha_jornada: date
+    # Presupuesto total en segundos; el servidor lo limita a 30 (RN-012)
+    tiempo_max_s: float | None = Field(default=None, gt=0)
+    # Solo para pruebas y demostraciones: hora que se toma como "ahora" (HH:MM). Sin ella se usa la hora real de Perú.
+    hora_actual: time | None = None
+
+
+class ComparativaReoptimizacion(BaseModel):
+    """Plan vigente (con los pedidos nuevos insertados) frente al plan re-optimizado, sobre el tramo que falta."""
+
+    costo_base: float
+    costo: float
+    distancia_base_km: float
+    distancia_km: float
+
+
+class ResultadoReoptimizacion(BaseModel):
+    lote_id: str | None
+    fecha_jornada: date
+    sin_rutas_activas: bool
+    mensaje: str
+    hora_considerada: time | None
+    rutas: list[RutaOut]
+    sin_cobertura: list[SinCoberturaOut]
+    pedidos_nuevos: int       # pendientes que se integraron al plan
+    pedidos_retirados: int    # paradas pendientes cuyo pedido se canceló
+    incidentes_aplicados: list[str]
+    comparativa: ComparativaReoptimizacion | None
+    fuente_distancias: str
+    iteraciones: int
+    tiempo_ejecucion_s: float
+    dentro_del_limite: bool   # tiempo_ejecucion_s <= 30 (RN-012)
+    tiempos: dict[str, float] = {}
+
+
+class IncidenteIn(BaseModel):
+    calle: CalleIncidente
+    factor: float = Field(default=2.0, gt=1.0, le=10.0)  # 2.0 = el doble de lento
+    descripcion: str | None = Field(default=None, max_length=200)
+
+
+class IncidenteOut(BaseModel):
+    incidente_id: str
+    calle: str
+    factor: float
+    descripcion: str | None
+    activo: bool
+    creado_en: datetime
+    resuelto_en: datetime | None
+
+
+class MarcarEntrega(BaseModel):
+    estado: Literal["ENTREGADO", "FALLIDO"]
+
+
+class ResultadoEntrega(BaseModel):
+    ruta_id: str
+    pedido_id: str
+    estado_entrega: str
+    estado_ruta: str  # EN_EJECUCION | COMPLETADA

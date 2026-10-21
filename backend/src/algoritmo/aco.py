@@ -18,9 +18,9 @@ TOLERANCIA = 1e-9
 EVALUACIONES_PULIDO_CORTO = 300
 
 
-def _reforzar(tau: np.ndarray, mejor: Solucion, rho: float) -> None:
+def _reforzar(tau: np.ndarray, mejor: Solucion, rho: float, contextos: list) -> None:
     deposito = rho / max(mejor.costo, 1e-9)
-    for i, j in mejor.arcos():
+    for i, j in mejor.arcos(contextos):
         tau[i, j] = (1.0 - rho) * tau[i, j] + deposito
 
 
@@ -29,14 +29,14 @@ def optimizar(d: Datos, contextos: list, inicial: Solucion, rng, inicio_t: float
     p = d.p
     hormigas = min(p.hormigas, max(2, d.n))
     tau0 = 1.0 / (max(d.n, 1) * max(inicial.costo, 1e-6))
-    tau = np.full((d.n + 1, d.n + 1), tau0)
+    tau = np.full(d.T.shape, tau0)  # incluye los nodos de arranque de vehículos en ruta
     limite = None if p.tiempo_max_s is None else inicio_t + p.tiempo_max_s * (1.0 - p.reserva_mejora_local)
 
     def sin_tiempo() -> bool:
         return limite is not None and time.perf_counter() >= limite
 
     mejor = inicial
-    _reforzar(tau, mejor, p.rho)
+    _reforzar(tau, mejor, p.rho, contextos)
     sin_mejora = 0
     iteracion = 0
     for iteracion in range(1, p.max_iteraciones + 1):
@@ -56,7 +56,7 @@ def optimizar(d: Datos, contextos: list, inicial: Solucion, rng, inicio_t: float
             sin_mejora = 0
         else:
             sin_mejora += 1
-        _reforzar(tau, mejor, p.rho)
+        _reforzar(tau, mejor, p.rho, contextos)
         if sin_mejora >= p.iteraciones_sin_mejora:
             break
     return mejor, iteracion
