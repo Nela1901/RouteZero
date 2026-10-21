@@ -71,9 +71,12 @@ def _recto(a, b, factor_velocidad: float) -> tuple[np.ndarray, float]:
     return puntos, metros / (VELOCIDAD_APROX_KMH / 3.6 * factor_velocidad) / 60.0
 
 
-def trazar(grafo: Grafo | None, puntos: list, salidas_s: list[float], incidentes: list[dict], factor_velocidad: float) -> list[dict]:
+def trazar(
+    grafo: Grafo | None, puntos: list, salidas_s: list[float], incidentes: list[dict], factor_velocidad: float, con_nodos: bool = False
+) -> list[dict]:
     """Un tramo por cada par de puntos consecutivos. `salidas_s[i]` es la hora (segundos desde la medianoche) a la
-    que sale el tramo i. Cada tramo trae `puntos` ([lat, lon]), `distancia_km`, `duracion_min` y `en_punta`."""
+    que sale el tramo i. Cada tramo trae `puntos` ([lat, lon]), `distancia_km`, `duracion_min` y `en_punta`. Con
+    `con_nodos`, también `nodos`: los nodos del grafo por los que pasa (la línea dibujada se simplifica y los pierde)."""
     n = len(puntos)
     if n < 2:
         return []
@@ -100,6 +103,7 @@ def trazar(grafo: Grafo | None, puntos: list, salidas_s: list[float], incidentes
             punta = congestion.en_punta(salidas_s[i])
             origen, destino = coords[i], coords[i + 1]
             camino = None
+            nodos_camino = []
             if i in resueltos:
                 src, dst = int(nodos[i]), int(nodos[i + 1])
                 k = fila[src]
@@ -127,6 +131,7 @@ def trazar(grafo: Grafo | None, puntos: list, salidas_s: list[float], incidentes
                 camino = (lineal, minutos)
             lineal = simplificar(camino[0])
             resultado[i] = {
+                **({"nodos": [int(n) for n in (nodos_camino or [])]} if con_nodos else {}),
                 "puntos": [[round(float(la), 5), round(float(lo), 5)] for la, lo in lineal],
                 "distancia_km": round(longitud_km(camino[0]), 3),
                 "duracion_min": round(float(camino[1]), 1),

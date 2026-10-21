@@ -405,3 +405,30 @@ class RepositorioRutas:
             {"id": incidente_id},
         ).one_or_none()
         return self._incidente(row) if row else None
+
+    # ------------------------------------------------------------------ vista del conductor (HU-014)
+    def conductor_del_usuario(self, usuario_id: str, correo: str | None) -> dict | None:
+        """El conductor de este usuario. Si todavía no está vinculado, lo vincula por correo: el conductor cuyo correo
+        coincide (sin distinguir mayúsculas) con el de la cuenta y que no tiene usuario. `nuevo` indica ese caso."""
+        fila = self.session.execute(
+            text("SELECT conductor_id, nombre FROM conductores WHERE usuario_id = :u"), {"u": usuario_id}
+        ).one_or_none()
+        nuevo = False
+        if fila is None and correo:
+            fila = self.session.execute(
+                text(
+                    "UPDATE conductores SET usuario_id = :u WHERE conductor_id = (SELECT conductor_id FROM conductores "
+                    "WHERE usuario_id IS NULL AND lower(correo) = lower(:c) ORDER BY creado_en, conductor_id LIMIT 1) "
+                    "RETURNING conductor_id, nombre"
+                ),
+                {"u": usuario_id, "c": correo},
+            ).one_or_none()
+            nuevo = fila is not None
+        return {"conductor_id": str(fila[0]), "nombre": fila[1], "nuevo": nuevo} if fila else None
+
+    def rutas_del_conductor(self, conductor_id: str, fecha: date) -> list[dict]:
+        """Rutas del conductor en esa fecha que ya puede ver: confirmadas, en ejecución o completadas (nunca borradores)."""
+        return self._rutas(
+            "r.conductor_id = :conductor AND r.fecha_jornada = :fecha AND r.estado IN ('CONFIRMADA', 'EN_EJECUCION', 'COMPLETADA')",
+            {"conductor": conductor_id, "fecha": fecha},
+        )

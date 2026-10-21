@@ -467,7 +467,12 @@ class ServicioRutas:
         }
 
     # ------------------------------------------------------------------ entregas (HU-012)
-    def marcar_entrega(self, ruta_id: str, pedido_id: str, estado: str, usuario_id: str) -> dict:
+    def marcar_entrega(self, ruta_id: str, pedido_id: str, estado: str, usuario_id: str, rol: str | None = None, correo: str | None = None) -> dict:
+        if rol == "CONDUCTOR":  # un conductor solo registra las entregas de su propia ruta
+            conductor = self.repo.conductor_del_usuario(usuario_id, correo)
+            ruta = self.repo.obtener_ruta(ruta_id)
+            if ruta is not None and (conductor is None or ruta["conductor_id"] != conductor["conductor_id"]):
+                raise HTTPException(status.HTTP_403_FORBIDDEN, "Esa ruta no es tuya: solo puedes registrar las entregas de tu ruta")
         parada = self.repo.obtener_parada(ruta_id, pedido_id)
         if parada is None:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Parada no encontrada en esa ruta")
@@ -500,6 +505,27 @@ class ServicioRutas:
         return incidente
 
     # ------------------------------------------------------------------ mapa (HU-013)
+    def _tramos_de_ruta(self, r: dict, paradas: list[dict], incidentes: list[dict], con_nodos: bool = False) -> list[dict]:
+        """Trazado por calles de una ruta (depósito, paradas en orden y regreso), con caché por paradas e incidentes."""
+        cfg = self.config
+        grafo = self.red_vial.grafo
+        clave = (r["ruta_id"], congestion.firma(incidentes), tuple((p["pedido_id"], p["orden_entrega"]) for p in paradas), id(grafo), con_nodos)
+        tramos = _CACHE_TRAZADOS.get(clave)
+        if tramos is None:
+            deposito = (cfg.deposito_latitud, cfg.deposito_longitud)
+            atencion_s = cfg.tiempo_atencion_min * 60
+            puntos = [deposito] + [(float(p["latitud"]), float(p["longitud"])) for p in paradas] + [deposito]
+            salidas = [float(_segundos(r["hora_salida"])) if r["hora_salida"] else float(_segundos(cfg.hora_inicio_jornada))]
+            salidas += [_segundos(p["hora_estimada"]) + atencion_s if p["hora_estimada"] else salidas[-1] for p in paradas]
+            tramos = trazar(grafo, puntos, salidas, incidentes, cfg.factor_velocidad_urbana, con_nodos=con_nodos)
+            for i, t in enumerate(tramos):
+                t["desde"] = 0 if i == 0 else paradas[i - 1]["orden_entrega"]
+                t["hasta"] = paradas[i]["orden_entrega"] if i < len(paradas) else 0
+            if len(_CACHE_TRAZADOS) >= _MAX_TRAZADOS_EN_CACHE:
+                _CACHE_TRAZADOS.clear()
+            _CACHE_TRAZADOS[clave] = tramos
+        return tramos
+
     def mapa(self, fecha: date) -> dict:
         """Rutas de la jornada con sus paradas y el trazado por calles de cada tramo, para dibujarlas."""
         cfg = self.config
@@ -507,26 +533,10 @@ class ServicioRutas:
         paradas = self.repo.paradas_de([r["ruta_id"] for r in rutas])
         incidentes = self.repo.incidentes(True)
         deposito = (cfg.deposito_latitud, cfg.deposito_longitud)
-        atencion_s = cfg.tiempo_atencion_min * 60
-        salida_defecto = _segundos(cfg.hora_inicio_jornada)
-        grafo = self.red_vial.grafo
         salida = []
         for r in rutas:
             ps = paradas.get(r["ruta_id"], [])
-            vigentes = [p for p in ps]
-            clave = (r["ruta_id"], congestion.firma(incidentes), tuple((p["pedido_id"], p["orden_entrega"]) for p in vigentes), id(grafo))
-            tramos = _CACHE_TRAZADOS.get(clave)
-            if tramos is None:
-                puntos = [deposito] + [(float(p["latitud"]), float(p["longitud"])) for p in vigentes] + [deposito]
-                salidas = [float(_segundos(r["hora_salida"])) if r["hora_salida"] else float(salida_defecto)]
-                salidas += [_segundos(p["hora_estimada"]) + atencion_s if p["hora_estimada"] else salidas[-1] for p in vigentes]
-                tramos = trazar(grafo, puntos, salidas, incidentes, cfg.factor_velocidad_urbana)
-                for i, t in enumerate(tramos):
-                    t["desde"] = 0 if i == 0 else vigentes[i - 1]["orden_entrega"]
-                    t["hasta"] = vigentes[i]["orden_entrega"] if i < len(vigentes) else 0
-                if len(_CACHE_TRAZADOS) >= _MAX_TRAZADOS_EN_CACHE:
-                    _CACHE_TRAZADOS.clear()
-                _CACHE_TRAZADOS[clave] = tramos
+            tramos = self._tramos_de_ruta(r, ps, incidentes)
             ruta = self._a_ruta_out(r, ps)
             salida.append({
                 "ruta_id": r["ruta_id"], "lote_id": r["lote_id"], "estado": r["estado"], "reemplaza_ruta_id": r["reemplaza_ruta_id"],
@@ -548,6 +558,63 @@ class ServicioRutas:
                 "segmentos": _segmentos_de_via(grafo, congestion.CLAVE_EN_GRAFO[via]),
             })
         return {"hora": _hora(segundos), "en_punta": congestion.en_punta(segundos), "vias": vias}
+
+
+    # ------------------------------------------------------------------ vista del conductor (HU-014)
+    def mi_ruta(self, usuario_id: str, correo: str | None, fecha: date | None, hora: time | None) -> dict:
+        """La ruta de hoy del conductor que inició sesión, con su siguiente parada y las alertas de tráfico. Solo
+        devuelve datos suyos. Si su cuenta no está vinculada a un conductor, o no tiene ruta, lo explica."""
+        cfg = self.config
+        fecha = fecha or self.hoy()
+        segundos = _segundos(hora) if hora is not None else _segundos(datetime.now(PERU).time())
+        base = {
+            "fecha_jornada": fecha, "hora": _hora(segundos), "deposito": {"latitud": cfg.deposito_latitud, "longitud": cfg.deposito_longitud},
+            "vinculado": False, "mensaje": None, "conductor": None, "ruta": None, "siguiente_orden": None,
+            "entregadas": 0, "pendientes": 0, "alertas": [],
+        }
+        conductor = self.repo.conductor_del_usuario(usuario_id, correo)
+        if conductor is None:
+            return base | {"mensaje": "Tu usuario todavía no está vinculado a un conductor. Pide al administrador que registre tu correo en tu ficha de conductor."}
+        if conductor["nuevo"]:
+            self.auditoria.registrar(usuario_id, "conductor_vinculado", "rutas", conductor["conductor_id"])
+        base |= {"vinculado": True, "conductor": {"conductor_id": conductor["conductor_id"], "nombre": conductor["nombre"]}}
+        rutas = self.repo.rutas_del_conductor(conductor["conductor_id"], fecha)
+        if not rutas:
+            return base | {"mensaje": "No tienes rutas asignadas por el momento."}
+        prioridad = {"EN_EJECUCION": 0, "CONFIRMADA": 1, "COMPLETADA": 2}
+        r = sorted(rutas, key=lambda x: prioridad.get(x["estado"], 3))[0]
+        ps = self.repo.paradas_de([r["ruta_id"]]).get(r["ruta_id"], [])
+        incidentes = self.repo.incidentes(True)
+        tramos = self._tramos_de_ruta(r, ps, incidentes, con_nodos=True)
+        nodos_ruta = {n for t in tramos for n in t.get("nodos", [])}
+        ruta = self._a_ruta_out(r, ps)
+        atendibles = [p for p in ruta["paradas"] if p["pedido_estado"] != "CANCELADO"]
+        pendientes = [p for p in atendibles if p["estado_entrega"] == "PENDIENTE"]
+
+        grafo = self.red_vial.grafo
+        alertas = []
+        for via in congestion.VIAS:
+            factor, motivos = congestion.factor_efectivo(via, segundos, incidentes)
+            nivel = congestion.nivel(factor)
+            if nivel == "VERDE":
+                continue
+            clave = congestion.CLAVE_EN_GRAFO[via]
+            en_ruta = grafo is not None and bool(nodos_ruta & grafo.nodos_de_calle(clave))
+            alertas.append({
+                "calle": via, "nivel": nivel, "factor": round(factor, 2), "motivos": motivos, "en_tu_ruta": en_ruta,
+                "segmentos": _segmentos_de_via(grafo, clave) if en_ruta else [],
+            })
+        alertas.sort(key=lambda a: (not a["en_tu_ruta"], a["nivel"] != "ROJO"))
+        return base | {
+            "ruta": {
+                "ruta_id": r["ruta_id"], "lote_id": r["lote_id"], "estado": r["estado"], "reemplaza_ruta_id": r["reemplaza_ruta_id"],
+                "vehiculo": ruta["vehiculo"], "conductor": ruta["conductor"], "hora_salida": r["hora_salida"],
+                "hora_regreso": r["hora_regreso"], "paradas": ruta["paradas"],
+                "tramos": [{k: v for k, v in t.items() if k != "nodos"} for t in tramos],
+            },
+            "siguiente_orden": min(p["orden"] for p in pendientes) if pendientes else None,
+            "entregadas": len(atendibles) - len(pendientes), "pendientes": len(pendientes), "alertas": alertas,
+        }
 
 
 @lru_cache(maxsize=8)

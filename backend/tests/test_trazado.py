@@ -115,3 +115,19 @@ def test_los_factores_para_las_matrices_separan_lo_normal_de_la_hora_punta():
     assert normal == {"calle real": 3.0}  # se toma el mayor de los incidentes sobre la misma vía
     assert punta["calle real"] == pytest.approx(3.0 * congestion.FACTOR_PUNTA["Calle Real"])
     assert punta["ferrocarril"] == congestion.FACTOR_PUNTA["Av. Ferrocarril"]
+
+
+# ---------------------------------------------------------------------------------------- HU-014: nodos de la ruta
+def test_con_nodos_el_tramo_informa_los_nodos_por_los_que_pasa(dos_caminos):
+    [t] = trazar(dos_caminos, [A, B], [DIEZ], [incidente("Av. Giráldez", 10.0)], 1.0, con_nodos=True)
+    assert t["nodos"] == [0, 2, 1]  # A -> C -> B
+    [sin] = trazar(dos_caminos, [A, B], [DIEZ], [], 1.0)
+    assert "nodos" not in sin
+
+
+def test_los_nodos_de_una_calle_sirven_para_saber_si_el_camino_la_cruza(dos_caminos):
+    assert dos_caminos.nodos_de_calle("Giráldez") == frozenset({0, 1})
+    assert dos_caminos.nodos_de_calle("jiron otro") == frozenset({0, 2, 1})
+    assert dos_caminos.nodos_de_calle("no existe") == frozenset()
+    [por_giraldez] = trazar(dos_caminos, [A, B], [DIEZ], [], 1.0, con_nodos=True)
+    assert set(por_giraldez["nodos"]) & dos_caminos.nodos_de_calle("Giráldez")
