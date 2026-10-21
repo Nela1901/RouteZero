@@ -19,8 +19,10 @@ from src.algoritmo.modelo import Arranque, Par, Pedido, Problema
 from src.algoritmo.motor import resolver
 from src.red_vial.grafo import RUTA_POR_DEFECTO
 from src.red_vial.matrices import RedVial
+from src.rutas import congestion
 
-LIMITE_S = 30.0
+LIMITE_S = 30.0          # RN-012: lo que no se puede superar
+PRESUPUESTO_S = 25.0     # lo que apunta el servicio, para dejar holgura
 RESERVA_PERSISTENCIA_S = 5.0  # igual que el servicio: tiempo para guardar el borrador
 AHORA_S = hora(10)
 
@@ -63,14 +65,17 @@ def test_la_reoptimizacion_cabe_en_el_limite_de_30_segundos(semilla):
         pares.append(r.par)
 
     inicio = time.perf_counter()
-    m = RedVial.cargar(0.6).matrices(puntos, congestion={"ferrocarril": 3.0, "giraldez": 2.0})
+    incidentes = [{"calle": "Av. Ferrocarril", "factor": 3.0}, {"calle": "Av. Giráldez", "factor": 2.0}]
+    normal, punta = congestion.factores_de_matrices(incidentes)
+    m = RedVial.cargar(0.6).matrices(puntos, congestion=normal, congestion_punta=punta)
     t_matrices = time.perf_counter() - inicio
     parametros = problema.parametros
-    parametros.tiempo_max_s = max(1.0, LIMITE_S - t_matrices - RESERVA_PERSISTENCIA_S)
+    parametros.tiempo_max_s = max(1.0, PRESUPUESTO_S - t_matrices - RESERVA_PERSISTENCIA_S)
     parametros.semilla = semilla
+    parametros.franjas_punta = congestion.FRANJAS_PUNTA
     nuevo = Problema(
         restantes + nuevos, problema.vehiculos, problema.conductores, m.distancia_m, m.tiempo_s, parametros,
-        pares_fijos=pares, arranques=arranques, plan_vigente=plan_vigente,
+        pares_fijos=pares, arranques=arranques, plan_vigente=plan_vigente, tiempo_punta_s=m.tiempo_punta_s,
     )
     resultado = resolver(nuevo)
     total = time.perf_counter() - inicio + RESERVA_PERSISTENCIA_S

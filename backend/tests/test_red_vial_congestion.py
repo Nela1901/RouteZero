@@ -64,3 +64,12 @@ def test_los_tramos_de_una_calle_se_devuelven_para_dibujarlos(dos_caminos):
 @pytest.mark.parametrize("calle", ["Ferrocarril", "Giráldez", "Calle Real"])
 def test_el_grafo_real_trae_las_tres_calles_de_la_rn_012(calle):
     assert len(cargar_grafo().tramos_de_calle(calle)) > 0
+
+
+def test_la_matriz_de_hora_punta_solo_se_calcula_si_se_pide(dos_caminos):
+    base = calcular_matrices([A, B], dos_caminos, 1.0)
+    assert base.tiempo_punta_s is None
+    con = calcular_matrices([A, B], dos_caminos, 1.0, congestion_punta={"giraldez": 4.0})
+    assert np.allclose(con.tiempo_s, base.tiempo_s)  # la matriz normal no cambia
+    assert con.tiempo_punta_s[0, 1] > con.tiempo_s[0, 1]
+    assert con.tiempo_punta_s[0, 0] == 0.0 and np.isfinite(con.tiempo_punta_s).all()

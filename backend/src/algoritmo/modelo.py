@@ -88,6 +88,8 @@ class Parametros:
     q0: float = 0.9
     semilla: int | None = None
     reserva_mejora_local: float = 0.15    # fracción del tiempo que se deja para pulir la mejor solución
+    # Franjas de hora punta (inicio_s, fin_s): un tramo que sale dentro de una franja usa `tiempo_punta_s`
+    franjas_punta: tuple = ()
 
 
 @dataclass(frozen=True)
@@ -111,6 +113,8 @@ class Problema:
     pares_fijos: list | None = None                    # pares vehículo-conductor ya asignados (no se vuelven a emparejar)
     arranques: dict = field(default_factory=dict)      # id de vehículo -> Arranque
     plan_vigente: dict = field(default_factory=dict)   # id de vehículo -> ids de pedido en el orden actual
+    # Tiempos de viaje en hora punta (misma forma que `tiempo_s`); sin ellos o sin franjas, todo el día usa `tiempo_s`
+    tiempo_punta_s: np.ndarray | None = None
 
 
 @dataclass

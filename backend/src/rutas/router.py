@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, time
 
 from fastapi import APIRouter, Depends, Path, Query
 from sqlalchemy.orm import Session
@@ -8,7 +8,9 @@ from src.rutas.repository import RepositorioRutas
 from src.rutas.schemas import (
     GenerarRutas,
     IncidenteIn,
+    CongestionOut,
     IncidenteOut,
+    MapaOut,
     MarcarEntrega,
     Reoptimizar,
     ResultadoConfirmacion,
@@ -109,6 +111,26 @@ def resolver_incidente(
 ) -> dict:
     """Marca el incidente como resuelto: deja de aplicarse en las próximas re-optimizaciones."""
     return _servicio(db).resolver_incidente(incidente_id, usuario.usuario_id)
+
+
+@router.get("/mapa", response_model=MapaOut)
+def mapa_de_rutas(
+    fecha: date,
+    _usuario: UsuarioActual = Depends(requiere_rol("ADMINISTRADOR", "OPERADOR")),
+    db: Session = Depends(get_db_con_rls),
+) -> dict:
+    """Rutas de la jornada con sus paradas y el trazado por calles de cada tramo (HU-013)."""
+    return _servicio(db).mapa(fecha)
+
+
+@router.get("/congestion", response_model=CongestionOut)
+def congestion_de_las_vias(
+    hora: time | None = Query(default=None, description="HH:MM; por defecto, la hora actual de Perú"),
+    _usuario: UsuarioActual = Depends(requiere_rol("ADMINISTRADOR", "OPERADOR", "CONDUCTOR")),
+    db: Session = Depends(get_db_con_rls),
+) -> dict:
+    """Nivel de congestión (verde, amarillo o rojo) de Av. Ferrocarril, Av. Giráldez y Calle Real a una hora."""
+    return _servicio(db).congestion(hora)
 
 
 @router.get("", response_model=list[RutaOut])

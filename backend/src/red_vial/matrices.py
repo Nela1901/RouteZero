@@ -21,6 +21,7 @@ class Matrices:
     tiempo_s: np.ndarray
     fuente: str  # "calles" | "mixta" | "aproximada"
     puntos_aproximados: list[int] = field(default_factory=list)
+    tiempo_punta_s: np.ndarray | None = None  # tiempos con la congestión de hora punta (None si no se pidió)
 
 
 def distancias_rectas(puntos) -> np.ndarray:
@@ -41,7 +42,8 @@ def _por_bloques(matriz_dispersa, fuentes: np.ndarray) -> np.ndarray:
 
 
 def calcular_matrices(
-    puntos, grafo: Grafo | None, factor_velocidad: float, umbral_m: float = UMBRAL_SNAP_M, congestion: dict[str, float] | None = None
+    puntos, grafo: Grafo | None, factor_velocidad: float, umbral_m: float = UMBRAL_SNAP_M, congestion: dict[str, float] | None = None,
+    congestion_punta: dict[str, float] | None = None,
 ) -> Matrices:
     """Matrices (n × n) de distancia (m) y tiempo (s) entre los puntos (lat, lon).
 
@@ -52,6 +54,8 @@ def calcular_matrices(
     El tiempo usa la velocidad base de cada tipo de vía dividida por `factor_velocidad`.
     - `congestion` (nombre de calle -> factor de lentitud) encarece solo el tiempo de esas calles (RN-012);
       las distancias no cambian. Sin grafo no tiene efecto.
+    - `congestion_punta` pide además una segunda matriz de tiempos (`tiempo_punta_s`) con esos factores, para los
+      tramos que salen en hora punta (RF-003). Debe incluir también los incidentes, que siguen vigentes.
     """
     puntos = np.asarray(puntos, dtype=np.float64).reshape(-1, 2)
     n = len(puntos)
@@ -76,17 +80,27 @@ def calcular_matrices(
     acceso = np.where(resuelto, acceso_m, 0.0)
     suma_acceso = acceso[:, None] + acceso[None, :]
     distancia = dist_u[np.ix_(pos, pos)] + suma_acceso
-    tiempo = tiempo_u[np.ix_(pos, pos)] + suma_acceso / (VELOCIDAD_ACCESO_KMH / 3.6 * factor_velocidad)
+    acceso_s = suma_acceso / (VELOCIDAD_ACCESO_KMH / 3.6 * factor_velocidad)
+    tiempo = tiempo_u[np.ix_(pos, pos)] + acceso_s
+    tiempo_p = None
+    if congestion_punta:
+        tiempo_pu = _por_bloques(grafo.tiempo_con_congestion(congestion_punta), unicos) / factor_velocidad
+        tiempo_p = tiempo_pu[np.ix_(pos, pos)] + acceso_s
 
     usar_aprox = ~(resuelto[:, None] & resuelto[None, :]) | ~np.isfinite(distancia) | ~np.isfinite(tiempo)
+    if tiempo_p is not None:
+        usar_aprox |= ~np.isfinite(tiempo_p)
     distancia = np.where(usar_aprox, aprox_d, distancia)
     tiempo = np.where(usar_aprox, aprox_t, tiempo)
     np.fill_diagonal(distancia, 0.0)
     np.fill_diagonal(tiempo, 0.0)
+    if tiempo_p is not None:
+        tiempo_p = np.where(usar_aprox, aprox_t, tiempo_p)
+        np.fill_diagonal(tiempo_p, 0.0)
 
     aproximados = [int(i) for i in np.flatnonzero(~resuelto)]
     fuente = "calles" if not aproximados else "mixta"
-    return Matrices(distancia, tiempo, fuente, aproximados)
+    return Matrices(distancia, tiempo, fuente, aproximados, tiempo_p)
 
 
 class RedVial:
@@ -100,5 +114,7 @@ class RedVial:
     def cargar(cls, factor_velocidad: float, ruta: Path | None = None) -> "RedVial":
         return cls(cargar_grafo(ruta), factor_velocidad)
 
-    def matrices(self, puntos, congestion: dict[str, float] | None = None) -> Matrices:
-        return calcular_matrices(puntos, self.grafo, self.factor_velocidad, congestion=congestion)
+    def matrices(
+        self, puntos, congestion: dict[str, float] | None = None, congestion_punta: dict[str, float] | None = None
+    ) -> Matrices:
+        return calcular_matrices(puntos, self.grafo, self.factor_velocidad, congestion=congestion, congestion_punta=congestion_punta)

@@ -52,15 +52,19 @@ def construir(d: Datos, contextos: list, tau, rng, q0: float = 1.0, alfa: float 
             if idx.size == 0:
                 break
             idx1 = idx + 1
-            viaje = d.T[pos, idx1]
+            viaje = d.t_en(t)[pos, idx1]
             necesita = (trabajo + viaje) > p.descanso_cada_s
+            if d.hay_punta and necesita.any():  # tras el descanso el tramo sale más tarde: puede cambiar de franja
+                viaje = np.where(necesita, d.t_en(t + p.descanso_s)[pos, idx1], viaje)
             llegada = t + necesita * p.descanso_s + viaje
             inicio = np.maximum(llegada, d.w_ini[idx])
             retraso = np.maximum(0.0, inicio - d.w_fin[idx])
             fin = inicio + p.atencion_s
             trabajo_f = np.where(necesita, 0.0, trabajo) + viaje + p.atencion_s
-            vuelta = d.T[idx1, 0]
+            vuelta = d.vuelta_en(fin, idx1)
             necesita_vuelta = (trabajo_f + vuelta) > p.descanso_cada_s
+            if d.hay_punta and necesita_vuelta.any():
+                vuelta = np.where(necesita_vuelta, d.vuelta_en(fin + p.descanso_s, idx1), vuelta)
             t_fin = fin + necesita_vuelta * p.descanso_s + vuelta
             cabe = (t_fin <= ctx.limite_s + EPS) & (carga + d.peso[idx] <= ctx.capacidad_kg + EPS)
             if not cabe.any():

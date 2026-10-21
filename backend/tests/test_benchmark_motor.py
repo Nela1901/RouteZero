@@ -20,6 +20,7 @@ from src.algoritmo.modelo import Conductor, Parametros, Pedido, Problema, Vehicu
 from src.algoritmo.motor import resolver
 from src.red_vial.grafo import RUTA_POR_DEFECTO
 from src.red_vial.matrices import RedVial
+from src.rutas import congestion
 
 DEPOSITO = (-12.043632, -75.226373)
 LIMITE_S = 45.0
@@ -35,7 +36,8 @@ def escenario(semilla: int, n_pedidos: int = 150, n_vehiculos: int = 15, **param
     azar = random.Random(semilla)
     puntos = [DEPOSITO] + [(azar.uniform(-12.10, -12.00), azar.uniform(-75.26, -75.18)) for _ in range(n_pedidos)]
     inicio = time.perf_counter()
-    m = RedVial.cargar(0.6).matrices(puntos)
+    # Como en el servicio: matriz normal y matriz de hora punta (RF-003)
+    m = RedVial.cargar(0.6).matrices(puntos, congestion_punta=congestion.factores_de_matrices([])[1])
     t_matrices = time.perf_counter() - inicio
 
     pedidos = []
@@ -59,7 +61,10 @@ def escenario(semilla: int, n_pedidos: int = 150, n_vehiculos: int = 15, **param
     ]
     conductores = [Conductor(f"C{i:02d}", "A-IIb", FECHA + timedelta(days=200), hora(6), hora(14)) for i in range(n_vehiculos)]
     parametros.setdefault("semilla", semilla)
-    problema = Problema(pedidos, vehiculos, conductores, m.distancia_m, m.tiempo_s, Parametros(fecha=FECHA, **parametros))
+    parametros.setdefault("franjas_punta", congestion.FRANJAS_PUNTA)
+    problema = Problema(
+        pedidos, vehiculos, conductores, m.distancia_m, m.tiempo_s, Parametros(fecha=FECHA, **parametros), tiempo_punta_s=m.tiempo_punta_s
+    )
     return problema, t_matrices
 
 

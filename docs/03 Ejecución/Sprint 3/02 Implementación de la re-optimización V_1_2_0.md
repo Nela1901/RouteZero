@@ -10,7 +10,7 @@
 | **Sprint** | Sprint 3 — Rutas y Visualización (17 oct – 30 oct 2026) |
 | **Ítems** | HU-012 (Re-optimizar rutas ante evento de cambio operativo) y cierre de HT-07 |
 | **Fecha** | 2026-10-20 |
-| **Versión** | 1.1.0 |
+| **Versión** | 1.2.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -52,6 +52,7 @@ Como el punto de partida es el plan vigente, el resultado de la re-optimización
 - `Grafo.tramos_de_calle(nombre)` devuelve los segmentos de una vía, para dibujarla en el mapa (HU-013).
 - Tramos del grafo real por vía: Av. Ferrocarril 616 (578 con ese nombre y 38 como «Av. Ferrocarril»), Av. Giráldez 49, Calle Real 298.
 - Solo se pueden reportar las tres vías de la RN-012 (Av. Ferrocarril, Av. Giráldez y Calle Real), con un factor de lentitud mayor que 1 y hasta 10.
+- Desde HU-013 los incidentes también se aplican al **generar** rutas, y cada tramo usa los tiempos de hora punta si sale en una franja de RF-003 (ver [`04 Implementación del mapa de rutas`](04%20Implementaci%C3%B3n%20del%20mapa%20de%20rutas%20V_1_0_0.md)).
 
 ## 4. API
 
@@ -131,7 +132,7 @@ Servicio gratuito de Render (0.1 de CPU), base de datos en Supabase y el endpoin
 
 Observaciones:
 
-- **El margen es corto.** Medido desde fuera quedan unos 1.0 s sobre el límite de 30 s: el motor trabaja hasta agotar su presupuesto, así que el tiempo total es casi constante. Una latencia mayor de la red o de Render podría rebasarlo. La mejora propuesta es apuntar a 25 s de presupuesto (dejando 5 s de holgura) y mantener 30 s como límite que se informa en `dentro_del_limite`; costaría algunas iteraciones del ACO.
+- **El margen era corto** (cerca de 1.0 s medidos desde fuera). Se amplió: el presupuesto por defecto baja a **25 s** y los 30 s quedan como el límite que informa `dentro_del_limite`. En el equipo de desarrollo, con 150 pedidos y 15 vehículos, la re-optimización pasó a 17.9–22.8 s en total con la reserva de guardado (ver [`04 Implementación del mapa de rutas`](04%20Implementaci%C3%B3n%20del%20mapa%20de%20rutas%20V_1_0_0.md)). Falta confirmarlo en Render.
 - **Las matrices pesan 9.2 a 9.6 s** (el tiempo con congestión se calcula con el grafo completo), igual que en la generación del Sprint 2 (IMP-013).
 - **El ACO rinde poco en Render:** 7 a 9 iteraciones, como en el Sprint 2. Por eso la re-optimización parte del plan vigente: el resultado nunca es peor que continuar con él.
 
@@ -145,3 +146,4 @@ Observaciones:
 |---|---|---|---|
 | V_1_0_0 | 2026-10-20 | Versión inicial: motor, congestión por calle, API, decisiones, limitaciones, pruebas y benchmark local de la re-optimización (HU-012) | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-20 | Se agrega la medición en Render de la re-optimización (150 pedidos, 15 vehículos, 5 corridas) con sus observaciones y la propuesta de ampliar el margen | Inciso Aguilar Elizabeth Antonela |
+| V_1_2_0 | 2026-10-20 | Se amplía el margen de la re-optimización (presupuesto de 25 s) y se aclara que los incidentes y las horas punta también se aplican al generar | Inciso Aguilar Elizabeth Antonela |
