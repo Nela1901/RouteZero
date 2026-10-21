@@ -237,3 +237,27 @@ class CongestionOut(BaseModel):
     hora: time
     en_punta: bool
     vias: list[ViaCongestion]
+
+
+# ---------------------------------------------------------------------------------- HU-014: vista del conductor
+class AlertaConductor(BaseModel):
+    calle: str
+    nivel: Literal["AMARILLO", "ROJO"]
+    factor: float
+    motivos: list[str]
+    en_tu_ruta: bool  # el recorrido del conductor pasa por esa vía
+    segmentos: list[list[list[float]]] = []  # solo si está en su ruta, para marcarla en el mapa
+
+
+class MiRutaOut(BaseModel):
+    fecha_jornada: date
+    hora: time
+    deposito: DepositoOut
+    vinculado: bool  # la cuenta está vinculada a un conductor
+    mensaje: str | None  # por qué no hay ruta que mostrar
+    conductor: ConductorRuta | None
+    ruta: RutaMapa | None
+    siguiente_orden: int | None  # orden de la siguiente parada por atender
+    entregadas: int
+    pendientes: int
+    alertas: list[AlertaConductor]

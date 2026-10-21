@@ -9,7 +9,7 @@
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Sprint** | Sprint 3 — Rutas y Visualización (17 oct – 30 oct 2026) |
 | **Fecha** | 2026-10-20 |
-| **Versión** | 1.3.0 |
+| **Versión** | 1.4.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -69,8 +69,9 @@ Motivo de posponer la fase 2: las pruebas del backend corren contra la base real
 
 | Fecha | Prueba | Resultado | Observaciones |
 |---|---|---|---|
-| 2026-10-20 | pytest, suite completa del backend | 313 pasan; cobertura total de 98 % | Incluye las pruebas de HU-012 y HU-013 contra la base real; 20 min |
-| 2026-10-20 | Vitest, frontend | 73 pasan | Incluye las pruebas de re-optimización, entregas, incidentes y mapa de rutas (con el aviso de carga); `npm run build` sin errores |
+| 2026-10-20 | pytest, suite completa del backend | 328 pasan; cobertura total de 98 % | Incluye las pruebas de HU-012, HU-013 y HU-014 contra la base real; 24 min |
+| 2026-10-20 | Vitest, frontend | 88 pasan | Incluye las pruebas de re-optimización, entregas, incidentes, mapa de rutas y vista del conductor; `npm run build` sin errores |
+| 2026-10-20 | Vista del conductor (13 pruebas de integración y 15 de pantalla) | Todas pasan | Vínculo por correo, aislamiento entre conductores, entregas propias, alertas y roles |
 | 2026-10-20 | Benchmark de re-optimización (150 pedidos, 15 vehículos) | 14.5 a 21.6 s con la reserva de guardado, límite de 30 s | Máquina de desarrollo |
 | 2026-10-20 | Re-optimización en Render (150 pedidos, 15 vehículos, 5 corridas) | 27.1 a 27.2 s en el servidor y 29.0 a 29.1 s desde fuera; todas dentro de 30 s | Servicio gratuito de Render; margen corto, ver la sección 8.1 de `02 Implementación de la re-optimización` |
 | 2026-10-20 | Benchmark de generación con hora punta (150 pedidos, 15 vehículos, 10 corridas) | Mediana de 12.8 s, percentil 95 de 20.2 s y máximo de 21.1 s | Límite de 45 s (RN-015); equipo de desarrollo |
@@ -91,3 +92,4 @@ Motivo de posponer la fase 2: las pruebas del backend corren contra la base real
 | V_1_1_0 | 2026-10-20 | Se registran los resultados de las suites de backend y frontend y las mediciones de la re-optimización en local y en Render | Inciso Aguilar Elizabeth Antonela |
 | V_1_2_0 | 2026-10-20 | Se registran la suite completa (313 pruebas, 98 %), el frontend (72 pruebas) y los benchmarks de generación y re-optimización con hora punta | Inciso Aguilar Elizabeth Antonela |
 | V_1_3_0 | 2026-10-20 | Se registran las mediciones en Render con hora punta (generación, re-optimización y mapa) y las 73 pruebas del frontend | Inciso Aguilar Elizabeth Antonela |
+| V_1_4_0 | 2026-10-20 | Se registran la suite completa (328 pruebas, 98 %), el frontend (88 pruebas) y las pruebas de la vista del conductor | Inciso Aguilar Elizabeth Antonela |

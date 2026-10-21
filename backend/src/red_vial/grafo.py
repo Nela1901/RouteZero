@@ -76,6 +76,15 @@ class Grafo:
         indices = np.flatnonzero(np.isin(self.nombre_id, ids))
         return [[tuple(self.coords[self.u[i]]), tuple(self.coords[self.v[i]])] for i in indices]
 
+    def nodos_de_calle(self, calle: str) -> frozenset:
+        """Nodos del grafo por los que pasa la calle (extremos de sus tramos); sirve para saber si un camino la cruza."""
+        clave = normalizar_calle(calle)
+        ids = [i for i, n in enumerate(self.nombres) if clave and clave in normalizar_calle(n)]
+        if not ids:
+            return frozenset()
+        indices = np.flatnonzero(np.isin(self.nombre_id, ids))
+        return frozenset(int(n) for n in np.concatenate([self.u[indices], self.v[indices]]))
+
     def _proyectar(self, puntos: np.ndarray) -> np.ndarray:
         puntos = np.asarray(puntos, dtype=np.float64)
         return np.column_stack((puntos[:, 1] * self._coseno, puntos[:, 0])) * METROS_POR_GRADO

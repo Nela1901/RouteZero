@@ -12,6 +12,7 @@ from src.rutas.schemas import (
     IncidenteOut,
     MapaOut,
     MarcarEntrega,
+    MiRutaOut,
     Reoptimizar,
     ResultadoConfirmacion,
     ResultadoDescarte,
@@ -77,11 +78,12 @@ def marcar_entrega(
     body: MarcarEntrega,
     ruta_id: str = Path(pattern=_UUID),
     pedido_id: str = Path(pattern=_UUID),
-    usuario: UsuarioActual = Depends(requiere_rol("ADMINISTRADOR", "OPERADOR")),
+    usuario: UsuarioActual = Depends(requiere_rol("ADMINISTRADOR", "OPERADOR", "CONDUCTOR")),
     db: Session = Depends(get_db_con_rls),
 ) -> dict:
-    """Registra una parada como ENTREGADO o FALLIDO. La ruta pasa a EN_EJECUCION y, al atender la última, a COMPLETADA."""
-    return _servicio(db).marcar_entrega(ruta_id, pedido_id, body.estado, usuario.usuario_id)
+    """Registra una parada como ENTREGADO o FALLIDO. La ruta pasa a EN_EJECUCION y, al atender la última, a COMPLETADA.
+    Un conductor solo puede registrar las entregas de su propia ruta."""
+    return _servicio(db).marcar_entrega(ruta_id, pedido_id, body.estado, usuario.usuario_id, usuario.rol_nombre, usuario.email)
 
 
 @router.post("/incidentes", response_model=IncidenteOut, status_code=201)
@@ -121,6 +123,18 @@ def mapa_de_rutas(
 ) -> dict:
     """Rutas de la jornada con sus paradas y el trazado por calles de cada tramo (HU-013)."""
     return _servicio(db).mapa(fecha)
+
+
+@router.get("/mi-ruta", response_model=MiRutaOut)
+def mi_ruta(
+    fecha: date | None = Query(default=None, description="Por defecto, hoy"),
+    hora: time | None = Query(default=None, description="HH:MM; por defecto, la hora actual de Perú"),
+    usuario: UsuarioActual = Depends(requiere_rol("CONDUCTOR")),
+    db: Session = Depends(get_db_con_rls),
+) -> dict:
+    """La ruta del conductor que inició sesión: siguiente parada, entregas y alertas de tráfico (HU-014). Vincula su
+    cuenta con su ficha de conductor por correo la primera vez."""
+    return _servicio(db).mi_ruta(usuario.usuario_id, usuario.email, fecha, hora)
 
 
 @router.get("/congestion", response_model=CongestionOut)
