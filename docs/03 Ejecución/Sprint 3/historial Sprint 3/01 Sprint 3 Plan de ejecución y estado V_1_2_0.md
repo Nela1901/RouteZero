@@ -12,13 +12,13 @@
 | **Inspección** | Por confirmar (Jira cierra el sprint el 30-10-2026) |
 | **Versión** | 1.2.0 |
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
 ## 1. Objetivo del Sprint
 
-Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_1_0.md)):
+Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../../02%20Planificaci%C3%B3n/02%20Artefactos%20Jira%20V_1_1_0.md)):
 
 > *Completar el motor de optimización ACO con re-optimización dinámica (EP-05) e implementar la visualización de rutas en mapa interactivo con Leaflet + OpenStreetMap (EP-06).*
 
@@ -53,7 +53,7 @@ Deuda técnica y acciones de la retrospectiva del Sprint 2 que se atienden en es
 
 ## 4. Definition of Done — metas del sprint
 
-Criterios del DoD global ([`01 Transformando a ágil`](../../02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_1_0.md), sección 5), aplicados a lo que entregue este sprint:
+Criterios del DoD global ([`01 Transformando a ágil`](../../../02%20Planificaci%C3%B3n/01%20Transformando%20a%20%C3%A1gil%20V_1_1_0.md), sección 5), aplicados a lo que entregue este sprint:
 
 | # | Criterio | Meta | Estado |
 |---|---|---|---|
@@ -84,7 +84,7 @@ Propuesta **sujeta a validación del equipo**. La fecha de inspección no está 
 
 ## 6. Riesgos del Sprint
 
-Se relacionan con el [`03 Registro de riesgos`](../../02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md).
+Se relacionan con el [`03 Registro de riesgos`](../../../02%20Planificaci%C3%B3n/03%20Registro%20de%20riesgos%20V_1_0_0.md).
 
 | Riesgo | Efecto | Mitigación |
 |---|---|---|
@@ -96,11 +96,11 @@ Se relacionan con el [`03 Registro de riesgos`](../../02%20Planificaci%C3%B3n/03
 
 ## 7. Evidencias
 
-- Código del backend: [`backend/`](../../../backend/) y del frontend: [`frontend/`](../../../frontend/).
-- Estado del sprint anterior: [`01 Sprint 2 Plan de ejecución y estado V_1_8_0`](../Sprint%202/01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_8_0.md).
-- Entregables de seguimiento: carpeta [`Implementación/`](Implementaci%C3%B3n/).
+- Código del backend: [`backend/`](../../../../backend/) y del frontend: [`frontend/`](../../../../frontend/).
+- Estado del sprint anterior: [`01 Sprint 2 Plan de ejecución y estado V_1_8_0`](../../Sprint%202/01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_8_0.md).
+- Entregables de seguimiento: carpeta [`Implementación/`](../Implementaci%C3%B3n/).
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 

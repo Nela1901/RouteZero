@@ -118,9 +118,11 @@ export function MapaPage() {
   const [verPedidos, setVerPedidos] = useState(true);
   const [automatico, setAutomatico] = useState(true);
   const [actualizado, setActualizado] = useState<string | null>(null);
+  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
+    setCargando(true);
     try {
       const [m, c, p] = await Promise.all([
         api.get<MapaDatos>(`/api/rutas/mapa?fecha=${fecha}`),
@@ -135,6 +137,8 @@ export function MapaPage() {
       setActualizado(ahoraLocal());
     } catch (err) {
       setError(mensajeDeError(err, "No se pudo cargar el mapa"));
+    } finally {
+      setCargando(false);
     }
   }, [fecha, horaVista]);
 
@@ -185,11 +189,13 @@ export function MapaPage() {
           <input type="checkbox" checked={verPedidos} onChange={(e) => setVerPedidos(e.target.checked)} />
           Pedidos pendientes
         </label>
-        {actualizado && (
-          <span style={{ fontSize: 12, color: "var(--rz-text-muted)", marginLeft: "auto" }} role="status">
-            Actualizado a las {actualizado}
-          </span>
-        )}
+        <span style={{ fontSize: 12, color: "var(--rz-text-muted)", marginLeft: "auto" }} role="status">
+          {cargando
+            ? mapa === null
+              ? "Calculando los recorridos por calles… la primera carga puede tardar unos segundos."
+              : "Actualizando…"
+            : actualizado && `Actualizado a las ${actualizado}`}
+        </span>
       </div>
       {error && <div style={{ ...estiloAviso, margin: "8px 16px 0" }}>{error}</div>}
 

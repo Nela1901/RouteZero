@@ -9,7 +9,7 @@
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Sprint** | Sprint 3 — Rutas y Visualización (17 oct – 30 oct 2026) |
 | **Fecha** | 2026-10-20 |
-| **Versión** | 1.2.0 |
+| **Versión** | 1.3.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -70,11 +70,14 @@ Motivo de posponer la fase 2: las pruebas del backend corren contra la base real
 | Fecha | Prueba | Resultado | Observaciones |
 |---|---|---|---|
 | 2026-10-20 | pytest, suite completa del backend | 313 pasan; cobertura total de 98 % | Incluye las pruebas de HU-012 y HU-013 contra la base real; 20 min |
-| 2026-10-20 | Vitest, frontend | 72 pasan | Incluye las pruebas de re-optimización, entregas, incidentes y mapa de rutas; `npm run build` sin errores |
+| 2026-10-20 | Vitest, frontend | 73 pasan | Incluye las pruebas de re-optimización, entregas, incidentes y mapa de rutas (con el aviso de carga); `npm run build` sin errores |
 | 2026-10-20 | Benchmark de re-optimización (150 pedidos, 15 vehículos) | 14.5 a 21.6 s con la reserva de guardado, límite de 30 s | Máquina de desarrollo |
 | 2026-10-20 | Re-optimización en Render (150 pedidos, 15 vehículos, 5 corridas) | 27.1 a 27.2 s en el servidor y 29.0 a 29.1 s desde fuera; todas dentro de 30 s | Servicio gratuito de Render; margen corto, ver la sección 8.1 de `02 Implementación de la re-optimización` |
 | 2026-10-20 | Benchmark de generación con hora punta (150 pedidos, 15 vehículos, 10 corridas) | Mediana de 12.8 s, percentil 95 de 20.2 s y máximo de 21.1 s | Límite de 45 s (RN-015); equipo de desarrollo |
-| 2026-10-20 | Benchmark de re-optimización con hora punta y presupuesto de 25 s (3 semillas) | 17.9 a 22.8 s con la reserva de guardado | Límite de 30 s (RN-012); falta medir en Render |
+| 2026-10-20 | Benchmark de re-optimización con hora punta y presupuesto de 25 s (3 semillas) | 17.9 a 22.8 s con la reserva de guardado | Límite de 30 s (RN-012); equipo de desarrollo |
+| 2026-10-20 | Generación en Render con hora punta (150 pedidos, 15 vehículos) | 30.0 s; 14 rutas, 150 paradas, 0 sin cobertura | Límite de 45 s (RN-015); servicio gratuito de Render |
+| 2026-10-20 | Re-optimización en Render con hora punta y presupuesto de 25 s (5 corridas) | 22.2 s en el servidor y 24.0 a 24.2 s desde fuera | Límite de 30 s (RN-012); matrices de 13.0 a 13.6 s y el ACO hace 2 a 3 iteraciones |
+| 2026-10-20 | Mapa en Render (14 rutas, 2 126 puntos) | 9.3 s la primera petición (calcula los trazados) y 2.6 s desde la caché; congestión en 2.0 a 2.1 s | La caché es por proceso: tras dormirse Render, la primera carga vuelve a tardar |
 
 ---
 
@@ -87,3 +90,4 @@ Motivo de posponer la fase 2: las pruebas del backend corren contra la base real
 | V_1_0_0 | 2026-10-20 | Versión inicial: pirámide de pruebas según el material del docente, decisión de no usar MSW, Playwright y la fase 1 de GitHub Actions para HT-10; fase 2 pospuesta al cierre del proyecto | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-20 | Se registran los resultados de las suites de backend y frontend y las mediciones de la re-optimización en local y en Render | Inciso Aguilar Elizabeth Antonela |
 | V_1_2_0 | 2026-10-20 | Se registran la suite completa (313 pruebas, 98 %), el frontend (72 pruebas) y los benchmarks de generación y re-optimización con hora punta | Inciso Aguilar Elizabeth Antonela |
+| V_1_3_0 | 2026-10-20 | Se registran las mediciones en Render con hora punta (generación, re-optimización y mapa) y las 73 pruebas del frontend | Inciso Aguilar Elizabeth Antonela |

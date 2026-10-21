@@ -267,6 +267,21 @@ describe("MapaPage", () => {
     expect(llamadasA("/api/rutas/mapa")).toHaveLength(antes);
   });
 
+  it("mientras calcula los recorridos avisa que la primera carga puede tardar, y luego indica la hora de la actualización", async () => {
+    let terminar: (valor: unknown) => void = () => {};
+    vi.mocked(api.get).mockImplementation((url: string) => {
+      if (url.startsWith("/api/rutas/mapa")) return new Promise((resolver) => (terminar = resolver)) as never;
+      if (url.startsWith("/api/rutas/congestion")) return Promise.resolve(vias()) as never;
+      return Promise.resolve({ items: [], total: 0, limite: 200, desplazamiento: 0 }) as never;
+    });
+    render(<MapaPage />);
+
+    expect(await screen.findByText(/calculando los recorridos por calles/i)).toBeInTheDocument();
+    await act(async () => terminar({ fecha_jornada: "2026-10-21", deposito: DEPOSITO, rutas: [] }));
+    expect(await screen.findByText(/actualizado a las/i)).toBeInTheDocument();
+    expect(screen.queryByText(/calculando los recorridos/i)).not.toBeInTheDocument();
+  });
+
   it("si la API falla muestra el error en lugar de un mapa en blanco", async () => {
     vi.mocked(api.get).mockRejectedValue(new Error("sin conexión"));
     render(<MapaPage />);

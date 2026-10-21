@@ -12,7 +12,7 @@
 | **Fecha** | 2026-10-20 |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
@@ -128,7 +128,7 @@ Rendimiento en el equipo de desarrollo, con las franjas incluidas (150 pedidos, 
 
 ---
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 
