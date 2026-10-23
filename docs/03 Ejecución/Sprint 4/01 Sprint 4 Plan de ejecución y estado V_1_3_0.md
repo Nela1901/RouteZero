@@ -10,7 +10,7 @@
 | **Sprint** | Sprint 4 — Sostenibilidad y Cierre (22 oct – 13 nov 2026) |
 | **Fecha de corte** | 2026-10-23 |
 | **Inspección** | Por confirmar (no hay fecha; por ahora solo clases) |
-| **Versión** | 1.2.0 |
+| **Versión** | 1.3.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -36,7 +36,7 @@ Estados: **Completada** (cumple todos sus escenarios de aceptación), **Parcial*
 | HT-11 | Optimizar consultas SQL aplicando Green Software | EP-07 | 3 | Guerra Lozano Keen | Completada | Auditoría de 17 consultas críticas con un volumen de seis meses de operación (`scripts/auditar_consultas.py`): todas en 42 ms o menos en el servidor y ninguna sin índice; índice `idx_pedidos_creado` (listado de pedidos de 7.0 a 0.1 ms) y dashboard y reporte que cuentan solo las paradas del periodo (de 6.6 a 3.1 ms y de 6.9 a 2.5 ms) | — |
 | HT-12 | Pruebas de generación de reportes PDF | EP-07 | 2 | Espinoza Tiza Yago Imanol | Completada | 15 pruebas de `test_reporte_pdf.py`: PDF válido leído de vuelta con `pypdf`, sin PDF vacío cuando no hay datos, costo del ciclo de vida, reporte parcial, descarga por la API y permisos; 2 de Flota para los campos nuevos | — |
 
-**Resumen del corte:** 5/5 ítems completados al 2026-10-23 (18 de 18 SP), desplegados y medidos en Render. La aprobación de un compañero en los Pull Request del sprint (criterio 3 del DoD) está por confirmar. El sprint lleva 2 de 23 días.
+**Resumen del corte:** 5/5 ítems completados al 2026-10-23 (18 de 18 SP), desplegados y medidos en Render. El criterio 3 del DoD (aprobación de un compañero) se cumplió en el Pull Request #64, aprobado por Espinoza Tiza Yago Imanol y Guerra Lozano Keen antes del merge. El sprint lleva 2 de 23 días.
 
 ## 3. Decisiones de alcance
 
@@ -54,7 +54,7 @@ Criterios del DoD global ([`01 Transformando a ágil`](../../02%20Planificaci%C3
 |---|---|---|---|
 | 1 | Cobertura de pruebas unitarias | ≥ 80 % con pytest-cov sobre el código nuevo; Vitest para el frontend nuevo | **Cumplido:** el módulo `sostenibilidad` tiene 100 % (total del backend 98 %, 359 pruebas); Vitest suma 99 |
 | 2 | Análisis estático | 0 vulnerabilidades críticas (Bandit, pip-audit, npm audit) en el workflow de GitHub Actions | **Cumplido:** el workflow quedó en verde en los PR #62 y #63; Bandit, pip-audit y npm audit sin hallazgos |
-| 3 | Revisión de código | Pull Request aprobado por un compañero en GitHub antes del merge a `main` (en el Sprint 3 solo el #60 lo cumplió; aquí se pide en todos) | **Por confirmar:** la aprobación de un compañero en GitHub en los Pull Request del sprint; el #62 y el #63 ya están fusionados y se registrará en el Pull Request de documentación |
+| 3 | Revisión de código | Pull Request aprobado por un compañero en GitHub antes del merge a `main` (en el Sprint 3 solo el #60 lo cumplió; aquí se pide en todos) | **Cumplido en el #64:** el Pull Request de documentación fue aprobado en GitHub el 23-10-2026 por YagoEspinoza (19:25 UTC) y KeenGuerra (19:27 UTC), ambos colaboradores del repositorio, antes del merge (19:28 UTC). El #62 y el #63 se habían fusionado antes, sin aprobación registrada en GitHub |
 | 4 | Despliegue en Staging | Build exitoso en Render y Vercel | **Cumplido:** Render sirve los tres endpoints nuevos y Vercel la pantalla con el botón del reporte |
 | 5 | Documentación de API | Endpoints nuevos documentados en Swagger/OpenAPI | **Cumplido:** `/api/sostenibilidad/dashboard`, `/compensacion` y `/reporte` aparecen en `/docs` |
 | 6 | Criterios de aceptación verificados | Escenarios de HU-015, HU-016, HU-017, HT-11 y HT-12 ejecutados y aprobados | **Cumplido:** los dos escenarios de cada ítem tienen pruebas de integración y de extremo a extremo |
@@ -112,4 +112,5 @@ Se relacionan con el [`03 Registro de riesgos`](../../02%20Planificaci%C3%B3n/03
 |---|---|---|---|
 | V_1_0_0 | 2026-10-23 | Versión inicial: alcance del Sprint 4 (18 SP), decisiones de alcance, actividad de cierre y plan de trabajo | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-23 | Se corrige el periodo del sprint según Jira (22-10 a 13-11, ya iniciado), se agrega el responsable por ítem y el avance de los cinco ítems: HT-11 y HT-12 completadas, HU-015, HU-016 y HU-017 parciales | Inciso Aguilar Elizabeth Antonela |
-| V_1_2_0 | 2026-10-23 | HU-015, HU-016 y HU-017 pasan a Completadas (18 de 18 SP) tras desplegar y medir en Render; se actualiza el Definition of Done; la aprobación de un compañero (criterio 3) queda por confirmar | Inciso Aguilar Elizabeth Antonela |
+| V_1_2_0 | 2026-10-23 | HU-015, HU-016 y HU-017 pasan a Completadas (18 de 18 SP) tras desplegar y medir en Render; se actualiza el Definition of Done; se registra la aprobación de dos compañeros en el Pull Request #64 (criterio 3) | Inciso Aguilar Elizabeth Antonela |
+| V_1_3_0 | 2026-10-23 | Se registra la aprobación del Pull Request #64 por dos compañeros (criterio 3 del Definition of Done); el #62 y el #63 se fusionaron antes sin aprobación registrada | Inciso Aguilar Elizabeth Antonela |

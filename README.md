@@ -259,9 +259,9 @@ RouteZero/
 │   │   │   │   └── historial Implementación/   (13 versiones anteriores)
 │   │   │   └── historial Sprint 3/   (22 versiones anteriores)
 │   │   └── Sprint 4/
-│   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_2_0.md
+│   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_3_0.md
 │   │       ├── 02 Implementación de la sostenibilidad V_1_2_0.md
-│   │       └── historial Sprint 4/   (4 versiones anteriores)
+│   │       └── historial Sprint 4/   (5 versiones anteriores)
 │   ├── 04 Seguimiento_Control/   (pendiente)
 │   └── 05 Cierre/   (pendiente)
 ├── backend/
@@ -383,7 +383,7 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 
 | Documento | Ubicación |
 |---|---|
-| Sprint 4: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 4/01 Sprint 4 Plan de ejecución y estado V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_2_0.md) |
+| Sprint 4: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 4/01 Sprint 4 Plan de ejecución y estado V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_3_0.md) |
 | Implementación de la sostenibilidad | [`docs/03 Ejecución/Sprint 4/02 Implementación de la sostenibilidad V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_2_0.md) |
 
 *Los documentos de seguimiento del Sprint 4 (`Implementación/`) se crean al cerrar el sprint, con la misma estructura que los anteriores.*

@@ -18,7 +18,7 @@
 
 ## 1. Alcance
 
-Este documento describe lo implementado en la épica EP-07 (Sostenibilidad). El estado de cada ítem está en el [`01 Sprint 4 Plan de ejecución y estado`](01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_2_0.md).
+Este documento describe lo implementado en la épica EP-07 (Sostenibilidad). El estado de cada ítem está en el [`01 Sprint 4 Plan de ejecución y estado`](01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_3_0.md).
 
 ## 2. Módulo `sostenibilidad` del backend
 
