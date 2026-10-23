@@ -10,7 +10,7 @@
 | **Sprint** | Sprint 4 — Sostenibilidad y Cierre (22 oct – 13 nov 2026) |
 | **Historias cubiertas** | HU-015 (dashboard de indicadores), HU-017 (plan de compensación de carbono), HU-016 (reporte PDF), HT-12 (pruebas del reporte) y HT-11 (optimización de consultas) |
 | **Fecha de corte** | 2026-10-23 |
-| **Versión** | 1.1.0 |
+| **Versión** | 1.2.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -18,7 +18,7 @@
 
 ## 1. Alcance
 
-Este documento describe lo implementado en la épica EP-07 (Sostenibilidad). El estado de cada ítem está en el [`01 Sprint 4 Plan de ejecución y estado`](01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_1_0.md).
+Este documento describe lo implementado en la épica EP-07 (Sostenibilidad). El estado de cada ítem está en el [`01 Sprint 4 Plan de ejecución y estado`](01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_2_0.md).
 
 ## 2. Módulo `sostenibilidad` del backend
 
@@ -118,12 +118,29 @@ Mediciones del 23-10-2026, en esta máquina y con la base real:
 | Validador W3C (Sostenibilidad) | 0 errores y 0 avisos |
 | `npm audit` (nivel alto) | 0 vulnerabilidades |
 
-## 8. Limitaciones conocidas
+## 8. Medición en Render (producción)
+
+Medido el 23-10-2026 contra `https://routezero-7k7j.onrender.com` (plan gratuito, CPU 0.1) con la cuenta administradora y datos temporales marcados que se borraron al terminar (`backend/tests_manual/medir_sostenibilidad_render.py`): un mes de operación (30 días × 15 rutas con 6 paradas, 450 rutas y 2 700 paradas), en fechas lejanas para no mezclarse con la operación real. Cuatro peticiones por caso.
+
+| Petición | Estado | Mediana | Mejor | Peor | Tamaño |
+|---|---|---|---|---|---|
+| Dashboard, 30 días (450 rutas) | 200 | 2.4 s | 2.4 s | 2.6 s | 3 KB |
+| Dashboard, 1 día (15 rutas) | 200 | 2.3 s | 2.3 s | 2.4 s | < 1 KB |
+| Plan de compensación, 30 días | 200 | 2.3 s | 2.3 s | 2.4 s | 1 KB |
+| Reporte PDF, 30 días (300 rutas listadas) | 200 (`application/pdf`) | 7.5 s | 7.4 s | 7.7 s | 23 KB |
+| Reporte PDF, 1 día (15 rutas) | 200 (`application/pdf`) | 3.3 s | 3.3 s | 3.4 s | 5 KB |
+| Reporte sin datos | 404 | 2.2 s | 2.2 s | 2.2 s | < 1 KB |
+
+- **El dashboard y el plan** cuestan lo mismo que cualquier petición del sistema en Render, unos 2.3 s: casi todo es la latencia de red hacia la base (IMP-016), no las consultas, que en el servidor tardan 3 ms. Pasar de 15 a 450 rutas casi no cambia el tiempo (2.3 s → 2.4 s).
+- **El reporte** suma el dibujo del PDF. Con el máximo que lista (300 rutas) toma 7.5 s; un reporte de un día, 3.3 s. En esta máquina el dibujo del PDF más grande toma 0.4 s, así que en Render la CPU de 0.1 lo multiplica por unas 12. Es aceptable para una descarga que el administrador pide a mano, y la pantalla muestra «Generando reporte…» mientras tanto.
+- Los datos temporales se borraron (0 vehículos, 0 conductores y 0 pedidos de la medición al terminar).
+
+## 9. Limitaciones conocidas
 
 - Tras una re-optimización, las métricas de la ruta cubren solo el tramo restante (ver [`02 Implementación de la re-optimización`](../Sprint%203/02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md)); el dashboard y el reporte pueden quedar por debajo de lo recorrido en las rutas re-optimizadas del periodo.
 - El combustible ahorrado se mide frente a la solución inicial del optimizador, no frente a una operación real sin optimizar.
 - Los tres supuestos de la sección 3 deben validarse con Andina Reparto antes de usar las cifras para decidir, y los vehículos ya registrados necesitan que se les cargue el precio de compra y la vida útil para entrar al costo del ciclo de vida.
-- Falta medir en Render el tiempo de respuesta de las consultas y de la generación del PDF, donde cada petición cuesta unos 2 s (IMP-016) y la CPU es de 0.1.
+- Un reporte de un mes completo tarda unos 7.5 s en Render (CPU 0.1); si el sistema pasara a un plan con más CPU bajaría casi todo ese tiempo. Tampoco se midió Lighthouse sobre la pantalla Sostenibilidad ya desplegada en Vercel: la medición de este documento es local, con datos sintéticos.
 
 [← Volver al README Principal](../../../README.md)
 
@@ -133,3 +150,4 @@ Mediciones del 23-10-2026, en esta máquina y con la base real:
 |---|---|---|---|
 | V_1_0_0 | 2026-10-23 | Versión inicial: módulo de sostenibilidad, supuestos configurables, pantalla y resultados de pruebas de HU-015 y HU-017 | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-23 | Se agregan el reporte PDF y el costo del ciclo de vida de la flota (HU-016), sus pruebas (HT-12), la auditoría y optimización de consultas (HT-11) y se corrige el periodo del sprint | Inciso Aguilar Elizabeth Antonela |
+| V_1_2_0 | 2026-10-23 | Se agrega la medición en Render de los tres endpoints (dashboard, compensación y reporte PDF) y se actualizan las limitaciones | Inciso Aguilar Elizabeth Antonela |
