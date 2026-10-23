@@ -205,6 +205,19 @@ describe("MapaPage", () => {
     expect(marcadoresDeRadio(10)).toHaveLength(2);
   });
 
+  it("el panel se puede ocultar para ver todo el mapa y volver a mostrar", async () => {
+    api_responde([ruta("r1", "ABC-101")]);
+    const usuario = userEvent.setup();
+    render(<MapaPage />);
+
+    expect(await screen.findByRole("complementary", { name: /rutas y congestión/i })).toBeInTheDocument();
+    await usuario.click(screen.getByRole("button", { name: "Ocultar panel" }));
+    expect(screen.queryByRole("complementary", { name: /rutas y congestión/i })).not.toBeInTheDocument();
+    expect(screen.getAllByTestId("linea").length).toBeGreaterThan(0); // el mapa sigue dibujado
+    await usuario.click(screen.getByRole("button", { name: "Mostrar panel" }));
+    expect(screen.getByRole("complementary", { name: /rutas y congestión/i })).toBeInTheDocument();
+  });
+
   it("muestra el nivel de congestión de cada vía con su color y la hora punta", async () => {
     api_responde([], {
       hora: "08:30:00",

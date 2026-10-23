@@ -105,12 +105,12 @@ export function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (
 export function CampoSelect(props: { etiqueta: string; valor: string; opciones: string[]; onCambio: (v: string) => void; ayuda?: string }) {
   const id = useId();
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)", minWidth: 0, maxWidth: "100%" }}>
       <span>
         <label htmlFor={id}>{props.etiqueta}</label>
         {props.ayuda && <Ayuda texto={props.ayuda} />}
       </span>
-      <select id={id} value={props.valor} onChange={(e) => props.onCambio(e.target.value)} style={estiloInput}>
+      <select id={id} value={props.valor} onChange={(e) => props.onCambio(e.target.value)} style={{ ...estiloInput, maxWidth: "100%" }}>
         {props.opciones.map((o) => (
           <option key={o} value={o}>
             {o}

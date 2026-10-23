@@ -119,6 +119,8 @@ export function MapaPage() {
   const [automatico, setAutomatico] = useState(true);
   const [actualizado, setActualizado] = useState<string | null>(null);
   const [cargando, setCargando] = useState(true);
+  // En pantallas angostas el panel tapa buena parte del mapa: empieza cerrado y se abre con el botón
+  const [panelAbierto, setPanelAbierto] = useState(() => typeof window.matchMedia !== "function" || window.matchMedia("(min-width: 900px)").matches);
   const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
@@ -260,6 +262,16 @@ export function MapaPage() {
           )}
         </MapContainer>
 
+        <button
+          type="button"
+          onClick={() => setPanelAbierto((abierto) => !abierto)}
+          aria-expanded={panelAbierto}
+          style={{ ...estiloBotonBarra, position: "absolute", right: 12, top: 12, zIndex: 1001, height: 36, background: "var(--rz-panel-solid-bg)" }}
+        >
+          {panelAbierto ? "Ocultar panel" : "Mostrar panel"}
+        </button>
+
+        {panelAbierto && (
         <PanelRutas
           rutas={rutas}
           congestion={congestion}
@@ -268,6 +280,7 @@ export function MapaPage() {
           sinRutas={mapa !== null && rutas.length === 0}
           hayPedidos={verPedidos && pendientes.length > 0}
         />
+        )}
       </div>
     </div>
   );
@@ -341,9 +354,9 @@ function PanelRutas(props: {
       style={{
         position: "absolute",
         right: 12,
-        top: 12,
+        top: 56,
         width: "min(340px, calc(100% - 24px))",
-        maxHeight: "calc(100% - 24px)",
+        maxHeight: "calc(100% - 68px)",
         overflowY: "auto",
         padding: 12,
         borderRadius: 14,
@@ -392,7 +405,7 @@ function PanelRutas(props: {
                   </div>
                   <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 3 }}>
                     {r.tramos.map((t) => (
-                      <li key={`${t.desde}-${t.hasta}`} style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                      <li key={`${t.desde}-${t.hasta}`} style={{ display: "flex", justifyContent: "space-between", gap: "2px 8px", flexWrap: "wrap" }}>
                         <span>{etiquetaTramo(t)}</span>
                         <span style={{ fontFamily: "var(--rz-font-mono)", whiteSpace: "nowrap" }}>
                           {numero(t.duracion_min)} min · {numero(t.distancia_km, 2)} km{t.en_punta ? " · punta" : ""}
