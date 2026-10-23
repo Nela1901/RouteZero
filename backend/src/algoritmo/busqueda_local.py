@@ -56,7 +56,7 @@ def mejorar(sol: Solucion, d: Datos, contextos: list, rng, limite_t: float | Non
                     if valida and (mejor is None or costo < mejor[0]):
                         mejor = (costo, None, k)
             if mejor is not None and mejor[0] < penalizacion:
-                delta, ri, donde = mejor
+                _, ri, donde = mejor
                 if ri is None:
                     rutas.append([donde, [u]])
                     costos.append(evaluar(donde, [u])[0])

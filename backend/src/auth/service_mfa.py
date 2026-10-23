@@ -6,6 +6,19 @@ from src.auth import supabase_client
 from src.auth.repository import RepositorioUsuarios
 
 
+# Supabase rechaza el código si el desafío y la verificación salen desde IPs distintas (`mfa_ip_address_mismatch`).
+# Con un servicio que puede salir por varias IPs (Render) pasa de vez en cuando aunque el código sea correcto: se repite
+# el desafío y la verificación, y eso no cuenta como intento fallido.
+INTENTOS_ANTE_CAMBIO_DE_IP = 3
+
+
+def _codigo_de_error(exc: httpx.HTTPStatusError) -> str | None:
+    try:
+        return exc.response.json().get("error_code")
+    except ValueError:
+        return None
+
+
 class ServicioMFA:
     def __init__(self, repo: RepositorioUsuarios):
         self.repo = repo
@@ -33,15 +46,24 @@ class ServicioMFA:
                 status.HTTP_429_TOO_MANY_REQUESTS,
                 "Verificación de MFA bloqueada temporalmente por intentos fallidos",
             )
-        try:
-            challenge = supabase_client.mfa_challenge(access_token, factor_id)
-            sesion = supabase_client.mfa_verify(access_token, factor_id, challenge["id"], codigo)
-        except httpx.HTTPStatusError as exc:
-            self.repo.registrar_intento_mfa_fallido(usuario_id)
-            self.auditoria.registrar(usuario_id, "mfa_codigo_invalido", "auth")
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Código TOTP inválido") from exc
-        self.repo.resetear_intentos_mfa(usuario_id)
-        return sesion
+        for intento in range(1, INTENTOS_ANTE_CAMBIO_DE_IP + 1):
+            try:
+                challenge = supabase_client.mfa_challenge(access_token, factor_id)
+                sesion = supabase_client.mfa_verify(access_token, factor_id, challenge["id"], codigo)
+            except httpx.HTTPStatusError as exc:
+                if _codigo_de_error(exc) == "mfa_ip_address_mismatch":
+                    if intento < INTENTOS_ANTE_CAMBIO_DE_IP:
+                        continue
+                    raise HTTPException(
+                        status.HTTP_503_SERVICE_UNAVAILABLE,
+                        "No se pudo verificar el código por un cambio de red. Inténtalo de nuevo",
+                    ) from exc
+                self.repo.registrar_intento_mfa_fallido(usuario_id)
+                self.auditoria.registrar(usuario_id, "mfa_codigo_invalido", "auth")
+                raise HTTPException(status.HTTP_400_BAD_REQUEST, "Código TOTP inválido") from exc
+            self.repo.resetear_intentos_mfa(usuario_id)
+            return sesion
+        raise AssertionError("inalcanzable: el último intento siempre devuelve o lanza")
 
     def verificar_login(self, usuario_id: str, access_token: str, factor_id: str, codigo: str) -> dict:
         return self._verificar_codigo_totp(usuario_id, access_token, factor_id, codigo)

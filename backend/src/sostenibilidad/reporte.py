@@ -7,6 +7,7 @@ from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 
 EMPRESA = "Andina Reparto S.A.C."
+SIN_DATO = "sin dato"
 GRIS = (90, 90, 90)
 VERDE = (22, 101, 52)
 AVISO = (146, 64, 14)
@@ -17,11 +18,11 @@ def _t(texto: object) -> str:
 
 
 def _n(valor: float | None, decimales: int = 1) -> str:
-    return "sin dato" if valor is None else f"{valor:,.{decimales}f}"
+    return SIN_DATO if valor is None else f"{valor:,.{decimales}f}"
 
 
 def _soles(valor: float | None) -> str:
-    return "sin dato" if valor is None else f"S/ {valor:,.2f}"
+    return SIN_DATO if valor is None else f"S/ {valor:,.2f}"
 
 
 class _Documento(FPDF):
@@ -125,7 +126,7 @@ def generar_pdf(datos: dict) -> bytes:
     _tabla(
         pdf, ["Vehículo", "Tipo", "Precio de compra", "Vida útil", "Depreciación", "Combustible", "Total"],
         [
-            [v["placa"], v["tipo"], _soles(v["precio_compra_soles"]), "sin dato" if v["vida_util_anios"] is None else f"{v['vida_util_anios']} años",
+            [v["placa"], v["tipo"], _soles(v["precio_compra_soles"]), SIN_DATO if v["vida_util_anios"] is None else f"{v['vida_util_anios']} años",
              _soles(v["depreciacion_soles"]), _soles(v["combustible_soles"]), _soles(v["costo_total_soles"])]
             for v in flota
         ],

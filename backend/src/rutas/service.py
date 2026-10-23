@@ -582,7 +582,7 @@ class ServicioRutas:
         if not rutas:
             return base | {"mensaje": "No tienes rutas asignadas por el momento."}
         prioridad = {"EN_EJECUCION": 0, "CONFIRMADA": 1, "COMPLETADA": 2}
-        r = sorted(rutas, key=lambda x: prioridad.get(x["estado"], 3))[0]
+        r = min(rutas, key=lambda x: prioridad.get(x["estado"], 3))
         ps = self.repo.paradas_de([r["ruta_id"]]).get(r["ruta_id"], [])
         incidentes = self.repo.incidentes(True)
         tramos = self._tramos_de_ruta(r, ps, incidentes, con_nodos=True)

@@ -119,30 +119,9 @@ class ServicioSesiones:
         self.auditoria.registrar(usuario.usuario_id, "login_exitoso", "auth", detalle="via MFA", ip_origen=ip)
         return _tokens(sesion)
 
-    def renovar(self, access_token_vencido: str, refresh_token: str) -> dict:
-        # La firma se verifica, pero se tolera que el access token ya haya vencido: solo sirve
-        # para saber a qué cuenta y sesión corresponde este intento de renovación.
-        payload = decodificar_token(access_token_vencido, verificar_exp=False)
-        usuario_id = payload.get("sub")
-        if not usuario_id:
-            raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token sin usuario asociado")
-        session_id = payload.get("session_id", "")
-        self.usuarios.fijar_contexto_rls(usuario_id)
-
-        # La sesión queda bloqueada (FOR UPDATE) hasta el final de la petición, así dos
-        # renovaciones simultáneas con el mismo token se serializan sin carreras.
-        fila = self.sesiones.bloquear_para_rotacion(session_id)
-        if fila is None or fila["estado"] != "ACTIVA":
-            raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED, "Sesión no registrada o revocada, inicia sesión de nuevo"
-            )
-
-        if fila["segundos_inactiva"] > DIAS_VIGENCIA_REFRESH * 86400:
-            self.sesiones.marcar_expirada(session_id)
-            raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED, "Sesión expirada por inactividad, inicia sesión de nuevo"
-            )
-
+    def _verificar_refresh_presentado(self, fila: dict, refresh_token: str, session_id: str, usuario_id: str) -> None:
+        """Detección de reuso del token de refresco (la hace el backend, no Supabase): lanza 401 si el token
+        presentado no es el vigente ni un reintento legítimo dentro de la ventana de gracia."""
         # La detección de reuso la hacemos nosotros: Supabase acepta refresh tokens ya rotados
         # (comprobado en este proyecto, aun con "detect and revoke compromised tokens" activo).
         hash_presentado = _hash_token(refresh_token)
@@ -169,6 +148,32 @@ class ServicioSesiones:
                 # Token desconocido (o demasiado antiguo): se rechaza sin tocar la sesión, para
                 # que enviar basura no permita cerrar la sesión de otra persona.
                 raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token de refresco inválido o revocado")
+
+    def renovar(self, access_token_vencido: str, refresh_token: str) -> dict:
+        # La firma se verifica, pero se tolera que el access token ya haya vencido: solo sirve
+        # para saber a qué cuenta y sesión corresponde este intento de renovación.
+        payload = decodificar_token(access_token_vencido, verificar_exp=False)
+        usuario_id = payload.get("sub")
+        if not usuario_id:
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token sin usuario asociado")
+        session_id = payload.get("session_id", "")
+        self.usuarios.fijar_contexto_rls(usuario_id)
+
+        # La sesión queda bloqueada (FOR UPDATE) hasta el final de la petición, así dos
+        # renovaciones simultáneas con el mismo token se serializan sin carreras.
+        fila = self.sesiones.bloquear_para_rotacion(session_id)
+        if fila is None or fila["estado"] != "ACTIVA":
+            raise HTTPException(
+                status.HTTP_401_UNAUTHORIZED, "Sesión no registrada o revocada, inicia sesión de nuevo"
+            )
+
+        if fila["segundos_inactiva"] > DIAS_VIGENCIA_REFRESH * 86400:
+            self.sesiones.marcar_expirada(session_id)
+            raise HTTPException(
+                status.HTTP_401_UNAUTHORIZED, "Sesión expirada por inactividad, inicia sesión de nuevo"
+            )
+
+        self._verificar_refresh_presentado(fila, refresh_token, session_id, usuario_id)
 
         try:
             sesion = supabase_client.refrescar_sesion(refresh_token)

@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -10,10 +12,10 @@ router = APIRouter(prefix="/api/auditoria", tags=["auditoria"])
 
 @router.get("", response_model=list[LogAuditoriaOut])
 def listar_auditoria(
+    _usuario: Annotated[UsuarioActual, Depends(requiere_rol("ADMINISTRADOR"))],
+    db: Annotated[Session, Depends(get_db_con_rls)],
     modulo: str | None = None,
     limite: int = 100,
-    _usuario: UsuarioActual = Depends(requiere_rol("ADMINISTRADOR")),
-    db: Session = Depends(get_db_con_rls),
 ) -> list[dict]:
     limite = min(max(limite, 1), 500)
     return RepositorioAuditoria(db).listar(modulo, limite)
