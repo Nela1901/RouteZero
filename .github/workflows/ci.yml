@@ -1,0 +1,84 @@
+# Integración continua, fase 1 (HT-10): todo lo que no necesita credenciales ni acceso a la base de datos.
+# Las pruebas de pytest del backend corren contra la base real de Supabase y se siguen ejecutando en local antes de
+# cada Pull Request; llevarlas aquí (fase 2) se reevalúa al terminar todos los sprints.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Frontend (lint, pruebas, build y auditoría)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - name: Pruebas de Vitest
+        run: npx vitest run --reporter=default --reporter=github-actions
+      - run: npm run build
+      - name: Auditoría de dependencias (sin vulnerabilidades altas ni críticas)
+        run: npm audit --audit-level=high
+
+  e2e:
+    name: Pruebas de extremo a extremo (Playwright)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Navegador (se guarda en caché entre ejecuciones)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - name: Informe y trazas de las pruebas fallidas
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: informe-playwright
+          path: |
+            frontend/playwright-report
+            frontend/test-results
+          retention-days: 7
+
+  backend-seguridad:
+    name: Backend (análisis estático y dependencias)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install bandit pip-audit
+      - name: Bandit (sin hallazgos de severidad alta)
+        run: python -m bandit -r backend/src -lll
+      - name: pip-audit (dependencias del backend)
+        run: python -m pip_audit -r backend/requirements.txt
