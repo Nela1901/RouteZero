@@ -7,12 +7,12 @@
 | **Nombre del Proyecto** | RouteZero — Optimizador de rutas sostenibles |
 | **Empresa ficticia** | Andina Reparto S.A.C. |
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
-| **Sprint** | Sprint 4 — Sostenibilidad y Cierre (31 oct – 13 nov 2026) |
+| **Sprint** | Sprint 4 — Sostenibilidad y Cierre (22 oct – 13 nov 2026) |
 | **Historias cubiertas** | HU-015 (dashboard de indicadores) y HU-017 (plan de compensación de carbono) |
 | **Fecha de corte** | 2026-10-23 |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
@@ -77,12 +77,12 @@ Mediciones del 23-10-2026, en esta máquina y con la base real:
 
 ## 6. Limitaciones conocidas
 
-- Tras una re-optimización, las métricas de la ruta cubren solo el tramo restante (ver [`02 Implementación de la re-optimización`](../Sprint%203/02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md)); el dashboard puede quedar por debajo de lo recorrido en las rutas re-optimizadas del periodo.
+- Tras una re-optimización, las métricas de la ruta cubren solo el tramo restante (ver [`02 Implementación de la re-optimización`](../../Sprint%203/02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md)); el dashboard puede quedar por debajo de lo recorrido en las rutas re-optimizadas del periodo.
 - El combustible ahorrado se mide frente a la solución inicial del optimizador, no frente a una operación real sin optimizar.
 - Los tres supuestos de la sección 3 deben validarse con Andina Reparto antes de usar las cifras para decidir.
 - Falta medir el tiempo de respuesta de las dos consultas en Render, donde cada petición cuesta unos 2 s (IMP-016).
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 

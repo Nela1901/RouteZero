@@ -7,10 +7,10 @@
 | **Nombre del Proyecto** | RouteZero — Optimizador de rutas sostenibles |
 | **Empresa ficticia** | Andina Reparto S.A.C. |
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
-| **Sprint** | Sprint 4 — Sostenibilidad y Cierre (31 oct – 13 nov 2026) |
+| **Sprint** | Sprint 4 — Sostenibilidad y Cierre (22 oct – 13 nov 2026) |
 | **Fecha de corte** | 2026-10-23 |
 | **Inspección** | Por confirmar (no hay fecha; por ahora solo clases) |
-| **Versión** | 1.0.0 |
+| **Versión** | 1.1.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -22,7 +22,7 @@ Meta definida en el Sprint Planning (ver [`02 Artefactos Jira`](../../02%20Plani
 
 > *Implementar el dashboard de sostenibilidad, reportes PDF y plan de compensación de carbono (EP-07). Ejecutar pruebas de aceptación, completar la documentación técnica y preparar la sustentación final.*
 
-El sprint compromete **5 ítems y 18 Story Points** (3 Historias de Usuario y 2 Historias Técnicas), confirmados contra el tablero de Jira el 23-10-2026 (el sprint todavía no se ha iniciado en Jira). El trabajo empieza antes del 31-10, apenas cerró el Sprint 3 en `main`, para tener margen antes de la actividad de cierre descrita en la sección 5.
+El sprint compromete **5 ítems y 18 Story Points** (3 Historias de Usuario y 2 Historias Técnicas), confirmados contra el tablero de Jira el 23-10-2026 (el sprint se inició en Jira el 22-10-2026 y cierra el 13-11-2026). El trabajo arrancó apenas cerró el Sprint 3 en `main`, para tener margen antes de la actividad de cierre descrita en la sección 5.
 
 ## 2. Alcance comprometido y estado al 2026-10-23
 
@@ -30,13 +30,13 @@ Estados: **Completada** (cumple todos sus escenarios de aceptación), **Parcial*
 
 | ID | Título | Épica | SP | Responsable (Jira) | Estado | Avance verificado | Falta para cerrarla |
 |---|---|---|---|---|---|---|---|
-| HU-015 | Visualizar dashboard de indicadores de sostenibilidad | EP-07 | 5 | Espinoza Tiza Yago Imanol | Parcial | Implementada y probada: módulo `sostenibilidad`, indicadores por periodo, ahorro en soles, ceros con mensaje sin datos y pantalla del administrador; Lighthouse 97 a 100 y W3C sin errores (ver [`02 Implementación de la sostenibilidad`](02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_0_0.md)) | Medir en Render, la revisión de un compañero y el resumen del día para el conductor (recortable) |
-| HU-016 | Descargar reporte de sostenibilidad en PDF | EP-07 | 5 | Espinoza Tiza Yago Imanol | Pendiente | — | Generación del PDF (CO₂ por ruta, costo del ciclo de vida de la flota, ahorro de combustible, metas), reporte parcial si la jornada sigue en curso, mensaje si no hay datos |
+| HU-015 | Visualizar dashboard de indicadores de sostenibilidad | EP-07 | 5 | Espinoza Tiza Yago Imanol | Parcial | Implementada y probada: módulo `sostenibilidad`, indicadores por periodo, ahorro en soles, ceros con mensaje sin datos y pantalla del administrador; Lighthouse 97 a 100 y W3C sin errores (ver [`02 Implementación de la sostenibilidad`](02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_1_0.md)) | Medir en Render, la revisión de un compañero y el resumen del día para el conductor (recortable) |
+| HU-016 | Descargar reporte de sostenibilidad en PDF | EP-07 | 5 | Espinoza Tiza Yago Imanol | Parcial | Implementada y probada: PDF con CO₂ por ruta, costo del ciclo de vida de la flota (precio de compra y vida útil del vehículo), ahorro de combustible y metas; reporte parcial si hay jornadas sin completar; 404 con mensaje sin datos; botón de descarga y registro de auditoría (ver [`02 Implementación de la sostenibilidad`](02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_1_0.md)) | Medir en Render, la revisión de un compañero y que Andina Reparto cargue el precio y la vida útil de sus vehículos |
 | HU-017 | Consultar plan de compensación de carbono | EP-07 | 3 | Espinoza Tiza Yago Imanol | Parcial | Implementada y probada: árboles necesarios (RN-011), alerta con acciones si el mes supera la meta (RN-010), alianzas a explorar y mensaje sin datos, en la misma pantalla | Medir en Render y la revisión de un compañero |
-| HT-11 | Optimizar consultas SQL aplicando Green Software | EP-07 | 3 | Guerra Lozano Keen | Pendiente | Índices del listado de pedidos (HT-08) | Medir las consultas críticas con 150 pedidos (≤ 500 ms), revisar planes de ejecución y agregar los índices que falten |
-| HT-12 | Pruebas de generación de reportes PDF | EP-07 | 2 | Espinoza Tiza Yago Imanol | Pendiente | — | Pruebas del módulo de reportes (PDF válido con datos y error esperado sin datos) |
+| HT-11 | Optimizar consultas SQL aplicando Green Software | EP-07 | 3 | Guerra Lozano Keen | Completada | Auditoría de 17 consultas críticas con un volumen de seis meses de operación (`scripts/auditar_consultas.py`): todas en 42 ms o menos en el servidor y ninguna sin índice; índice `idx_pedidos_creado` (listado de pedidos de 7.0 a 0.1 ms) y dashboard y reporte que cuentan solo las paradas del periodo (de 6.6 a 3.1 ms y de 6.9 a 2.5 ms) | — |
+| HT-12 | Pruebas de generación de reportes PDF | EP-07 | 2 | Espinoza Tiza Yago Imanol | Completada | 15 pruebas de `test_reporte_pdf.py`: PDF válido leído de vuelta con `pypdf`, sin PDF vacío cuando no hay datos, costo del ciclo de vida, reporte parcial, descarga por la API y permisos; 2 de Flota para los campos nuevos | — |
 
-**Resumen del corte:** 0/5 ítems completados al 2026-10-23 (0 de 18 SP). HU-015 (5 SP) y HU-017 (3 SP) están implementadas y probadas, a falta de la medición en Render y de la revisión de un compañero. El sprint formal empieza el 31-10.
+**Resumen del corte:** 2/5 ítems completados al 2026-10-23 (5 de 18 SP: HT-11 y HT-12). HU-015 (5 SP), HU-016 (5 SP) y HU-017 (3 SP) están implementadas y probadas, a falta de la medición en Render y de la revisión de un compañero. El sprint lleva 2 de 23 días.
 
 ## 3. Decisiones de alcance
 
@@ -81,7 +81,7 @@ Propuesta **sujeta a validación del equipo**. La fecha de inspección no está 
 | 23-10 a 25-10 | HU-015: backend de métricas y pantalla del dashboard | Escenarios 1 y 2 en la API y en pantalla |
 | 26-10 a 30-10 | HU-017 y HU-016: plan de compensación y reporte PDF | Escenarios de ambas historias; ciclo de vida de la flota |
 | 31-10 a 03-11 | HT-11 y HT-12: consultas SQL, índices y pruebas de reportes | Consultas críticas ≤ 500 ms; pruebas del PDF |
-| 04-11 a 08-11 | HT-09 y HT-10 del cierre: Lighthouse, W3C y pruebas de extremo a extremo de las pantallas nuevas | Evidencias de calidad |
+| 04-11 a 08-11 | Calidad de las pantallas nuevas: Lighthouse, W3C y pruebas de extremo a extremo | Evidencias de calidad |
 | 09-11 a 13-11 | Cierre: documentos, revisión y retrospectiva del sprint | DoD |
 | Después | Actividad de cierre de la sección 5 | SonarQube, OWASP, WCAG 2.2 y SUS |
 
@@ -101,7 +101,7 @@ Se relacionan con el [`03 Registro de riesgos`](../../02%20Planificaci%C3%B3n/03
 ## 8. Evidencias
 
 - Código del backend: [`backend/`](../../../backend/) y del frontend: [`frontend/`](../../../frontend/).
-- Implementación de HU-015 y HU-017: [`02 Implementación de la sostenibilidad`](02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_0_0.md).
+- Implementación de HU-015 y HU-017: [`02 Implementación de la sostenibilidad`](02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_1_0.md).
 - Estado del sprint anterior: [`01 Sprint 3 Plan de ejecución y estado V_1_7_0`](../Sprint%203/01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_7_0.md).
 
 [← Volver al README Principal](../../../README.md)
@@ -111,3 +111,4 @@ Se relacionan con el [`03 Registro de riesgos`](../../02%20Planificaci%C3%B3n/03
 | Versión | Fecha | Cambio realizado | Responsable |
 |---|---|---|---|
 | V_1_0_0 | 2026-10-23 | Versión inicial: alcance del Sprint 4 (18 SP), decisiones de alcance, actividad de cierre y plan de trabajo | Inciso Aguilar Elizabeth Antonela |
+| V_1_1_0 | 2026-10-23 | Se corrige el periodo del sprint según Jira (22-10 a 13-11, ya iniciado), se agrega el responsable por ítem y el avance de los cinco ítems: HT-11 y HT-12 completadas, HU-015, HU-016 y HU-017 parciales | Inciso Aguilar Elizabeth Antonela |

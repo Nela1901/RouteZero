@@ -212,10 +212,10 @@ RouteZero/
 │   │   ├── 08. Usuarios V_1_0_0.md
 │   │   ├── 09. Reglas de negocio V_1_1_0.md
 │   │   ├── 10. Stack tecnológico V_1_1_0.md
-│   │   ├── 11. Base de datos V_1_9_0.md
+│   │   ├── 11. Base de datos V_1_10_0.md
 │   │   ├── 12. Modelo C4 V_1_2_0.md
 │   │   ├── 13. Restricciones V_1_1_0.md
-│   │   └── historial Inicio/   (21 versiones anteriores)
+│   │   └── historial Inicio/   (22 versiones anteriores)
 │   ├── 02 Planificación/
 │   │   ├── 01 Transformando a ágil V_1_1_0.md
 │   │   ├── 02 Artefactos Jira V_1_1_0.md
@@ -259,8 +259,9 @@ RouteZero/
 │   │   │   │   └── historial Implementación/   (13 versiones anteriores)
 │   │   │   └── historial Sprint 3/   (22 versiones anteriores)
 │   │   └── Sprint 4/
-│   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_0_0.md
-│   │       └── 02 Implementación de la sostenibilidad V_1_0_0.md
+│   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_1_0.md
+│   │       ├── 02 Implementación de la sostenibilidad V_1_1_0.md
+│   │       └── historial Sprint 4/   (2 versiones anteriores)
 │   ├── 04 Seguimiento_Control/   (pendiente)
 │   └── 05 Cierre/   (pendiente)
 ├── backend/
@@ -283,7 +284,7 @@ RouteZero/
 └── README.md
 ```
 
-Cada carpeta de documentos muestra solo la **última versión** de cada archivo. Las versiones anteriores se conservan en una subcarpeta de esa misma carpeta, con el mismo nombre, para no perder la trazabilidad. La subcarpeta se llama `historial` seguido del nombre de la carpeta a la que pertenece: `historial Inicio`, `historial Planificación`, `historial Sprint 1` y `historial Sprint 2` (plan de ejecución e implementación técnica de cada sprint) e `historial Implementación` (informe de estado, registro de impedimentos, revisión y retrospectiva de cada sprint).
+Cada carpeta de documentos muestra solo la **última versión** de cada archivo. Las versiones anteriores se conservan en una subcarpeta de esa misma carpeta, con el mismo nombre, para no perder la trazabilidad. La subcarpeta se llama `historial` seguido del nombre de la carpeta a la que pertenece: `historial Inicio`, `historial Planificación`, `historial Sprint 1`, `historial Sprint 2`, `historial Sprint 3` y `historial Sprint 4` (plan de ejecución e implementación técnica de cada sprint) e `historial Implementación` (informe de estado, registro de impedimentos, revisión y retrospectiva de cada sprint).
 
 Antes de abrir un Pull Request con cambios en la documentación se ejecuta `python scripts/verificar_enlaces.py`, que revisa todos los enlaces, las secciones enlazadas y el enlace de retorno de cada documento.
 
@@ -306,7 +307,7 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Usuarios | [`docs/01 Inicio/08. Usuarios V_1_0_0.md`](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) |
 | Reglas de negocio | [`docs/01 Inicio/09. Reglas de negocio V_1_1_0.md`](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) |
 | Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_1_0.md`](docs/01%20Inicio/10.%20Stack%20tecnológico%20V_1_1_0.md) |
-| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_9_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_9_0.md) |
+| Base de datos | [`docs/01 Inicio/11. Base de datos V_1_10_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_10_0.md) |
 | Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_2_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_2_0.md) |
 | Restricciones | [`docs/01 Inicio/13. Restricciones V_1_1_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_1_0.md) |
 
@@ -382,8 +383,8 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 
 | Documento | Ubicación |
 |---|---|
-| Sprint 4: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 4/01 Sprint 4 Plan de ejecución y estado V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_0_0.md) |
-| Implementación de la sostenibilidad | [`docs/03 Ejecución/Sprint 4/02 Implementación de la sostenibilidad V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_0_0.md) |
+| Sprint 4: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 4/01 Sprint 4 Plan de ejecución y estado V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_1_0.md) |
+| Implementación de la sostenibilidad | [`docs/03 Ejecución/Sprint 4/02 Implementación de la sostenibilidad V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_1_0.md) |
 
 *Los documentos de seguimiento del Sprint 4 (`Implementación/`) se crean al cerrar el sprint, con la misma estructura que los anteriores.*
 
