@@ -113,6 +113,41 @@ export function miRuta(paradas = [parada(1), parada(2), parada(3)], estado = "CO
 
 export type MiRuta = ReturnType<typeof miRuta>;
 
+export function dashboardSostenibilidad(hayDatos = true, desde = "2026-10-01", hasta = "2026-10-22") {
+  const ceros = { rutas: 0, distancia_km: 0, emision_co2_kg: 0, combustible_l: 0, combustible_ahorrado_l: 0, ahorro_soles: 0, cumplimiento_ventanas_pct: 0 };
+  return {
+    desde,
+    hasta,
+    hay_datos: hayDatos,
+    mensaje: hayDatos ? null : "No hay jornadas operativas registradas en el periodo seleccionado.",
+    totales: hayDatos
+      ? { rutas: 3, distancia_km: 120.5, emision_co2_kg: 28.4, combustible_l: 14.2, combustible_ahorrado_l: 2.5, ahorro_soles: 11.25, cumplimiento_ventanas_pct: 96.7 }
+      : ceros,
+    entregas: hayDatos ? { entregadas: 8, pendientes: 3, fallidas: 1 } : { entregadas: 0, pendientes: 0, fallidas: 0 },
+    por_dia: hayDatos
+      ? [
+          { fecha: "2026-10-20", emision_co2_kg: 10.2, distancia_km: 40, combustible_ahorrado_l: 1 },
+          { fecha: "2026-10-21", emision_co2_kg: 18.2, distancia_km: 80.5, combustible_ahorrado_l: 1.5 },
+        ]
+      : [],
+    precio_combustible_soles_l: 4.5,
+  };
+}
+
+export function compensacionSostenibilidad(hayDatos = true, excede = true) {
+  return {
+    hay_datos: hayDatos,
+    mensaje: hayDatos ? null : "No hay datos suficientes: ejecute al menos una jornada operativa antes de generar el plan.",
+    emision_co2_kg: hayDatos ? 1000 : 0,
+    toneladas_co2: hayDatos ? 1 : 0,
+    kg_co2_por_arbol_anio: 22,
+    arboles_necesarios: hayDatos ? 46 : 0,
+    mes_evaluado: { desde: "2026-10-01", hasta: "2026-10-22", emision_co2_kg: hayDatos ? 1000 : 0, meta_kg: 800, porcentaje_meta: hayDatos ? 125 : 0, excede_meta: hayDatos && excede },
+    acciones: hayDatos && excede ? ["Regenerar y re-optimizar las rutas para acortar la distancia total recorrida.", "Reducir las jornadas o consolidar pedidos de zonas cercanas en una misma ruta."] : [],
+    alianzas: hayDatos ? [{ nombre: "Gobierno Regional de Junín y SERFOR", descripcion: "Programas públicos de reforestación en la región." }] : [],
+  };
+}
+
 export interface Escenario {
   rol?: Rol;
   mapa?: ReturnType<typeof rutaMapa>[];
@@ -122,6 +157,8 @@ export interface Escenario {
   pedidos?: unknown[];
   /** Rutas del listado de Rutas (sin paradas), como las devuelve `GET /api/rutas?fecha=`. */
   rutas?: unknown[];
+  /** Respuestas de `GET /api/sostenibilidad/dashboard` y `/compensacion`. */
+  sostenibilidad?: { dashboard: ReturnType<typeof dashboardSostenibilidad>; compensacion: ReturnType<typeof compensacionSostenibilidad> };
 }
 
 export interface Simulacion {
@@ -196,6 +233,11 @@ export async function simularApi(page: Page, escenario: Escenario = {}): Promise
       }
       return json({ ruta_id: "ruta-1", pedido_id: pedido, estado_entrega: estado, estado_ruta: "EN_EJECUCION" });
     }
+    if (metodo === "GET" && ruta === "/api/sostenibilidad/dashboard") {
+      const base = e.sostenibilidad?.dashboard ?? dashboardSostenibilidad();
+      return json({ ...base, desde: url.searchParams.get("desde"), hasta: url.searchParams.get("hasta") });
+    }
+    if (metodo === "GET" && ruta === "/api/sostenibilidad/compensacion") return json(e.sostenibilidad?.compensacion ?? compensacionSostenibilidad());
     if (metodo === "GET" && ruta === "/api/rutas/incidentes") return json(e.incidentes);
     if (metodo === "GET" && ruta === "/api/rutas") return json(e.rutas);
     if (metodo === "GET" && ruta === "/api/pedidos") return json({ items: e.pedidos, total: e.pedidos.length, limite: 200, desplazamiento: 0 });

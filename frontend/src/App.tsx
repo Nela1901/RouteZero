@@ -8,6 +8,7 @@ import { ConductoresPage } from "./pages/operaciones/ConductoresPage";
 import { ClientesPage } from "./pages/operaciones/ClientesPage";
 import { RutasPage } from "./pages/operaciones/RutasPage";
 import { PedidosPage } from "./pages/operaciones/PedidosPage";
+import { SostenibilidadPage } from "./pages/operaciones/SostenibilidadPage";
 import { SeguridadPage } from "./pages/operaciones/SeguridadPage";
 import { ConductorPage } from "./pages/conductor/ConductorPage";
 
@@ -62,6 +63,7 @@ export default function App() {
         <Route path="clientes" element={<ClientesPage />} />
         <Route path="rutas" element={<RutasPage />} />
         <Route path="pedidos" element={<PedidosPage />} />
+        {usuario.rolNombre === "ADMINISTRADOR" && <Route path="sostenibilidad" element={<SostenibilidadPage />} />}
         <Route path="seguridad" element={<SeguridadPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/app/mapa" replace />} />

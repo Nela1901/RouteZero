@@ -244,24 +244,27 @@ RouteZero/
 │   │   │   │   ├── 04 Retrospectiva del Sprint V_1_4_0.md
 │   │   │   │   └── historial Implementación/   (18 versiones anteriores)
 │   │   │   └── historial Sprint 2/   (12 versiones anteriores)
-│   │   └── Sprint 3/
-│   │       ├── 01 Sprint 3 Plan de ejecución y estado V_1_7_0.md
-│   │       ├── 02 Implementación de la re-optimización V_1_3_0.md
-│   │       ├── 03 Estrategia y resultados de pruebas V_1_6_0.md
-│   │       ├── 04 Implementación del mapa de rutas V_1_3_0.md
-│   │       ├── 05 Implementación de la vista del conductor V_1_2_0.md
-│   │       ├── 06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md
-│   │       ├── Implementación/
-│   │       │   ├── 01 Informe de estado del proyecto V_1_7_0.md
-│   │       │   ├── 02 Registro de Impedimentos V_1_1_0.md
-│   │       │   ├── 03 Revisión del Sprint V_1_3_0.md
-│   │       │   ├── 04 Retrospectiva del Sprint V_1_4_0.md
-│   │       │   └── historial Implementación/   (13 versiones anteriores)
-│   │       └── historial Sprint 3/   (22 versiones anteriores)
+│   │   ├── Sprint 3/
+│   │   │   ├── 01 Sprint 3 Plan de ejecución y estado V_1_7_0.md
+│   │   │   ├── 02 Implementación de la re-optimización V_1_3_0.md
+│   │   │   ├── 03 Estrategia y resultados de pruebas V_1_6_0.md
+│   │   │   ├── 04 Implementación del mapa de rutas V_1_3_0.md
+│   │   │   ├── 05 Implementación de la vista del conductor V_1_2_0.md
+│   │   │   ├── 06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md
+│   │   │   ├── Implementación/
+│   │   │   │   ├── 01 Informe de estado del proyecto V_1_7_0.md
+│   │   │   │   ├── 02 Registro de Impedimentos V_1_1_0.md
+│   │   │   │   ├── 03 Revisión del Sprint V_1_3_0.md
+│   │   │   │   ├── 04 Retrospectiva del Sprint V_1_4_0.md
+│   │   │   │   └── historial Implementación/   (13 versiones anteriores)
+│   │   │   └── historial Sprint 3/   (22 versiones anteriores)
+│   │   └── Sprint 4/
+│   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_0_0.md
+│   │       └── 02 Implementación de la sostenibilidad V_1_0_0.md
 │   ├── 04 Seguimiento_Control/   (pendiente)
 │   └── 05 Cierre/   (pendiente)
 ├── backend/
-│   ├── src/   (algoritmo, auditoria, auth, clientes, conductores, core, flota, pedidos, red_vial, rutas)
+│   ├── src/   (algoritmo, auditoria, auth, clientes, conductores, core, flota, pedidos, red_vial, rutas, sostenibilidad)
 │   ├── tests/
 │   ├── scripts/
 │   ├── data/
@@ -355,7 +358,7 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Revisión del Sprint | [`docs/03 Ejecución/Sprint 2/Implementación/03 Revisión del Sprint V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_6_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 2/Implementación/04 Retrospectiva del Sprint V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_4_0.md) |
 
-#### Sprint 3 — Rutas y Visualización (en curso)
+#### Sprint 3 — Rutas y Visualización (completado)
 
 | Documento | Ubicación |
 |---|---|
@@ -375,7 +378,14 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Revisión del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/03 Revisión del Sprint V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_3_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/04 Retrospectiva del Sprint V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_4_0.md) |
 
-*Sprint 4 en adelante se documentará en `docs/03 Ejecución/Sprint 4/`, siguiendo la misma estructura.*
+#### Sprint 4 — Sostenibilidad y Cierre (en curso)
+
+| Documento | Ubicación |
+|---|---|
+| Sprint 4: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 4/01 Sprint 4 Plan de ejecución y estado V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_0_0.md) |
+| Implementación de la sostenibilidad | [`docs/03 Ejecución/Sprint 4/02 Implementación de la sostenibilidad V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_0_0.md) |
+
+*Los documentos de seguimiento del Sprint 4 (`Implementación/`) se crean al cerrar el sprint, con la misma estructura que los anteriores.*
 
 ---
 

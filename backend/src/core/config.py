@@ -29,5 +29,14 @@ class Settings(BaseSettings):
     optimizacion_tiempo_s: float = 30.0
     optimizacion_tiempo_max_s: float = 40.0
 
+    # --- Sostenibilidad (Sprint 4). Supuestos sin datos reales de la empresa ficticia: se ajustan con la
+    # --- variable en mayúsculas, sin tocar el código.
+    # Precio del litro de combustible, para convertir el combustible ahorrado en soles.
+    precio_combustible_soles_l: float = 4.50
+    # Meta mensual de emisiones de la flota (RN-010); por encima se genera una alerta.
+    meta_mensual_co2_kg: float = 800.0
+    # CO2 que absorbe un árbol adulto en un año (RN-011); con 22 kg, una tonelada pide unos 46 árboles.
+    kg_co2_por_arbol_anio: float = 22.0
+
 
 settings = Settings()

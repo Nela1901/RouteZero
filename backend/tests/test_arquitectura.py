@@ -9,7 +9,7 @@ from pathlib import Path
 
 SRC = Path(__file__).resolve().parents[1] / "src"
 
-NEGOCIO = {"auth", "flota", "conductores", "clientes", "pedidos", "rutas"}
+NEGOCIO = {"auth", "flota", "conductores", "clientes", "pedidos", "rutas", "sostenibilidad"}
 COMPARTIDOS = {"core", "auditoria"}
 # Módulos que `rutas` puede usar además de los compartidos: el motor y la red vial.
 PERMITIDOS_POR_MODULO = {"rutas": {"red_vial", "algoritmo"}}

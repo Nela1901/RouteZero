@@ -29,6 +29,17 @@ test.describe("Pantallas de operaciones en el celular (HT-09)", () => {
     expect(api.noSimuladas).toEqual([]);
   });
 
+  test("la pantalla de sostenibilidad cabe en el ancho del celular", async ({ page }) => {
+    const api = await simularApi(page, { rol: "ADMINISTRADOR" });
+    await conSesion(page, "ADMINISTRADOR");
+    await page.goto("/app/sostenibilidad");
+    await expect(page.getByText("Distancia recorrida")).toBeVisible();
+    await expect(page.getByRole("region", { name: /Plan de compensación de carbono/ })).toBeVisible();
+
+    await sinDesplazamientoHorizontal(page);
+    expect(api.noSimuladas).toEqual([]);
+  });
+
   test("la pantalla de rutas cabe en el ancho del celular", async ({ page }) => {
     const activa = rutaMapa("r1", "ABC-101", "EN_EJECUCION");
     const api = await simularApi(page, { rol: "ADMINISTRADOR", mapa: [activa], rutas: [resumenRuta(activa)] });

@@ -13,6 +13,7 @@ const ITEMS_NAV: { a: string; etiqueta: string; descripcion: string; icono: () =
   { a: "/app/clientes", etiqueta: "Clientes", descripcion: "Negocios y horarios", icono: IconoClientes },
   { a: "/app/rutas", etiqueta: "Rutas", descripcion: "Generar y confirmar", icono: IconoRutas },
   { a: "/app/pedidos", etiqueta: "Pedidos", descripcion: "Registro y estado", icono: IconoPedidos },
+  { a: "/app/sostenibilidad", etiqueta: "Sostenibilidad", descripcion: "CO₂ y ahorro", icono: IconoSostenibilidad, roles: ["ADMINISTRADOR"] },
   { a: "/app/seguridad", etiqueta: "Seguridad", descripcion: "Verificación en 2 pasos", icono: IconoSeguridad },
 ];
 
@@ -326,6 +327,15 @@ function IconoRutas() {
       <circle cx="6" cy="19" r="2" />
       <circle cx="18" cy="5" r="2" />
       <path d="M8 19h7a3.5 3.5 0 000-7H9a3.5 3.5 0 010-7h7" />
+    </svg>
+  );
+}
+
+function IconoSostenibilidad() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14" />
+      <path d="M5 19c2-5 5-8 9-10" />
     </svg>
   );
 }
