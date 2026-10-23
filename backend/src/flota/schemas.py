@@ -18,6 +18,9 @@ class VehiculoCrear(BaseModel):
     # Documentos obligatorios para circular en el Perú; solo se guarda su fecha de vencimiento.
     soat_vence: date | None = None
     revision_tecnica_vence: date | None = None
+    # Para el costo del ciclo de vida del reporte de sostenibilidad (HU-016); opcionales.
+    precio_compra_soles: Decimal | None = Field(default=None, gt=0, le=9999999999.99, decimal_places=2)
+    vida_util_anios: int | None = Field(default=None, ge=1, le=40)
 
 
 class VehiculoActualizar(BaseModel):
@@ -30,6 +33,8 @@ class VehiculoActualizar(BaseModel):
     estado: EstadoVehiculo | None = None
     soat_vence: date | None = None
     revision_tecnica_vence: date | None = None
+    precio_compra_soles: Decimal | None = Field(default=None, gt=0, le=9999999999.99, decimal_places=2)
+    vida_util_anios: int | None = Field(default=None, ge=1, le=40)
 
 
 class VehiculoOut(BaseModel):
@@ -44,3 +49,5 @@ class VehiculoOut(BaseModel):
     creado_en: datetime
     soat_vence: date | None
     revision_tecnica_vence: date | None
+    precio_compra_soles: Decimal | None = None
+    vida_util_anios: int | None = None
