@@ -10,7 +10,7 @@
 | **Sprint** | Sprint 3 — Rutas y Visualización (17 oct – 30 oct 2026) |
 | **Ítems** | HU-013 (Visualizar rutas optimizadas en mapa interactivo) y la congestión por horas punta de RF-003 |
 | **Fecha** | 2026-10-20 |
-| **Versión** | 1.1.0 |
+| **Versión** | 1.2.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -79,6 +79,7 @@ La **generación** de rutas ahora también aplica los incidentes activos (antes 
 ## 6. Pantalla (`MapaPage`)
 
 - Selector de fecha y de hora de la congestión, botón Actualizar, refresco automático de 30 s y filtro de pedidos pendientes.
+- Un botón **Ocultar panel / Mostrar panel**: en pantallas angostas el panel empieza cerrado para no tapar el mapa.
 - Cada ruta con un color de una paleta apta para daltonismo; los borradores con línea discontinua. Al pulsar un tramo se ve su tiempo y su distancia; al pulsar una parada, el cliente, la hora estimada y el estado.
 - Estados de parada visibles: ✓ entregada, ✗ fallida, ✕ pedido cancelado y color de la ruta si está pendiente.
 - Las tres vías se pintan según su nivel a la hora elegida.
@@ -99,7 +100,7 @@ Limitaciones:
 - La hora punta de un tramo se decide por la hora en que **sale**; un tramo largo que cruza el fin de una franja no se divide.
 - La duración que muestra el trazado es de **viaje**; no incluye esperas por ventana de tiempo, la atención en cada parada ni los descansos.
 - El mapa estima la hora de salida de cada tramo con la hora estimada de llegada más la atención; en rutas re-optimizadas puede diferir ligeramente del plan.
-- Lighthouse y la validación W3C de esta pantalla están pendientes.
+- El rendimiento de Lighthouse en producción queda por medir (con la API simulada la pantalla da 96 en móvil y 100 en escritorio; ver [`06 Calidad de la interfaz y pruebas de extremo a extremo`](06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_0_0.md)).
 
 ## 8. Pruebas y rendimiento
 
@@ -109,13 +110,14 @@ Limitaciones:
 | Red vial | `tests/test_red_vial_congestion.py` | Matriz de hora punta solo si se pide, y que no cambia la normal. |
 | Trazado y niveles | `tests/test_trazado.py` (12) | Empalme con las paradas, rodeo por incidente, tramos en punta, línea recta de respaldo, simplificación, franjas de RF-003 y niveles. |
 | Servicio y API | `tests/test_mapa.py` (contra la base real) | Un tramo por parada más el regreso, caché, niveles según hora e incidente, y roles. |
-| Frontend | `MapaPage.test.tsx` (15) | Rutas, colores, borradores, estados de parada, congestión, hora, fecha, ocultar rutas, refresco automático y error. |
+| Frontend | `MapaPage.test.tsx` (16) | Rutas, colores, borradores, estados de parada, congestión, hora, fecha, ocultar rutas, refresco automático y error. |
 
 Resultados al 20-10-2026:
 
 - Suite completa del backend: **313 pruebas pasan, cobertura total de 98 %** (20 min).
-- Frontend: **73 pruebas pasan** y el `npm run build` completo termina sin errores.
+- Frontend: **89 pruebas pasan** y el `npm run build` completo termina sin errores.
 - La pantalla se revisó a mano en local con las rutas confirmadas del 07-10-2026 y se vio correcta.
+- Lighthouse el 22-10-2026: accesibilidad, buenas prácticas y SEO en 100, y W3C con 0 errores y 0 avisos (detalle en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_0_0.md)).
 
 Rendimiento en el equipo de desarrollo, con las franjas incluidas (150 pedidos, 15 vehículos):
 
@@ -155,3 +157,4 @@ Observaciones:
 |---|---|---|---|
 | V_1_0_0 | 2026-10-20 | Versión inicial: mapa de rutas con trazado por calles (HU-013), congestión por horas punta de RF-003, cambios en el motor, API, pantalla, pruebas y rendimiento local | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-20 | Se agrega la medición en Render del mapa, la generación y la re-optimización con hora punta, y el aviso de carga de la pantalla | Inciso Aguilar Elizabeth Antonela |
+| V_1_2_0 | 2026-10-22 | Se agregan el panel plegable del mapa, los resultados de Lighthouse y W3C y las 89 pruebas del frontend | Inciso Aguilar Elizabeth Antonela |

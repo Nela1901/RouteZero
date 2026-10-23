@@ -12,7 +12,7 @@
 | **Periodo del Informe** | 17-10-2026 – 30-10-2026 (Sprint 3 — Rutas y Visualización) |
 | **Versión** | 1.4.0 |
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ---
 
@@ -20,9 +20,9 @@
 
 | Variables de control | Descripción del estado |
 |---|---|
-| **Alcance** | 2/5 ítems completados al 20-10-2026 (13 de 26 Story Points: HU-012, que cierra HT-07, y HU-013); la re-optimización y el mapa por calles con congestión por horas punta están medidos en Render; HU-014 (vista del conductor) está implementada y probada, a falta de medirla en Render; falta Lighthouse y W3C de las pantallas del mapa y del conductor ([`02 Implementación de la re-optimización`](../02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md)). Detalle por ítem en [`01 Sprint 3 Plan de ejecución y estado V_1_4_0.md`](../01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md). Quedó definida la estrategia de pruebas del sprint ([`03 Estrategia y resultados de pruebas`](../03%20Estrategia%20y%20resultados%20de%20pruebas%20V_1_4_0.md)). |
+| **Alcance** | 2/5 ítems completados al 20-10-2026 (13 de 26 Story Points: HU-012, que cierra HT-07, y HU-013); la re-optimización y el mapa por calles con congestión por horas punta están medidos en Render; HU-014 (vista del conductor) está implementada y probada, a falta de medirla en Render; falta Lighthouse y W3C de las pantallas del mapa y del conductor ([`02 Implementación de la re-optimización`](../../02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md)). Detalle por ítem en [`01 Sprint 3 Plan de ejecución y estado V_1_4_0.md`](../../historial%20Sprint%203/01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md). Quedó definida la estrategia de pruebas del sprint ([`03 Estrategia y resultados de pruebas`](../../historial%20Sprint%203/03%20Estrategia%20y%20resultados%20de%20pruebas%20V_1_4_0.md)). |
 | **Cronograma** | Sprint iniciado el 17-10-2026; Jira lo cierra el 30-10-2026 y la fecha de inspección aún no está confirmada. Al corte van 4 de 14 días y HU-012 está completada. |
-| **Costos** | Presupuesto estimado académico: **USD $10,304.00** (ver [`04 Presupuesto del proyecto V_1_1_0.md`](../../../02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_1_0.md)). Sin desviación al corte: la infraestructura (Render, Vercel, Supabase) sigue en planes gratuitos, OPEX ejecutado **USD $0.00**. |
+| **Costos** | Presupuesto estimado académico: **USD $10,304.00** (ver [`04 Presupuesto del proyecto V_1_1_0.md`](../../../../02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_1_0.md)). Sin desviación al corte: la infraestructura (Render, Vercel, Supabase) sigue en planes gratuitos, OPEX ejecutado **USD $0.00**. |
 | **Calidad** | Backend: 328 pruebas, 98 % de cobertura (96 % al cierre del Sprint 2); frontend: 88 pruebas y build sin errores. Línea base heredada del Sprint 2: Lighthouse con accesibilidad y SEO en 100 y W3C sin errores en las 8 pantallas; pendiente repetirlos en la pantalla del mapa. Para el sprint: pruebas de extremo a extremo con Playwright y GitHub Actions. |
 
 ## Riesgos
@@ -48,7 +48,7 @@ El sistema sigue desplegado en Render (backend) y Vercel (frontend). La rama de 
 
 ---
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ## Historial de Control de Cambios
 

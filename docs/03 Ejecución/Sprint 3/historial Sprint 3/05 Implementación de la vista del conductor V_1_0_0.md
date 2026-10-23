@@ -12,7 +12,7 @@
 | **Fecha** | 2026-10-20 |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
@@ -103,7 +103,7 @@ Resultados al 20-10-2026:
 
 ---
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 
