@@ -9,7 +9,7 @@
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Sprint** | Sprint 3 — Rutas y Visualización (17 oct – 30 oct 2026) |
 | **Fecha** | 2026-10-20 |
-| **Versión** | 1.4.0 |
+| **Versión** | 1.5.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -70,7 +70,12 @@ Motivo de posponer la fase 2: las pruebas del backend corren contra la base real
 | Fecha | Prueba | Resultado | Observaciones |
 |---|---|---|---|
 | 2026-10-20 | pytest, suite completa del backend | 328 pasan; cobertura total de 98 % | Incluye las pruebas de HU-012, HU-013 y HU-014 contra la base real; 24 min |
-| 2026-10-20 | Vitest, frontend | 88 pasan | Incluye las pruebas de re-optimización, entregas, incidentes, mapa de rutas y vista del conductor; `npm run build` sin errores |
+| 2026-10-22 | Vitest, frontend | 89 pasan | Incluye las pruebas de re-optimización, entregas, incidentes, mapa de rutas (con el panel plegable) y vista del conductor; `npm run build` sin errores |
+| 2026-10-22 | Playwright, pruebas de extremo a extremo (escritorio y móvil) | 19 pasan | Aplicación compilada con la API simulada en el navegador; ver [`06 Calidad de la interfaz y pruebas de extremo a extremo`](06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_0_0.md) |
+| 2026-10-22 | Lighthouse (5 pantallas, móvil y escritorio) | Accesibilidad, buenas prácticas y SEO en 100; rendimiento de 95 a 100 | Con la API simulada: el rendimiento en producción queda por medir |
+| 2026-10-22 | Validador Nu del W3C (5 pantallas) | 0 errores y 0 avisos | DOM renderizado con datos sintéticos; una prueba de control con HTML erróneo confirmó que el validador detecta errores |
+| 2026-10-22 | Análisis estático y dependencias | Bandit sin hallazgos de severidad alta (16 medios, falsos positivos B608), `pip-audit` y `npm audit` sin vulnerabilidades | Base de la fase 1 de integración continua |
+| 2026-10-22 | Vista del conductor en Render | 3.8 s la primera petición y 2.6 s desde la caché | Ruta de demostración de 6 paradas; casi todo es la latencia base de ~2 s por petición |
 | 2026-10-20 | Vista del conductor (13 pruebas de integración y 15 de pantalla) | Todas pasan | Vínculo por correo, aislamiento entre conductores, entregas propias, alertas y roles |
 | 2026-10-20 | Benchmark de re-optimización (150 pedidos, 15 vehículos) | 14.5 a 21.6 s con la reserva de guardado, límite de 30 s | Máquina de desarrollo |
 | 2026-10-20 | Re-optimización en Render (150 pedidos, 15 vehículos, 5 corridas) | 27.1 a 27.2 s en el servidor y 29.0 a 29.1 s desde fuera; todas dentro de 30 s | Servicio gratuito de Render; margen corto, ver la sección 8.1 de `02 Implementación de la re-optimización` |
@@ -93,3 +98,4 @@ Motivo de posponer la fase 2: las pruebas del backend corren contra la base real
 | V_1_2_0 | 2026-10-20 | Se registran la suite completa (313 pruebas, 98 %), el frontend (72 pruebas) y los benchmarks de generación y re-optimización con hora punta | Inciso Aguilar Elizabeth Antonela |
 | V_1_3_0 | 2026-10-20 | Se registran las mediciones en Render con hora punta (generación, re-optimización y mapa) y las 73 pruebas del frontend | Inciso Aguilar Elizabeth Antonela |
 | V_1_4_0 | 2026-10-20 | Se registran la suite completa (328 pruebas, 98 %), el frontend (88 pruebas) y las pruebas de la vista del conductor | Inciso Aguilar Elizabeth Antonela |
+| V_1_5_0 | 2026-10-22 | Se registran Playwright (19 pruebas), Lighthouse, W3C, el análisis estático y la vista del conductor en Render | Inciso Aguilar Elizabeth Antonela |

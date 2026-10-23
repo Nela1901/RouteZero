@@ -20,10 +20,18 @@ const CLAVE_ALMACENAMIENTO = "routezero:sidebar-expandido";
 const ANCHO_EXPANDIDO = 232;
 const ANCHO_COLAPSADO = 84;
 
+/** Lo que el usuario eligió; sin elección, expandido solo en pantallas anchas (en el celular el contenido necesita el espacio). */
+function expandidoInicial(): boolean {
+  const guardado = window.localStorage.getItem(CLAVE_ALMACENAMIENTO);
+  if (guardado === "si") return true;
+  if (guardado === "no") return false;
+  return typeof window.matchMedia !== "function" || window.matchMedia("(min-width: 900px)").matches;
+}
+
 export function OperacionesLayout() {
   const { usuario, cerrarSesion } = useAuth();
   const { confirmar } = useConfirm();
-  const [expandido, setExpandido] = useState(() => window.localStorage.getItem(CLAVE_ALMACENAMIENTO) !== "no");
+  const [expandido, setExpandido] = useState(expandidoInicial);
 
   function alternarSidebar() {
     setExpandido((actual) => {
