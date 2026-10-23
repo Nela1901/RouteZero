@@ -36,6 +36,14 @@ export const PANTALLAS: Pantalla[] = [
     },
   },
   {
+    nombre: "Sostenibilidad",
+    ruta: "/app/sostenibilidad",
+    rol: "ADMINISTRADOR",
+    preparar: async (page) => {
+      await simularApi(page, { rol: "ADMINISTRADOR" });
+    },
+  },
+  {
     nombre: "Conductor con ruta",
     ruta: "/",
     rol: "CONDUCTOR",
