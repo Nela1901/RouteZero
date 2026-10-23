@@ -35,7 +35,7 @@ function dentroDeZona(lat: number, lon: number): boolean {
   return lat >= LAT_MIN && lat <= LAT_MAX && lon >= LON_MIN && lon <= LON_MAX;
 }
 
-export function SelectorUbicacion({ latitud, longitud, onCambio }: Props) {
+export function SelectorUbicacion({ latitud, longitud, onCambio }: Readonly<Props>) {
   const { notificar } = useToast();
   const [busqueda, setBusqueda] = useState("");
   const [resultados, setResultados] = useState<ResultadoBusqueda[]>([]);
@@ -124,8 +124,8 @@ export function SelectorUbicacion({ latitud, longitud, onCambio }: Props) {
 
       {resultados.length > 0 && (
         <div style={{ borderRadius: 10, border: "1px solid var(--rz-panel-border)", overflow: "hidden" }}>
-          {resultados.map((r, i) => (
-            <button key={i} type="button" onClick={() => elegirResultado(r)} style={estiloResultado}>
+          {resultados.map((r) => (
+            <button key={r.display_name} type="button" onClick={() => elegirResultado(r)} style={estiloResultado}>
               {r.display_name}
             </button>
           ))}

@@ -62,12 +62,15 @@ def test_cada_tramo_usa_la_matriz_de_su_hora_de_salida(dos_caminos):
 
 def test_sin_camino_por_calles_se_usa_una_linea_recta(dos_caminos):
     [t] = trazar(dos_caminos, [B, A], [DIEZ], [], 1.0)  # el grafo es de un solo sentido: B no llega a A
-    assert len(t["puntos"]) == 2 and t["distancia_km"] > 0 and t["duracion_min"] > 0
+    assert len(t["puntos"]) == 2
+    assert t["distancia_km"] > 0
+    assert t["duracion_min"] > 0
 
 
 def test_sin_grafo_todos_los_tramos_son_rectos():
     tramos = trazar(None, [A, B, C], [DIEZ, DIEZ], [], 0.6)
-    assert len(tramos) == 2 and all(len(t["puntos"]) == 2 for t in tramos)
+    assert len(tramos) == 2
+    assert all(len(t["puntos"]) == 2 for t in tramos)
 
 
 def test_un_solo_punto_no_tiene_tramos(dos_caminos):
@@ -99,11 +102,14 @@ def test_las_franjas_punta_son_las_de_rf_003():
 def test_el_factor_efectivo_combina_hora_punta_e_incidente():
     assert congestion.factor_efectivo("Av. Ferrocarril", DIEZ, []) == (1.0, [])
     f, motivos = congestion.factor_efectivo("Av. Ferrocarril", OCHO_Y_MEDIA, [])
-    assert f == congestion.FACTOR_PUNTA["Av. Ferrocarril"] and motivos == ["hora punta"]
+    assert f == congestion.FACTOR_PUNTA["Av. Ferrocarril"]
+    assert motivos == ["hora punta"]
     f, motivos = congestion.factor_efectivo("Av. Ferrocarril", DIEZ, [incidente("Av. Ferrocarril", 3.0)])
-    assert f == 3.0 and motivos == ["incidente"]
+    assert f == 3.0
+    assert motivos == ["incidente"]
     f, motivos = congestion.factor_efectivo("Av. Ferrocarril", OCHO_Y_MEDIA, [incidente("Av. Ferrocarril", 3.0)])
-    assert f == pytest.approx(3.0 * congestion.FACTOR_PUNTA["Av. Ferrocarril"]) and motivos == ["hora punta", "incidente"]
+    assert f == pytest.approx(3.0 * congestion.FACTOR_PUNTA["Av. Ferrocarril"])
+    assert motivos == ["hora punta", "incidente"]
     assert congestion.factor_efectivo("Calle Real", DIEZ, [incidente("Av. Ferrocarril", 3.0)])[0] == 1.0
 
 

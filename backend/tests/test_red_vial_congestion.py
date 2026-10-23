@@ -72,4 +72,5 @@ def test_la_matriz_de_hora_punta_solo_se_calcula_si_se_pide(dos_caminos):
     con = calcular_matrices([A, B], dos_caminos, 1.0, congestion_punta={"giraldez": 4.0})
     assert np.allclose(con.tiempo_s, base.tiempo_s)  # la matriz normal no cambia
     assert con.tiempo_punta_s[0, 1] > con.tiempo_s[0, 1]
-    assert con.tiempo_punta_s[0, 0] == 0.0 and np.isfinite(con.tiempo_punta_s).all()
+    assert con.tiempo_punta_s[0, 0] == 0.0
+    assert np.isfinite(con.tiempo_punta_s).all()

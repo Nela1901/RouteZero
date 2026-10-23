@@ -94,4 +94,4 @@ class RepositorioSostenibilidad:
             ),
             {"estados": _ESTADOS, "desde": desde, "hasta": hasta},
         ).all()
-        return {estado: n for estado, n in filas}
+        return dict(filas)

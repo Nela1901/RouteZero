@@ -4,7 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
 // aparte (`npm run auditar:produccion`) y necesita CLAVE_PRUEBA: la contraseña de las cuentas de prueba.
 export default defineConfig({
   testDir: "./e2e/auditoria",
-  testMatch: /.*produccion\.auditoria\.ts$/,
+  testMatch: /produccion\.auditoria\.ts$/,
   workers: 1,
   timeout: 300_000,
   reporter: "list",

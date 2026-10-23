@@ -5,14 +5,15 @@ factores de hora punta son una estimación razonable; se ajustan en `FACTOR_PUNT
 """
 
 # Las tres vías de la RN-012, tal como se guardan en `incidentes_trafico`
-VIAS = ("Av. Ferrocarril", "Av. Giráldez", "Calle Real")
+FERROCARRIL, GIRALDEZ, CALLE_REAL = "Av. Ferrocarril", "Av. Giráldez", "Calle Real"
+VIAS = (FERROCARRIL, GIRALDEZ, CALLE_REAL)
 # Cómo se busca cada una en el grafo (sin tildes ni mayúsculas)
-CLAVE_EN_GRAFO = {"Av. Ferrocarril": "ferrocarril", "Av. Giráldez": "giraldez", "Calle Real": "calle real"}
+CLAVE_EN_GRAFO = {FERROCARRIL: "ferrocarril", GIRALDEZ: "giraldez", CALLE_REAL: "calle real"}
 
 # RF-003: 7:30-9:30, 12:00-14:30 y 17:00-21:00 (segundos desde la medianoche)
 FRANJAS_PUNTA = ((7 * 3600 + 1800, 9 * 3600 + 1800), (12 * 3600, 14 * 3600 + 1800), (17 * 3600, 21 * 3600))
 # Cuántas veces más lento se circula por cada vía en hora punta
-FACTOR_PUNTA = {"Av. Ferrocarril": 1.8, "Av. Giráldez": 1.6, "Calle Real": 1.3}
+FACTOR_PUNTA = {FERROCARRIL: 1.8, GIRALDEZ: 1.6, CALLE_REAL: 1.3}
 
 UMBRAL_ROJO = 2.0   # desde 2 veces más lento el nivel es rojo
 EPSILON = 1e-9

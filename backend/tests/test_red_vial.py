@@ -51,8 +51,10 @@ def test_la_matriz_por_calles_respeta_el_sentido_unico(triangulo):
 def test_la_matriz_tiene_la_forma_correcta_y_diagonal_cero(triangulo):
     m = calcular_matrices([A, B, C], triangulo, factor_velocidad=1.0)
     assert m.distancia_m.shape == (3, 3) == m.tiempo_s.shape
-    assert np.all(np.diag(m.distancia_m) == 0) and np.all(np.diag(m.tiempo_s) == 0)
-    assert np.isfinite(m.distancia_m).all() and np.isfinite(m.tiempo_s).all()
+    assert np.all(np.diag(m.distancia_m) == 0)
+    assert np.all(np.diag(m.tiempo_s) == 0)
+    assert np.isfinite(m.distancia_m).all()
+    assert np.isfinite(m.tiempo_s).all()
 
 
 def test_dos_pedidos_en_el_mismo_lugar_no_dan_error(triangulo):
@@ -100,7 +102,8 @@ def test_un_punto_a_mas_de_500_m_de_la_red_usa_linea_recta(triangulo):
 def test_todos_los_puntos_lejos_de_la_red_se_marcan_aproximados(triangulo):
     lejos = [(A[0] - 0.05, A[1]), (A[0] - 0.06, A[1])]
     m = calcular_matrices(lejos, triangulo, factor_velocidad=1.0)
-    assert m.fuente == "aproximada" and m.puntos_aproximados == [0, 1]
+    assert m.fuente == "aproximada"
+    assert m.puntos_aproximados == [0, 1]
 
 
 def test_la_avenida_es_mas_rapida_que_la_calle_residencial():
@@ -123,7 +126,8 @@ def test_el_factor_de_velocidad_escala_los_tiempos(triangulo):
 def test_si_hay_varios_tramos_entre_los_mismos_nodos_se_usa_el_mas_corto():
     coords = [A, B]
     g = Grafo(coords, [0, 0], [1, 1], [1000.0, 700.0], [100.0, 50.0])
-    assert g.por_distancia[0, 1] == 700.0 and g.por_tiempo[0, 1] == 50.0
+    assert g.por_distancia[0, 1] == 700.0
+    assert g.por_tiempo[0, 1] == 50.0
 
 
 def test_la_carga_del_grafo_es_unica_por_proceso():
@@ -157,7 +161,8 @@ def test_el_grafo_real_da_distancias_coherentes_con_la_linea_recta():
     pares = ~np.eye(len(puntos), dtype=bool) & (recta > 500)
     razon = m.distancia_m[pares] / recta[pares]
     assert m.fuente in ("calles", "mixta")
-    assert np.isfinite(m.distancia_m).all() and np.isfinite(m.tiempo_s).all()
+    assert np.isfinite(m.distancia_m).all()
+    assert np.isfinite(m.tiempo_s).all()
     assert (razon >= 0.98).all()  # por calles nunca es más corto que la línea recta
     assert 1.1 < razon.mean() < 1.8  # medido en Huancayo: ~1.38
 
@@ -168,7 +173,8 @@ def test_las_tres_avenidas_de_los_requisitos_estan_en_el_grafo():
     nombres = [str(n).lower() for n in grafo.nombres]
     for clave in ("ferrocarril", "giraldez", "calle real"):
         ids = [i for i, n in enumerate(nombres) if clave in n]
-        assert ids and np.isin(grafo.nombre_id, ids).any(), clave
+        assert ids, clave
+        assert np.isin(grafo.nombre_id, ids).any(), clave
 
 
 @requiere_grafo

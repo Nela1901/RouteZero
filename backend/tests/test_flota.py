@@ -191,19 +191,22 @@ def test_registrar_vehiculo_con_precio_de_compra_y_vida_util(client):
         },
     )
     assert r.status_code == 201
-    assert r.json()["precio_compra_soles"] == "90000.00" and r.json()["vida_util_anios"] == 10
+    assert r.json()["precio_compra_soles"] == "90000.00"
+    assert r.json()["vida_util_anios"] == 10
     actualizado = client.put(
         f"/api/vehiculos/{r.json()['vehiculo_id']}", headers=auth(estado["tok_admin"]), json={"vida_util_anios": 8, "precio_compra_soles": "85000.50"}
     )
     assert actualizado.status_code == 200
-    assert actualizado.json()["vida_util_anios"] == 8 and actualizado.json()["precio_compra_soles"] == "85000.50"
+    assert actualizado.json()["vida_util_anios"] == 8
+    assert actualizado.json()["precio_compra_soles"] == "85000.50"
     admin_db("DELETE FROM vehiculos WHERE placa = %s", (placa,))
 
 
 def test_sin_precio_ni_vida_util_quedan_vacios_y_se_validan_los_rangos(client):
     r = client.get("/api/vehiculos", headers=auth(estado["tok_admin"]))
     propio = next(v for v in r.json() if v["vehiculo_id"] == estado["vehiculo_id"])
-    assert propio["precio_compra_soles"] is None and propio["vida_util_anios"] is None
+    assert propio["precio_compra_soles"] is None
+    assert propio["vida_util_anios"] is None
     for invalido in ({"vida_util_anios": 0}, {"vida_util_anios": 41}, {"precio_compra_soles": "0"}, {"precio_compra_soles": "-5"}):
         assert client.put(f"/api/vehiculos/{estado['vehiculo_id']}", headers=auth(estado["tok_admin"]), json=invalido).status_code == 422
 

@@ -9,19 +9,21 @@ import httpx
 
 from src.core.config import settings
 
+TIPO_JSON = "application/json"
+
 
 def _headers(access_token: str) -> dict:
     return {
         "apikey": settings.supabase_anon_key,
         "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
+        "Content-Type": TIPO_JSON,
     }
 
 
 def login_password(email: str, password: str) -> dict:
     resp = httpx.post(
         f"{settings.supabase_url}/auth/v1/token?grant_type=password",
-        headers={"apikey": settings.supabase_anon_key, "Content-Type": "application/json"},
+        headers={"apikey": settings.supabase_anon_key, "Content-Type": TIPO_JSON},
         json={"email": email, "password": password},
         timeout=10,
     )
@@ -32,7 +34,7 @@ def login_password(email: str, password: str) -> dict:
 def refrescar_sesion(refresh_token: str) -> dict:
     resp = httpx.post(
         f"{settings.supabase_url}/auth/v1/token?grant_type=refresh_token",
-        headers={"apikey": settings.supabase_anon_key, "Content-Type": "application/json"},
+        headers={"apikey": settings.supabase_anon_key, "Content-Type": TIPO_JSON},
         json={"refresh_token": refresh_token},
         timeout=10,
     )

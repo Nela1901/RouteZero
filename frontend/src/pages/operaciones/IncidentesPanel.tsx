@@ -17,7 +17,7 @@ const CALLES = ["Av. Ferrocarril", "Av. Giráldez", "Calle Real"];
 const FACTORES: Record<string, number> = { "1.5 veces más lento": 1.5, "2 veces más lento": 2, "3 veces más lento": 3, "5 veces más lento": 5 };
 
 /** Alertas de congestión activas. Cada re-optimización las aplica; solo el Administrador las registra y resuelve. */
-export function IncidentesPanel({ esAdministrador }: { esAdministrador: boolean }) {
+export function IncidentesPanel({ esAdministrador }: Readonly<{ esAdministrador: boolean }>) {
   const { notificar } = useToast();
   const [incidentes, setIncidentes] = useState<Incidente[]>([]);
   const [calle, setCalle] = useState(CALLES[0]);

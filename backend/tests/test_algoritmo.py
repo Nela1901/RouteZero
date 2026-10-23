@@ -52,7 +52,8 @@ def test_itinerario_con_espera_hasta_que_abre_la_ventana():
     assert it.paradas[1].retraso_s == 0
     assert it.regreso_s == hora(9) + 600 + 900
     assert it.distancia_m == (600 + 300 + 900) * 10
-    assert it.valida and it.descansos == 0
+    assert it.valida
+    assert it.descansos == 0
 
 
 def test_la_entrega_tardia_se_penaliza_segun_la_prioridad():
@@ -72,7 +73,8 @@ def test_el_costo_combina_distancia_combustible_co2_y_retraso():
     km = it.distancia_m / 1000
     esperado = km * (1.0 + 1.0 / 10.0 + 2.0 * 0.25) + 0.5 * it.retraso_ponderado_min
     assert it.costo == pytest.approx(esperado)
-    assert it.litros == pytest.approx(km / 10.0) and it.co2_kg == pytest.approx(km * 0.25)
+    assert it.litros == pytest.approx(km / 10.0)
+    assert it.co2_kg == pytest.approx(km * 0.25)
 
 
 def test_descanso_de_una_hora_tras_cuatro_horas_de_trabajo_continuo():
@@ -93,14 +95,16 @@ def test_la_ruta_es_invalida_si_supera_la_jornada_del_conductor():
     corto = Conductor("C1", "A-IIb", FECHA + timedelta(days=100), hora(6), hora(9))
     d, ctx = datos_y_contexto([PEDIDO_A, PEDIDO_B], conductor=corto)
     it = simular_ruta([0, 1], ctx, d)
-    assert not it.valida and it.motivo_invalida == "JORNADA"
+    assert not it.valida
+    assert it.motivo_invalida == "JORNADA"
 
 
 def test_la_ruta_es_invalida_si_supera_la_capacidad():
     chico = Vehiculo("V1", "ABC-101", "CAMIONETA", 40.0, 10.0, 0.25)
     d, ctx = datos_y_contexto([PEDIDO_A, PEDIDO_B], vehiculo=chico)  # 20 + 30 kg > 40 kg
     it = simular_ruta([0, 1], ctx, d)
-    assert not it.valida and it.motivo_invalida == "CAPACIDAD"
+    assert not it.valida
+    assert it.motivo_invalida == "CAPACIDAD"
 
 
 def test_un_express_despues_de_un_estandar_invalida_la_ruta():
@@ -108,13 +112,16 @@ def test_un_express_despues_de_un_estandar_invalida_la_ruta():
     d, ctx = datos_y_contexto([PEDIDO_A, express])
     assert simular_ruta([1, 0], ctx, d).valida
     malo = simular_ruta([0, 1], ctx, d)
-    assert not malo.valida and malo.motivo_invalida == "ORDEN_EXPRESS"
+    assert not malo.valida
+    assert malo.motivo_invalida == "ORDEN_EXPRESS"
 
 
 def test_una_ruta_vacia_no_tiene_distancia_ni_costo():
     d, ctx = datos_y_contexto([PEDIDO_A])
     it = simular_ruta([], ctx, d)
-    assert it.distancia_m == 0 and it.costo == 0 and it.valida
+    assert it.distancia_m == 0
+    assert it.costo == 0
+    assert it.valida
 
 
 # --------------------------------------------------------------------------------------------- 4.2 elegibilidad
@@ -127,9 +134,12 @@ def vehiculo(id_, tipo="CAMIONETA", placa="ABC-101", capacidad=1000.0, factor=0.
 
 
 def test_las_categorias_de_licencia_son_compatibles_con_su_familia_de_vehiculos():
-    assert licencia_compatible("CAMIONETA", "A-IIb") and licencia_compatible("FURGON", "A-I")
-    assert licencia_compatible("MOTO", "B-IIa") and licencia_compatible("MOTO", "B-IIb")
-    assert not licencia_compatible("FURGON", "B-IIa") and not licencia_compatible("MOTO", "A-IIb")
+    assert licencia_compatible("CAMIONETA", "A-IIb")
+    assert licencia_compatible("FURGON", "A-I")
+    assert licencia_compatible("MOTO", "B-IIa")
+    assert licencia_compatible("MOTO", "B-IIb")
+    assert not licencia_compatible("FURGON", "B-IIa")
+    assert not licencia_compatible("MOTO", "A-IIb")
 
 
 def test_un_conductor_con_la_licencia_vencida_no_se_asigna():
@@ -152,7 +162,9 @@ def test_vehiculos_no_disponibles_y_conductores_no_disponibles_se_excluyen():
         [conductor("C1", disponible=False)],
         p,
     )
-    assert emp.pares == [] and emp.vehiculos_elegibles == 0 and emp.conductores_elegibles == 0
+    assert emp.pares == []
+    assert emp.vehiculos_elegibles == 0
+    assert emp.conductores_elegibles == 0
 
 
 def test_sin_tabla_de_restriccion_por_placa_ningun_vehiculo_se_excluye():
@@ -164,7 +176,8 @@ def test_con_tabla_de_restriccion_el_vehiculo_restringido_ese_dia_no_recibe_ruta
     v, c = vehiculo("V1", placa="ABC-103"), conductor("C1")
     lunes_restringido = Parametros(fecha=FECHA, restriccion_placa={3: {0}})  # placas terminadas en 3, lunes
     emp = emparejar([v], [c], lunes_restringido)
-    assert emp.pares == [] and emp.vehiculos_restringidos == ["ABC-103"]
+    assert emp.pares == []
+    assert emp.vehiculos_restringidos == ["ABC-103"]
     martes = Parametros(fecha=FECHA + timedelta(days=1), restriccion_placa={3: {0}})
     assert emparejar([v], [c], martes).pares
 
@@ -218,7 +231,8 @@ def test_un_pedido_pesado_y_otro_liviano_van_en_vehiculos_distintos_si_no_caben_
     problema.pedidos[0] = Pedido("P0", 80.0, "ESTANDAR", hora(8), hora(18))
     problema.pedidos[1] = Pedido("P1", 80.0, "ESTANDAR", hora(8), hora(18))
     r = resolver(problema)
-    assert len(r.rutas) == 2 and not r.sin_cobertura
+    assert len(r.rutas) == 2
+    assert not r.sin_cobertura
 
 
 # --------------------------------------------------------------------------------------------- 4.4 ACO
@@ -239,7 +253,8 @@ def test_con_la_misma_semilla_y_las_mismas_iteraciones_el_resultado_es_identico(
         r = resolver(problema_aleatorio(25, 3, semilla=6, tiempo_max_s=None, max_iteraciones=10))
         return [[p.pedido_id for p in x.itinerario.paradas] for x in r.rutas], r.costo
 
-    assert ejecutar() == ejecutar()
+    primera, segunda = ejecutar(), ejecutar()  # misma semilla: el mismo resultado
+    assert primera == segunda
 
 
 def test_la_busqueda_respeta_el_presupuesto_de_tiempo():
@@ -279,15 +294,18 @@ def test_un_pedido_mas_pesado_que_toda_la_flota_queda_sin_cobertura_por_capacida
     sin = {s.pedido_id: s for s in r.sin_cobertura}
     assert sin["PESADO"].motivo == PESO_EXCEDE_CAPACIDAD
     assert "Divida" in sin["PESADO"].sugerencia
-    assert len(r.rutas) >= 1 and not r.imposible
+    assert len(r.rutas) >= 1
+    assert not r.imposible
 
 
 def test_sin_vehiculos_o_conductores_elegibles_no_hay_rutas_y_todos_quedan_sin_cobertura():
     problema = problema_aleatorio(6, 3, semilla=1)
     problema.conductores = []
     r = resolver(problema)
-    assert r.imposible and r.rutas == []
-    assert len(r.sin_cobertura) == 6 and {s.motivo for s in r.sin_cobertura} == {SIN_RECURSOS}
+    assert r.imposible
+    assert r.rutas == []
+    assert len(r.sin_cobertura) == 6
+    assert {s.motivo for s in r.sin_cobertura} == {SIN_RECURSOS}
     assert "no es posible" in r.mensaje.lower()
 
 
@@ -304,8 +322,10 @@ def test_si_la_flota_no_alcanza_los_pedidos_sobrantes_se_marcan_como_flota_insuf
     for i in range(12):
         problema.pedidos[i] = Pedido(f"P{i:03d}", 90.0, "ESTANDAR", hora(8), hora(18))
     r = resolver(problema)
-    assert r.sin_cobertura and {s.motivo for s in r.sin_cobertura} == {FLOTA_INSUFICIENTE}
-    assert len(r.rutas) == 1 and sum(len(x.itinerario.paradas) for x in r.rutas) == 2  # 2 × 90 kg ≤ 200 kg
+    assert r.sin_cobertura
+    assert {s.motivo for s in r.sin_cobertura} == {FLOTA_INSUFICIENTE}
+    assert len(r.rutas) == 1
+    assert sum(len(x.itinerario.paradas) for x in r.rutas) == 2  # 2 × 90 kg ≤ 200 kg
 
 
 def test_sin_pedidos_el_resultado_esta_vacio():
@@ -314,4 +334,6 @@ def test_sin_pedidos_el_resultado_esta_vacio():
     problema.distancia_m = problema.distancia_m[:1, :1]
     problema.tiempo_s = problema.tiempo_s[:1, :1]
     r = resolver(problema)
-    assert r.rutas == [] and r.sin_cobertura == [] and not r.imposible
+    assert r.rutas == []
+    assert r.sin_cobertura == []
+    assert not r.imposible

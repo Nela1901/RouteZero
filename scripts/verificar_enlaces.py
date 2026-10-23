@@ -50,7 +50,7 @@ def identificador(titulo: str) -> str:
 def anclas(ruta: str) -> set[str]:
     vistos: dict[str, int] = {}
     resultado = set()
-    for encabezado in re.findall(r"^#{1,6}\s+(.+?)\s*#*\s*$", leer(ruta), flags=re.M):
+    for encabezado in re.findall(r"^#{1,6}[ \t]+(\S.*?)[ \t]*#*[ \t]*$", leer(ruta), flags=re.M):
         base = identificador(encabezado)
         n = vistos.get(base, 0)
         resultado.add(base if n == 0 else f"{base}-{n}")

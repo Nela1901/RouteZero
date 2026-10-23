@@ -67,7 +67,7 @@ const ATAJOS = [
   { id: "mes", etiqueta: "Este mes", rango: () => [inicioDeMes(), hoy()] },
 ] as const;
 
-function Indicador({ etiqueta, valor, unidad, ayuda }: { etiqueta: string; valor: string; unidad: string; ayuda: string }) {
+function Indicador({ etiqueta, valor, unidad, ayuda }: Readonly<{ etiqueta: string; valor: string; unidad: string; ayuda: string }>) {
   return (
     <div
       style={{
@@ -93,7 +93,7 @@ function Indicador({ etiqueta, valor, unidad, ayuda }: { etiqueta: string; valor
   );
 }
 
-function GraficoPorDia({ dias }: { dias: DiaSostenibilidad[] }) {
+function GraficoPorDia({ dias }: Readonly<{ dias: DiaSostenibilidad[] }>) {
   const maximo = Math.max(...dias.map((d) => d.emision_co2_kg), 0.001);
   return (
     <section
@@ -120,7 +120,7 @@ function GraficoPorDia({ dias }: { dias: DiaSostenibilidad[] }) {
   );
 }
 
-function PlanCompensacion({ plan }: { plan: Compensacion }) {
+function PlanCompensacion({ plan }: Readonly<{ plan: Compensacion }>) {
   const mes = plan.mes_evaluado;
   return (
     <section
@@ -132,9 +132,9 @@ function PlanCompensacion({ plan }: { plan: Compensacion }) {
         <Ayuda texto={`Árboles necesarios para absorber en un año las emisiones del periodo, suponiendo que un árbol adulto absorbe ${numero(plan.kg_co2_por_arbol_anio, 0)} kg de CO₂ al año (RN-011). Es un supuesto ajustable por configuración.`} />
       </h2>
       {!plan.hay_datos ? (
-        <div role="status" style={{ ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
+        <output style={{ display: "block", ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
           {plan.mensaje}
-        </div>
+        </output>
       ) : (
         <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
           <span style={{ fontFamily: "var(--rz-font-display)", fontSize: 30, fontWeight: 700 }}>{numero(plan.arboles_necesarios, 0)}</span>
@@ -299,17 +299,17 @@ export function SostenibilidadPage() {
         </div>
       )}
       {cargando && !datos && (
-        <div role="status" style={{ color: "var(--rz-text-muted)", fontSize: 13.5 }}>
+        <output style={{ display: "block", color: "var(--rz-text-muted)", fontSize: 13.5 }}>
           Cargando indicadores…
-        </div>
+        </output>
       )}
 
       {datos && t && (
         <>
           {!datos.hay_datos && (
-            <div role="status" style={{ ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
+            <output style={{ display: "block", ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
               {datos.mensaje}
-            </div>
+            </output>
           )}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 210px), 1fr))", gap: 14 }}>
             <Indicador

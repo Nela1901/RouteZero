@@ -7,7 +7,7 @@ import { limitarDecimales } from "./utilesCrud";
  * Ícono "i" con una explicación breve. Se abre al pasar el mouse, al enfocarlo con el teclado
  * o al tocarlo (móvil); se cierra al salir, al perder el foco o con Escape.
  */
-export function Ayuda({ texto }: { texto: string }) {
+export function Ayuda({ texto }: Readonly<{ texto: string }>) {
   const [abierta, setAbierta] = useState(false);
   const id = useId();
   return (
@@ -72,7 +72,7 @@ export function Ayuda({ texto }: { texto: string }) {
   );
 }
 
-export function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (v: string) => void; tipo?: string; paso?: string; opcional?: boolean; ayuda?: string; atributos?: React.InputHTMLAttributes<HTMLInputElement> }) {
+export function CampoTexto(props: Readonly<{ etiqueta: string; valor: string; onCambio: (v: string) => void; tipo?: string; paso?: string; opcional?: boolean; ayuda?: string; atributos?: React.InputHTMLAttributes<HTMLInputElement> }>) {
   const id = useId();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
@@ -102,7 +102,7 @@ export function CampoTexto(props: { etiqueta: string; valor: string; onCambio: (
   );
 }
 
-export function CampoSelect(props: { etiqueta: string; valor: string; opciones: string[]; onCambio: (v: string) => void; ayuda?: string }) {
+export function CampoSelect(props: Readonly<{ etiqueta: string; valor: string; opciones: string[]; onCambio: (v: string) => void; ayuda?: string }>) {
   const id = useId();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)", minWidth: 0, maxWidth: "100%" }}>
@@ -121,7 +121,7 @@ export function CampoSelect(props: { etiqueta: string; valor: string; opciones: 
   );
 }
 
-export function FiltroChip({ etiqueta, activo, onClick }: { etiqueta: string; activo: boolean; onClick: () => void }) {
+export function FiltroChip({ etiqueta, activo, onClick }: Readonly<{ etiqueta: string; activo: boolean; onClick: () => void }>) {
   return (
     <button
       type="button"
@@ -141,11 +141,11 @@ export function FiltroChip({ etiqueta, activo, onClick }: { etiqueta: string; ac
   );
 }
 
-export function Th({ children }: { children: React.ReactNode }) {
+export function Th({ children }: Readonly<{ children: React.ReactNode }>) {
   return <th style={{ padding: "10px 16px", fontWeight: 600, color: "var(--rz-text-muted)", fontSize: 12 }}>{children}</th>;
 }
 
-export function Td({ children, mono }: { children: React.ReactNode; mono?: boolean }) {
+export function Td({ children, mono }: Readonly<{ children: React.ReactNode; mono?: boolean }>) {
   return (
     <td style={{ padding: "10px 16px", fontFamily: mono ? "var(--rz-font-mono)" : "inherit" }}>{children}</td>
   );
@@ -192,15 +192,18 @@ export function diasParaVencer(fecha: string): number {
   return Math.round((vence.getTime() - hoy.getTime()) / 86_400_000);
 }
 
-export function EstadoVencimiento({ fecha }: { fecha: string | null }) {
+export function EstadoVencimiento({ fecha }: Readonly<{ fecha: string | null }>) {
   if (!fecha) return <span style={{ color: "var(--rz-text-muted)" }}>—</span>;
   const dias = diasParaVencer(fecha);
-  const [aviso, color] =
-    dias < 0
-      ? ["Vencida", "var(--rz-danger)"]
-      : dias <= DIAS_AVISO_VENCIMIENTO
-        ? [`Vence en ${dias} d`, "var(--rz-warning, #b7791f)"]
-        : [null, ""];
+  let aviso: string | null = null;
+  let color = "";
+  if (dias < 0) {
+    aviso = "Vencida";
+    color = "var(--rz-danger)";
+  } else if (dias <= DIAS_AVISO_VENCIMIENTO) {
+    aviso = `Vence en ${dias} d`;
+    color = "var(--rz-warning, #b7791f)";
+  }
   return (
     <span style={{ display: "inline-flex", flexDirection: "column", gap: 2 }}>
       <span>{fecha}</span>

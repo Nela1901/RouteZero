@@ -45,3 +45,9 @@ export function limitarDecimales(valor: string, paso?: string): string {
   if (decimales === 0) return entera;
   return fraccion !== undefined && fraccion.length > decimales ? `${entera}.${fraccion.slice(0, decimales)}` : valor;
 }
+
+/** Texto del botón de guardar de un formulario: «Guardando…» mientras envía, y «Guardar cambios» al editar. */
+export function textoGuardar(enviando: boolean, editando: boolean, nuevo: string): string {
+  if (enviando) return "Guardando…";
+  return editando ? "Guardar cambios" : nuevo;
+}

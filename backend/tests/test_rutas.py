@@ -153,16 +153,19 @@ def ids_en_resultado(r: dict) -> list:
 # ----------------------------------------------------------------------------------- generación
 def test_generar_crea_un_borrador_y_no_cambia_los_pedidos(datos):
     r = generar(datos)
-    assert r["lote_id"] and not r["imposible"]
+    assert r["lote_id"]
+    assert not r["imposible"]
     assert r["fuente_distancias"] == "calles"
-    assert r["rutas"] and all(x["estado"] == "PLANIFICADA" for x in r["rutas"])
+    assert r["rutas"]
+    assert all(x["estado"] == "PLANIFICADA" for x in r["rutas"])
     assert estados_rutas(r["lote_id"]) == ["PLANIFICADA"] * len(r["rutas"])
     assert set(estados_pedidos(datos["pedidos"]).values()) == {"PENDIENTE"}
     # cada pedido aparece exactamente una vez: en una parada o sin cobertura
     cubiertos = ids_en_resultado(r) + [s["pedido_id"] for s in r["sin_cobertura"]]
     assert sorted(cubiertos) == sorted(datos["pedidos"])
     primera = r["rutas"][0]
-    assert primera["metricas"]["emision_co2_kg"] > 0 and primera["paradas"][0]["orden"] == 1
+    assert primera["metricas"]["emision_co2_kg"] > 0
+    assert primera["paradas"][0]["orden"] == 1
     assert primera["paradas"][0]["hora_estimada"] is not None
     assert r["comparativa_base"]["costo"] <= r["comparativa_base"]["costo_base"] + 1e-9
 
@@ -197,8 +200,11 @@ def test_sin_vehiculos_no_hay_rutas_y_se_conservan_los_borradores_previos(datos)
     previo = generar(datos)
     datos_sin_flota = datos | {"vehiculos": []}
     r = generar(datos_sin_flota)
-    assert r["imposible"] and r["lote_id"] is None and r["rutas"] == []
-    assert len(r["sin_cobertura"]) == 6 and {s["motivo"] for s in r["sin_cobertura"]} == {"SIN_RECURSOS"}
+    assert r["imposible"]
+    assert r["lote_id"] is None
+    assert r["rutas"] == []
+    assert len(r["sin_cobertura"]) == 6
+    assert {s["motivo"] for s in r["sin_cobertura"]} == {"SIN_RECURSOS"}
     assert "no es posible" in r["mensaje"].lower()
     assert estados_rutas(previo["lote_id"])  # el borrador anterior sigue ahí
 
@@ -214,7 +220,8 @@ def test_una_segunda_generacion_simultanea_recibe_un_conflicto(datos):
     candado.acquire()
     with pytest.raises(HTTPException) as e:
         generar(datos, bloqueo=candado)
-    assert e.value.status_code == 409 and "en curso" in e.value.detail
+    assert e.value.status_code == 409
+    assert "en curso" in e.value.detail
 
 
 # ----------------------------------------------------------------------------------- recursos comprometidos
@@ -241,8 +248,10 @@ def test_un_vehiculo_y_un_conductor_confirmados_no_se_reasignan_el_mismo_dia(dat
     datos["pedidos"] = todos  # llegan los demás pedidos y se regenera para la misma fecha
     segundo = generar(datos)
     vehiculos_2, conductores_2 = vehiculos_y_conductores_de(segundo)
-    assert segundo["rutas"] and not segundo["imposible"]
-    assert vehiculos_2.isdisjoint(vehiculos_1) and conductores_2.isdisjoint(conductores_1)
+    assert segundo["rutas"]
+    assert not segundo["imposible"]
+    assert vehiculos_2.isdisjoint(vehiculos_1)
+    assert conductores_2.isdisjoint(conductores_1)
     assert set(estados_rutas(primero["lote_id"])) == {"CONFIRMADA"}
 
 
@@ -250,13 +259,16 @@ def test_si_todos_los_recursos_estan_comprometidos_no_se_puede_generar_y_lo_conf
     admin_db("UPDATE pedidos SET peso_kg = 100 WHERE pedido_id = ANY(%s::uuid[])", (datos["pedidos"],))  # 6 × 100 kg = 2 × 300 kg
     primero = generar(datos)
     vehiculos_1, _ = vehiculos_y_conductores_de(primero)
-    assert len(vehiculos_1) == 2 and not primero["sin_cobertura"]
+    assert len(vehiculos_1) == 2
+    assert not primero["sin_cobertura"]
     confirmar(datos, primero["lote_id"])
 
     nuevos = [insertar_pedido(datos["cliente"]) for _ in range(2)]
     datos["pedidos"].extend(nuevos)
     segundo = generar(datos)
-    assert segundo["imposible"] and segundo["lote_id"] is None and segundo["rutas"] == []
+    assert segundo["imposible"]
+    assert segundo["lote_id"] is None
+    assert segundo["rutas"] == []
     assert {s["pedido_id"] for s in segundo["sin_cobertura"]} == set(nuevos)
     assert {s["motivo"] for s in segundo["sin_cobertura"]} == {"SIN_RECURSOS"}
     assert set(estados_rutas(primero["lote_id"])) == {"CONFIRMADA"}
@@ -268,7 +280,8 @@ def test_los_recursos_comprometidos_un_dia_siguen_libres_para_otra_fecha(datos):
     nuevo = insertar_pedido(datos["cliente"])
     datos["pedidos"].append(nuevo)  # para que la limpieza lo borre
     otro_dia = generar(datos | {"pedidos": [nuevo]}, fecha=FECHA + timedelta(days=1))
-    assert otro_dia["rutas"] and not otro_dia["imposible"]
+    assert otro_dia["rutas"]
+    assert not otro_dia["imposible"]
 
 
 def test_un_borrador_no_compromete_recursos(datos):
@@ -283,7 +296,8 @@ def test_confirmar_pasa_las_rutas_a_confirmada_y_los_pedidos_a_asignado(datos):
     r = generar(datos)
     with servicio(datos) as s:
         c = s.confirmar(r["lote_id"], UID)
-    assert c["rutas_confirmadas"] == len(r["rutas"]) and c["pedidos_asignados"] == len(ids_en_resultado(r))
+    assert c["rutas_confirmadas"] == len(r["rutas"])
+    assert c["pedidos_asignados"] == len(ids_en_resultado(r))
     assert set(estados_rutas(r["lote_id"])) == {"CONFIRMADA"}
     estados = estados_pedidos(datos["pedidos"])
     for pid in datos["pedidos"]:
@@ -302,10 +316,12 @@ def test_confirmar_se_rechaza_si_un_pedido_fue_cancelado_durante_la_revision(dat
     r = generar(datos)
     cancelado = ids_en_resultado(r)[0]
     admin_db("UPDATE pedidos SET estado = 'CANCELADO' WHERE pedido_id = %s", (cancelado,))
-    with pytest.raises(HTTPException) as e:
-        with servicio(datos) as s:
+    with servicio(datos) as s:
+        with pytest.raises(HTTPException) as e:
             s.confirmar(r["lote_id"], UID)
-    assert e.value.status_code == 409 and cancelado in e.value.detail and "Regenere" in e.value.detail
+    assert e.value.status_code == 409
+    assert cancelado in e.value.detail
+    assert "Regenere" in e.value.detail
     assert set(estados_rutas(r["lote_id"])) == {"PLANIFICADA"}  # nada cambió
     assert "ASIGNADO" not in estados_pedidos(datos["pedidos"]).values()
 
@@ -314,12 +330,12 @@ def test_confirmar_dos_veces_o_un_lote_inexistente_se_rechaza(datos):
     r = generar(datos)
     with servicio(datos) as s:
         s.confirmar(r["lote_id"], UID)
-    with pytest.raises(HTTPException) as e:
-        with servicio(datos) as s:
+    with servicio(datos) as s:
+        with pytest.raises(HTTPException) as e:
             s.confirmar(r["lote_id"], UID)
     assert e.value.status_code == 409
-    with pytest.raises(HTTPException) as e:
-        with servicio(datos) as s:
+    with servicio(datos) as s:
+        with pytest.raises(HTTPException) as e:
             s.confirmar(str(uuid.uuid4()), UID)
     assert e.value.status_code == 404
 
@@ -351,10 +367,11 @@ def test_las_rutas_confirmadas_no_se_pueden_descartar(datos):
     r = generar(datos)
     with servicio(datos) as s:
         s.confirmar(r["lote_id"], UID)
-    with pytest.raises(HTTPException) as e:
-        with servicio(datos) as s:
+    with servicio(datos) as s:
+        with pytest.raises(HTTPException) as e:
             s.descartar(r["lote_id"], UID)
-    assert e.value.status_code == 409 and "confirmadas" in e.value.detail
+    assert e.value.status_code == 409
+    assert "confirmadas" in e.value.detail
 
 
 # ----------------------------------------------------------------------------------- API HTTP
@@ -373,15 +390,21 @@ def test_el_flujo_completo_por_la_api_y_el_control_de_acceso_por_rol(client, dat
     assert r.status_code == 201
     cuerpo = r.json()
     lote = cuerpo["lote_id"]
-    assert cuerpo["rutas"] and cuerpo["fuente_distancias"] == "calles" and cuerpo["tiempo_ejecucion_s"] > 0
+    assert cuerpo["rutas"]
+    assert cuerpo["fuente_distancias"] == "calles"
+    assert cuerpo["tiempo_ejecucion_s"] > 0
 
     # El Operador consulta el listado y el detalle
     lista = client.get("/api/rutas", headers=auth(tok_op), params={"fecha": FECHA.isoformat()})
     assert lista.status_code == 200
     propias = [x for x in lista.json() if x["lote_id"] == lote]
-    assert len(propias) == len(cuerpo["rutas"]) and propias[0]["estado"] == "PLANIFICADA" and propias[0]["paradas"] == []
+    assert len(propias) == len(cuerpo["rutas"])
+    assert propias[0]["estado"] == "PLANIFICADA"
+    assert propias[0]["paradas"] == []
     detalle = client.get(f"/api/rutas/{propias[0]['ruta_id']}", headers=auth(tok_op))
-    assert detalle.status_code == 200 and detalle.json()["paradas"] and detalle.json()["conductor"]["nombre"].startswith("Conductor rutas")
+    assert detalle.status_code == 200
+    assert detalle.json()["paradas"]
+    assert detalle.json()["conductor"]["nombre"].startswith("Conductor rutas")
 
     # El Administrador confirma; después ya no se puede descartar
     assert client.post(f"/api/rutas/lotes/{lote}/confirmar", headers=auth(tok_admin)).status_code == 200
@@ -407,7 +430,8 @@ def test_la_api_responde_conflicto_si_hay_una_generacion_en_curso(client):
         r = client.post("/api/rutas/generar", headers=auth(tok_admin), json={"fecha_jornada": FECHA.isoformat()})
     finally:
         BLOQUEO_GENERACION.release()
-    assert r.status_code == 409 and "en curso" in r.json()["detail"]
+    assert r.status_code == 409
+    assert "en curso" in r.json()["detail"]
 
 
 def test_la_generacion_con_los_datos_reales_responde_con_la_estructura_esperada(client):

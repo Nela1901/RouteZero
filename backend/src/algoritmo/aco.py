@@ -24,6 +24,21 @@ def _reforzar(tau: np.ndarray, mejor: Solucion, rho: float, contextos: list) -> 
         tau[i, j] = (1.0 - rho) * tau[i, j] + deposito
 
 
+def _mejor_hormiga(d: Datos, contextos: list, tau: np.ndarray, rng, hormigas: int, sin_tiempo) -> Solucion | None:
+    """La mejor solución de una iteración: cada hormiga construye una y se conserva la de menor costo. Se corta
+    apenas se agota el tiempo."""
+    p = d.p
+    mejor_iteracion = None
+    for _ in range(hormigas):
+        rutas, sin = construir(d, contextos, tau, rng, p.q0, p.alfa, p.beta)
+        solucion = evaluar_solucion(d, contextos, rutas, sin)
+        if mejor_iteracion is None or solucion.costo < mejor_iteracion.costo:
+            mejor_iteracion = solucion
+        if sin_tiempo():
+            break
+    return mejor_iteracion
+
+
 def optimizar(d: Datos, contextos: list, inicial: Solucion, rng, inicio_t: float) -> tuple:
     """Devuelve (mejor solución, iteraciones realizadas)."""
     p = d.p
@@ -43,14 +58,7 @@ def optimizar(d: Datos, contextos: list, inicial: Solucion, rng, inicio_t: float
         if sin_tiempo():
             iteracion -= 1
             break
-        mejor_iteracion = None
-        for _ in range(hormigas):
-            rutas, sin = construir(d, contextos, tau, rng, p.q0, p.alfa, p.beta)
-            solucion = evaluar_solucion(d, contextos, rutas, sin)
-            if mejor_iteracion is None or solucion.costo < mejor_iteracion.costo:
-                mejor_iteracion = solucion
-            if sin_tiempo():
-                break
+        mejor_iteracion = _mejor_hormiga(d, contextos, tau, rng, hormigas, sin_tiempo)
         if mejor_iteracion is not None and mejor_iteracion.costo < mejor.costo - TOLERANCIA:
             mejor = mejorar(mejor_iteracion, d, contextos, rng, limite, EVALUACIONES_PULIDO_CORTO)
             sin_mejora = 0

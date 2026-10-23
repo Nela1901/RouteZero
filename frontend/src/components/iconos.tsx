@@ -5,7 +5,7 @@
  * lo da el botón.
  */
 
-function Trazo({ children }: { children: React.ReactNode }) {
+function Trazo({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <svg
       width="17"

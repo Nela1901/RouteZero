@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { api, ErrorApi } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
@@ -66,6 +66,25 @@ export function SeguridadPage() {
     setError(null);
   }
 
+  let contenidoMfa: ReactNode;
+  if (usuario?.mfaActivo) {
+    contenidoMfa = <EstadoActivo />;
+  } else if (inscripcion) {
+    contenidoMfa = (
+      <FormularioConfirmacion
+        inscripcion={inscripcion}
+        codigo={codigo}
+        onCambioCodigo={setCodigo}
+        onEnviar={confirmarInscripcion}
+        onCancelar={cancelarInscripcion}
+        error={error}
+        enviando={enviando}
+      />
+    );
+  } else {
+    contenidoMfa = <EstadoInicial onIniciar={iniciarInscripcion} error={error} enviando={enviando} exito={exito} />;
+  }
+
   return (
     <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 1200 }}>
       <div>
@@ -94,21 +113,7 @@ export function SeguridadPage() {
             gap: 18,
           }}
         >
-          {usuario?.mfaActivo ? (
-            <EstadoActivo />
-          ) : inscripcion ? (
-            <FormularioConfirmacion
-              inscripcion={inscripcion}
-              codigo={codigo}
-              onCambioCodigo={setCodigo}
-              onEnviar={confirmarInscripcion}
-              onCancelar={cancelarInscripcion}
-              error={error}
-              enviando={enviando}
-            />
-          ) : (
-            <EstadoInicial onIniciar={iniciarInscripcion} error={error} enviando={enviando} exito={exito} />
-          )}
+          {contenidoMfa}
         </div>
 
         <SeccionSesiones />
@@ -177,6 +182,10 @@ function SeccionSesiones() {
     }
   }
 
+  let mensajeDeSesiones: string | null = null;
+  if (sesiones === null) mensajeDeSesiones = "Cargando…";
+  else if (sesiones.length === 0) mensajeDeSesiones = "No hay sesiones activas.";
+
   return (
     <div
       style={{
@@ -205,13 +214,11 @@ function SeccionSesiones() {
 
       {error && <div style={estiloAviso}>{error}</div>}
 
-      {sesiones === null ? (
-        <p style={{ margin: 0, fontSize: 13, color: "var(--rz-text-muted)" }}>Cargando…</p>
-      ) : sesiones.length === 0 ? (
-        <p style={{ margin: 0, fontSize: 13, color: "var(--rz-text-muted)" }}>No hay sesiones activas.</p>
+      {mensajeDeSesiones ? (
+        <p style={{ margin: 0, fontSize: 13, color: "var(--rz-text-muted)" }}>{mensajeDeSesiones}</p>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {sesiones.map((s) => (
+          {(sesiones ?? []).map((s) => (
             <div
               key={s.sesion_id}
               style={{
@@ -291,12 +298,12 @@ function EstadoInicial({
   error,
   enviando,
   exito,
-}: {
+}: Readonly<{
   onIniciar: () => void;
   error: string | null;
   enviando: boolean;
   exito: boolean;
-}) {
+}>) {
   return (
     <>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
@@ -328,7 +335,7 @@ function FormularioConfirmacion({
   onCancelar,
   error,
   enviando,
-}: {
+}: Readonly<{
   inscripcion: InscripcionMfa;
   codigo: string;
   onCambioCodigo: (v: string) => void;
@@ -336,7 +343,11 @@ function FormularioConfirmacion({
   onCancelar: () => void;
   error: string | null;
   enviando: boolean;
-}) {
+}>) {
+  const campoCodigo = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    campoCodigo.current?.focus(); // el campo aparece tras pedir la activación: se enfoca por código, no con autoFocus
+  }, []);
   return (
     <form onSubmit={onEnviar} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div>
@@ -378,10 +389,10 @@ function FormularioConfirmacion({
           </div>
 
           <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
-            Código de 6 dígitos
+            Código de 6 dígitos{" "}
             <input
               required
-              autoFocus
+              ref={campoCodigo}
               type="text"
               inputMode="numeric"
               maxLength={6}
@@ -432,7 +443,7 @@ function EstadoActivo() {
   );
 }
 
-function IconoEscudo({ activo }: { activo: boolean }) {
+function IconoEscudo({ activo }: Readonly<{ activo: boolean }>) {
   return (
     <div
       aria-hidden="true"

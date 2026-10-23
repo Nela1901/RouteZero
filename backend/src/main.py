@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -49,7 +51,7 @@ def health() -> dict:
 
 
 @app.get("/api/auth/me")
-def me(usuario: UsuarioActual = Depends(get_current_user)) -> dict:
+def me(usuario: Annotated[UsuarioActual, Depends(get_current_user)]) -> dict:
     return {
         "usuario_id": usuario.usuario_id,
         "email": usuario.email,

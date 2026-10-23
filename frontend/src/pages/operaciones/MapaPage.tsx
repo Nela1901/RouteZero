@@ -1,4 +1,5 @@
 import { MapContainer, TileLayer, CircleMarker, Polyline, Popup, Tooltip } from "react-leaflet";
+import { marcaDeEntrega, textoDeEntrega } from "../../components/utilesEntrega";
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useState } from "react";
 import { api, mensajeDeError } from "../../api/client";
@@ -184,24 +185,20 @@ export function MapaPage() {
           Actualizar
         </button>
         <label style={estiloCheck}>
-          <input type="checkbox" checked={automatico} onChange={(e) => setAutomatico(e.target.checked)} />
+          <input type="checkbox" checked={automatico} onChange={(e) => setAutomatico(e.target.checked)} />{" "}
           Actualizar cada 30 s
         </label>
         <label style={estiloCheck}>
-          <input type="checkbox" checked={verPedidos} onChange={(e) => setVerPedidos(e.target.checked)} />
+          <input type="checkbox" checked={verPedidos} onChange={(e) => setVerPedidos(e.target.checked)} />{" "}
           Pedidos pendientes
         </label>
-        <span style={{ fontSize: 12, color: "var(--rz-text-muted)", marginLeft: "auto" }} role="status">
-          {cargando
-            ? mapa === null
-              ? "Calculando los recorridos por calles… la primera carga puede tardar unos segundos."
-              : "Actualizando…"
-            : actualizado && `Actualizado a las ${actualizado}`}
-        </span>
+        <output style={{ fontSize: 12, color: "var(--rz-text-muted)", marginLeft: "auto" }}>
+          {textoDeCarga(cargando, mapa === null, actualizado)}
+        </output>
       </div>
       {error && <div style={{ ...estiloAviso, margin: "8px 16px 0" }}>{error}</div>}
 
-      <div role="region" aria-label="Mapa de rutas de Huancayo" style={{ position: "relative", flex: 1, minHeight: 320 }}>
+      <section aria-label="Mapa de rutas de Huancayo" style={{ position: "relative", flex: 1, minHeight: 320 }}>
         <MapContainer center={CENTRO_HUANCAYO} zoom={14} style={{ height: "100%", width: "100%" }}>
           <TileLayer url={OSM_TILES} attribution="&copy; OpenStreetMap contributors" />
 
@@ -281,12 +278,12 @@ export function MapaPage() {
           hayPedidos={verPedidos && pendientes.length > 0}
         />
         )}
-      </div>
+      </section>
     </div>
   );
 }
 
-function RutaEnMapa({ ruta, color, borrador }: { ruta: RutaMapa; color: string; borrador: boolean }) {
+function RutaEnMapa({ ruta, color, borrador }: Readonly<{ ruta: RutaMapa; color: string; borrador: boolean }>) {
   return (
     <>
       {ruta.tramos.map((t) => (
@@ -308,7 +305,7 @@ function RutaEnMapa({ ruta, color, borrador }: { ruta: RutaMapa; color: string; 
       {ruta.paradas.map((p) => {
         const cancelada = p.pedido_estado === "CANCELADO";
         const relleno = cancelada ? COLOR_ENTREGA.CANCELADO : (COLOR_ENTREGA[p.estado_entrega] ?? color);
-        const marca = cancelada ? "✕" : p.estado_entrega === "ENTREGADO" ? "✓" : p.estado_entrega === "FALLIDO" ? "✗" : "";
+        const marca = marcaDeEntrega(cancelada, p.estado_entrega);
         return (
           <CircleMarker
             key={p.pedido_id}
@@ -329,7 +326,7 @@ function RutaEnMapa({ ruta, color, borrador }: { ruta: RutaMapa; color: string; 
               Llegada estimada {hora(p.hora_estimada)}
               {p.minutos_retraso > 0 && <> (+{p.minutos_retraso} min de retraso)</>}
               <br />
-              {cancelada ? "Pedido cancelado" : p.estado_entrega === "PENDIENTE" ? "Pendiente de entrega" : p.estado_entrega === "ENTREGADO" ? "Entregado" : "Entrega fallida"}
+              {textoDeEntrega(cancelada, p.estado_entrega)}
               {p.prioridad === "EXPRESS" && " · EXPRESS"}
             </Popup>
           </CircleMarker>
@@ -339,14 +336,14 @@ function RutaEnMapa({ ruta, color, borrador }: { ruta: RutaMapa; color: string; 
   );
 }
 
-function PanelRutas(props: {
+function PanelRutas(props: Readonly<{
   rutas: RutaMapa[];
   congestion: Congestion | null;
   ocultas: Set<string>;
   onAlternar: (id: string) => void;
   sinRutas: boolean;
   hayPedidos: boolean;
-}) {
+}>) {
   const { rutas, congestion, ocultas, onAlternar, sinRutas, hayPedidos } = props;
   return (
     <aside
@@ -371,9 +368,9 @@ function PanelRutas(props: {
       }}
     >
       {sinRutas && (
-        <div role="status" style={{ color: "var(--rz-text-muted)", fontSize: 13 }}>
+        <output style={{ display: "block", color: "var(--rz-text-muted)", fontSize: 13 }}>
           No hay rutas para esta fecha. El mapa muestra las vías y los pedidos pendientes.
-        </div>
+        </output>
       )}
 
       {rutas.length > 0 && (
@@ -397,7 +394,7 @@ function PanelRutas(props: {
                 </summary>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: "8px 0 4px 20px" }}>
                   <label htmlFor={id} style={estiloCheck}>
-                    <input id={id} type="checkbox" checked={!ocultas.has(r.ruta_id)} onChange={() => onAlternar(r.ruta_id)} />
+                    <input id={id} type="checkbox" checked={!ocultas.has(r.ruta_id)} onChange={() => onAlternar(r.ruta_id)} />{" "}
                     Mostrar en el mapa
                   </label>
                   <div style={{ color: "var(--rz-text-muted)" }}>
@@ -457,7 +454,7 @@ function PanelRutas(props: {
   );
 }
 
-function Campo({ id, etiqueta, ayuda, children }: { id: string; etiqueta: string; ayuda?: string; children: React.ReactNode }) {
+function Campo({ id, etiqueta, ayuda, children }: Readonly<{ id: string; etiqueta: string; ayuda?: string; children: React.ReactNode }>) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12.5, color: "var(--rz-text-muted)" }}>
       <span>
@@ -469,7 +466,7 @@ function Campo({ id, etiqueta, ayuda, children }: { id: string; etiqueta: string
   );
 }
 
-function Leyenda({ color, etiqueta }: { color: string; etiqueta: string }) {
+function Leyenda({ color, etiqueta }: Readonly<{ color: string; etiqueta: string }>) {
   return (
     <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12 }}>
       <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: color }} />
@@ -490,3 +487,8 @@ const estiloBotonBarra: React.CSSProperties = {
   fontSize: 13,
   cursor: "pointer",
 };
+
+function textoDeCarga(cargando: boolean, sinMapa: boolean, actualizado: string | null): string {
+  if (cargando) return sinMapa ? "Calculando los recorridos por calles… la primera carga puede tardar unos segundos." : "Actualizando…";
+  return actualizado ? `Actualizado a las ${actualizado}` : "";
+}

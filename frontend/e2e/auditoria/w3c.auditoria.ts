@@ -28,7 +28,11 @@ for (const pantalla of PANTALLAS) {
     const errores = mensajes.filter((m) => m.type === "error");
     const avisos = mensajes.filter((m) => m.type === "info" && m.subType === "warning");
     console.log(`W3C ${pantalla.nombre}: ${errores.length} error(es), ${avisos.length} aviso(s)`);
-    for (const m of [...errores, ...avisos]) console.log(`  [${m.type === "error" ? "ERROR" : "AVISO"}] ${m.message}${m.lastLine ? ` (línea ${m.lastLine})` : ""}\n    ${(m.extract ?? "").replace(/\s+/g, " ").slice(0, 160)}`);
+    for (const m of [...errores, ...avisos]) console.log(`  [${m.type === "error" ? "ERROR" : "AVISO"}] ${m.message}${linea(m.lastLine)}\n    ${(m.extract ?? "").replace(/\s+/g, " ").slice(0, 160)}`);
     expect(errores, "errores de HTML").toEqual([]);
   });
+}
+
+function linea(numero?: number): string {
+  return numero ? ` (línea ${numero})` : "";
 }

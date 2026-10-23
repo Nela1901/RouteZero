@@ -181,7 +181,7 @@ export function OperacionesLayout() {
           }}
         >
           <span style={{ flexShrink: 0, display: "flex" }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
               <path d="M16 17l5-5-5-5M21 12H9" />
             </svg>
@@ -243,8 +243,7 @@ export function OperacionesLayout() {
 
           <div style={{ flexGrow: 1 }} />
 
-          <div
-            role="status"
+          <output
             aria-label="CO2 evitado hoy"
             className="rz-pastilla-co2"
             style={{
@@ -267,7 +266,7 @@ export function OperacionesLayout() {
             <span className="rz-pastilla-co2-texto" style={{ fontSize: 12.5, color: "var(--rz-text-muted)" }}>
               evitados hoy
             </span>
-          </div>
+          </output>
 
           <BotonTema />
          </div>
@@ -283,7 +282,7 @@ export function OperacionesLayout() {
 
 function IconoMapa() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 20l-5.5 2V6L9 4m0 16l6 2m-6-2V4m6 18l5.5-2V4L15 6m0 16V6m0 0L9 4" />
     </svg>
   );
@@ -291,7 +290,7 @@ function IconoMapa() {
 
 function IconoFlota() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 16V9a1 1 0 011-1h9l4 4h3a1 1 0 011 1v3a1 1 0 01-1 1h-1" />
       <circle cx="7.5" cy="17.5" r="2" />
       <circle cx="17.5" cy="17.5" r="2" />
@@ -302,7 +301,7 @@ function IconoFlota() {
 
 function IconoConductores() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="9" cy="8" r="3.5" />
       <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
       <path d="M16 11.5a3 3 0 100-6M18 14.3c2 .6 3.5 2.4 3.5 5.7" />
@@ -312,7 +311,7 @@ function IconoConductores() {
 
 function IconoClientes() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 9l1.5-5h13L20 9" />
       <path d="M4 9a2.7 2.7 0 005.3 0 2.7 2.7 0 005.4 0A2.7 2.7 0 0020 9" />
       <path d="M5 12v8h14v-8" />
@@ -323,7 +322,7 @@ function IconoClientes() {
 
 function IconoRutas() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="6" cy="19" r="2" />
       <circle cx="18" cy="5" r="2" />
       <path d="M8 19h7a3.5 3.5 0 000-7H9a3.5 3.5 0 010-7h7" />
@@ -333,7 +332,7 @@ function IconoRutas() {
 
 function IconoSostenibilidad() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14" />
       <path d="M5 19c2-5 5-8 9-10" />
     </svg>
@@ -342,7 +341,7 @@ function IconoSostenibilidad() {
 
 function IconoPedidos() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 7l8-4 8 4-8 4-8-4z" />
       <path d="M4 7v10l8 4 8-4V7" />
       <path d="M12 11v10" />
@@ -352,7 +351,7 @@ function IconoPedidos() {
 
 function IconoSeguridad() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
     </svg>
   );

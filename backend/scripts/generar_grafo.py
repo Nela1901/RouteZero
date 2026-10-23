@@ -51,6 +51,21 @@ RAIZ = Path(__file__).resolve().parents[1]
 SALIDA_POR_DEFECTO = RAIZ / "data" / "huancayo_grafo.npz"
 
 
+def _ruta_en_backend(sufijo: str):
+    """Valida una ruta recibida por la línea de comandos: debe quedar dentro de `backend/` (sin salirse con `..`
+    ni con rutas absolutas ajenas) y terminar en la extensión esperada. Devuelve la ruta ya resuelta."""
+
+    def validar(texto: str) -> Path:
+        ruta = (Path.cwd() / texto).resolve()
+        if not ruta.is_relative_to(RAIZ):
+            raise argparse.ArgumentTypeError(f"la ruta debe estar dentro de {RAIZ}")
+        if ruta.suffix.lower() != sufijo:
+            raise argparse.ArgumentTypeError(f"el archivo debe terminar en {sufijo}")
+        return ruta
+
+    return validar
+
+
 def consulta_overpass() -> str:
     tipos = "|".join(VELOCIDAD_KMH)
     s, o, n, e = CAJA
@@ -97,13 +112,12 @@ def transitable(etiquetas: dict) -> bool:
     return etiquetas.get("service") not in SERVICIOS_EXCLUIDOS
 
 
-def construir(datos: dict) -> dict:
-    nodos = {e["id"]: (e["lat"], e["lon"]) for e in datos["elements"] if e["type"] == "node"}
-    vias = [e for e in datos["elements"] if e["type"] == "way" and transitable(e.get("tags", {}))]
-
+def _aristas_de(nodos: dict, vias: list) -> tuple[dict, dict, list]:
+    """Recorre las vías y devuelve (índice de cada nodo OSM, id de cada nombre de calle, aristas dirigidas).
+    Cada arista es (origen, destino, metros, segundos a velocidad base, id de nombre)."""
     indice: dict[int, int] = {}
     nombres: dict[str, int] = {"": 0}
-    aristas = []  # (origen, destino, metros, segundos a velocidad base, id de nombre)
+    aristas = []
     for via in vias:
         etiquetas = via["tags"]
         sentido = sentido_de(etiquetas)
@@ -121,6 +135,13 @@ def construir(datos: dict) -> dict:
                 aristas.append((indice[a], indice[b], metros, segundos, nombre_id))
             if sentido <= 0:
                 aristas.append((indice[b], indice[a], metros, segundos, nombre_id))
+    return indice, nombres, aristas
+
+
+def construir(datos: dict) -> dict:
+    nodos = {e["id"]: (e["lat"], e["lon"]) for e in datos["elements"] if e["type"] == "node"}
+    vias = [e for e in datos["elements"] if e["type"] == "way" and transitable(e.get("tags", {}))]
+    indice, nombres, aristas = _aristas_de(nodos, vias)
 
     n = len(indice)
     origen = np.array([a[0] for a in aristas], dtype=np.int32)
@@ -155,9 +176,9 @@ def construir(datos: dict) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--entrada", type=Path, help="JSON de Overpass ya descargado (evita la descarga)")
-    parser.add_argument("--guardar-descarga", type=Path, help="guarda aquí el JSON descargado")
-    parser.add_argument("--salida", type=Path, default=SALIDA_POR_DEFECTO)
+    parser.add_argument("--entrada", type=_ruta_en_backend(".json"), help="JSON de Overpass ya descargado (evita la descarga)")
+    parser.add_argument("--guardar-descarga", type=_ruta_en_backend(".json"), help="guarda aquí el JSON descargado")
+    parser.add_argument("--salida", type=_ruta_en_backend(".npz"), default=SALIDA_POR_DEFECTO)
     args = parser.parse_args()
 
     if args.entrada:
