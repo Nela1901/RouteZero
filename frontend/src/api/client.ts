@@ -95,7 +95,25 @@ async function intentarRenovarSesion(): Promise<boolean> {
   return true;
 }
 
+/** Descarga un archivo (p. ej. un PDF). Renueva la sesión una vez si el token venció, igual que `solicitud`. */
+async function descargar(ruta: string, reintentar = true): Promise<Blob> {
+  const accessToken = obtenerAccessToken();
+  const cabeceras = new Headers();
+  if (accessToken) cabeceras.set("Authorization", `Bearer ${accessToken}`);
+  const respuesta = await fetch(`${BASE_URL}${ruta}`, { method: "GET", headers: cabeceras });
+
+  if (respuesta.status === 401 && reintentar && obtenerRefreshToken() && (await intentarRenovarSesion())) {
+    return descargar(ruta, false);
+  }
+  if (!respuesta.ok) {
+    const cuerpo = await respuesta.json().catch(() => null);
+    throw new ErrorApi(respuesta.status, cuerpo?.detail ?? cuerpo);
+  }
+  return respuesta.blob();
+}
+
 export const api = {
+  descargar,
   get: <T>(ruta: string) => solicitud<T>(ruta, { method: "GET" }),
   post: <T>(ruta: string, cuerpo?: unknown, opciones: RequestInit = {}) =>
     solicitud<T>(ruta, { ...opciones, method: "POST", body: cuerpo ? JSON.stringify(cuerpo) : undefined }),

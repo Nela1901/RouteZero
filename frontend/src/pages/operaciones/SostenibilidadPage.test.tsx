@@ -5,7 +5,7 @@ import { SostenibilidadPage, type Compensacion, type Dashboard } from "./Sosteni
 
 vi.mock("../../api/client", async (importOriginal) => {
   const real = await importOriginal<typeof import("../../api/client")>();
-  return { ...real, api: { post: vi.fn(), get: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn() } };
+  return { ...real, api: { post: vi.fn(), get: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn(), descargar: vi.fn() } };
 });
 
 import { ErrorApi, api } from "../../api/client";
@@ -130,6 +130,42 @@ describe("SostenibilidadPage", () => {
     expect(await screen.findByText(/ejecute al menos una jornada operativa/)).toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(screen.queryByText(/Alianzas de reforestación/)).not.toBeInTheDocument();
+  });
+
+  it("«Descargar reporte PDF» pide el PDF del periodo y lo descarga", async () => {
+    responder(conDatos, plan);
+    vi.mocked(api.descargar).mockResolvedValue(new Blob(["%PDF-1.4"], { type: "application/pdf" }));
+    const crear = vi.fn(() => "blob:reporte");
+    const revocar = vi.fn();
+    Object.assign(URL, { createObjectURL: crear, revokeObjectURL: revocar });
+    const clic = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    render(<SostenibilidadPage />);
+    await screen.findByText("Distancia recorrida");
+
+    await userEvent.click(screen.getByRole("button", { name: "Descargar reporte PDF" }));
+
+    expect(await screen.findByText("El reporte se descargó.")).toBeInTheDocument();
+    expect(api.descargar).toHaveBeenCalledWith(expect.stringMatching(/^\/api\/sostenibilidad\/reporte\?desde=\d{4}-\d{2}-01&hasta=\d{4}-\d{2}-\d{2}$/));
+    expect(crear).toHaveBeenCalledTimes(1);
+    expect(clic).toHaveBeenCalledTimes(1);
+    expect(revocar).toHaveBeenCalledWith("blob:reporte");
+    clic.mockRestore();
+  });
+
+  it("si el periodo no tiene datos, el reporte muestra el aviso de la API y no descarga nada", async () => {
+    responder(sinDatos, planSinDatos);
+    vi.mocked(api.descargar).mockRejectedValue(
+      new ErrorApi(404, "No hay datos suficientes para generar el reporte en el periodo seleccionado. Seleccione otro periodo."),
+    );
+    const clic = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    render(<SostenibilidadPage />);
+    await screen.findByText("S/ 0.00");
+
+    await userEvent.click(screen.getByRole("button", { name: "Descargar reporte PDF" }));
+
+    expect(await screen.findByText(/Seleccione otro periodo/)).toBeInTheDocument();
+    expect(clic).not.toHaveBeenCalled();
+    clic.mockRestore();
   });
 
   it("si la API falla muestra el error y no los indicadores", async () => {

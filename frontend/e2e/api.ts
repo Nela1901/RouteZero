@@ -237,6 +237,12 @@ export async function simularApi(page: Page, escenario: Escenario = {}): Promise
       const base = e.sostenibilidad?.dashboard ?? dashboardSostenibilidad();
       return json({ ...base, desde: url.searchParams.get("desde"), hasta: url.searchParams.get("hasta") });
     }
+    if (metodo === "GET" && ruta === "/api/sostenibilidad/reporte") {
+      if (e.sostenibilidad && !e.sostenibilidad.dashboard.hay_datos) {
+        return json({ detail: "No hay datos suficientes para generar el reporte en el periodo seleccionado. Seleccione otro periodo." }, 404);
+      }
+      return route.fulfill({ status: 200, contentType: "application/pdf", body: Buffer.from("%PDF-1.4\n%%EOF\n") });
+    }
     if (metodo === "GET" && ruta === "/api/sostenibilidad/compensacion") return json(e.sostenibilidad?.compensacion ?? compensacionSostenibilidad());
     if (metodo === "GET" && ruta === "/api/rutas/incidentes") return json(e.incidentes);
     if (metodo === "GET" && ruta === "/api/rutas") return json(e.rutas);

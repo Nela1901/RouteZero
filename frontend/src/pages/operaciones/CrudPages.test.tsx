@@ -42,6 +42,8 @@ const vehiculo = {
   estado: "DISPONIBLE",
   soat_vence: "2027-05-01",
   revision_tecnica_vence: null,
+  precio_compra_soles: null,
+  vida_util_anios: null,
 };
 
 const conductor = {
@@ -207,6 +209,39 @@ describe("Flota: detalle, edición y eliminación", () => {
     await waitFor(() =>
       expect(api.put).toHaveBeenCalledWith("/api/vehiculos/vehiculo-1", { placa: "XYZ-789", capacidad_kg: "1200" }),
     );
+  });
+
+  it("el detalle indica «Sin dato» cuando el vehículo no tiene precio de compra ni vida útil", async () => {
+    const usuario = userEvent.setup();
+    renderizar(<FlotaPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Ver detalle de ABC-123" }));
+
+    const dialogo = await screen.findByRole("dialog", { name: "Vehículo ABC-123" });
+    expect(within(dialogo).getByText("Precio de compra").nextElementSibling).toHaveTextContent("Sin dato");
+    expect(within(dialogo).getByText("Vida útil").nextElementSibling).toHaveTextContent("Sin dato");
+  });
+
+  it("el precio de compra y la vida útil se muestran en el detalle y se pueden editar", async () => {
+    responder({ "/api/vehiculos": [{ ...vehiculo, precio_compra_soles: "90000.00", vida_util_anios: 10 }] });
+    vi.mocked(api.put).mockResolvedValue({});
+    const usuario = userEvent.setup();
+    renderizar(<FlotaPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Ver detalle de ABC-123" }));
+    const detalle = await screen.findByRole("dialog", { name: "Vehículo ABC-123" });
+    expect(within(detalle).getByText("S/ 90000.00")).toBeInTheDocument();
+    expect(within(detalle).getByText("10 años")).toBeInTheDocument();
+    await usuario.keyboard("{Escape}");
+
+    await usuario.click(await screen.findByRole("button", { name: "Editar ABC-123" }));
+    const dialogo = await screen.findByRole("dialog");
+    const vida = within(dialogo).getByLabelText(/Vida útil/);
+    await usuario.clear(vida);
+    await usuario.type(vida, "8");
+    await usuario.click(within(dialogo).getByRole("button", { name: "Guardar cambios" }));
+
+    await waitFor(() => expect(api.put).toHaveBeenCalledWith("/api/vehiculos/vehiculo-1", { vida_util_anios: 8 }));
   });
 
   it("un vehículo con rutas no se elimina y se muestra el motivo", async () => {
