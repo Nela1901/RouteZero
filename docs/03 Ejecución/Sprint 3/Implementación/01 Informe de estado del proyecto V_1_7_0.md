@@ -20,7 +20,7 @@
 
 | Variables de control | Descripción del estado |
 |---|---|
-| **Alcance** | **5/5 ítems completados al 22-10-2026 (26 de 26 Story Points)**: HU-012, que cierra HT-07, HU-013, HU-014, HT-09 y HT-10. Detalle por ítem en [`01 Sprint 3 Plan de ejecución y estado V_1_6_0.md`](../01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_6_0.md) y en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md). |
+| **Alcance** | **5/5 ítems completados al 22-10-2026 (26 de 26 Story Points)**: HU-012, que cierra HT-07, HU-013, HU-014, HT-09 y HT-10. Detalle por ítem en [`01 Sprint 3 Plan de ejecución y estado V_1_6_0.md`](../01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_7_0.md) y en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md). |
 | **Cronograma** | Sprint iniciado el 17-10-2026; Jira lo cierra el 30-10-2026 y la fecha de inspección aún no está confirmada. Al corte (22-10-2026) van 6 de 14 días y los 26 SP están completados: el núcleo terminó ocho días antes del cierre. Falta la revisión y la retrospectiva. |
 | **Costos** | Presupuesto estimado académico: **USD $10,304.00** (ver [`04 Presupuesto del proyecto V_1_1_0.md`](../../../02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_1_0.md)). Sin desviación al corte: la infraestructura (Render, Vercel, Supabase) sigue en planes gratuitos, OPEX ejecutado **USD $0.00**. |
 | **Calidad** | Backend: 328 pruebas, 98 % de cobertura (96 % al cierre del Sprint 2); frontend: 89 pruebas de Vitest y 19 de Playwright. Integración continua en GitHub Actions en verde. Lighthouse con accesibilidad, buenas prácticas y SEO en 100 y W3C sin errores; en producción, rendimiento de 91 a 98. `npm audit` y `pip-audit` sin vulnerabilidades y Bandit sin hallazgos de severidad alta. |
@@ -62,3 +62,4 @@ El sistema sigue desplegado en Render (backend) y Vercel (frontend). La rama de 
 | V_1_4_0 | 2026-10-20 | Se agrega el avance de HU-014, el hallazgo del token del conductor y los próximos pasos | Inciso Aguilar Elizabeth Antonela |
 | V_1_5_0 | 2026-10-22 | Se actualiza el avance (21 de 26 SP), la calidad, el riesgo del workflow de CI y los próximos pasos | Inciso Aguilar Elizabeth Antonela |
 | V_1_6_0 | 2026-10-22 | El sprint queda completo (26 de 26 SP); se actualizan la calidad, los riesgos y los próximos pasos | Inciso Aguilar Elizabeth Antonela |
+| V_1_7_0 | 2026-10-23 | Se actualiza el enlace al plan de ejecución (V_1_7_0), que registra la aprobación del Pull Request #60 por un compañero | Inciso Aguilar Elizabeth Antonela |
