@@ -12,7 +12,7 @@
 | **Fecha de la retrospectiva** | Por confirmar (contenido al 22-10-2026) |
 | **Versión** | 1.2.0 |
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ---
 
@@ -80,7 +80,7 @@ La columna «Asignación en Jira» es el dato objetivo del tablero. La columna �
 
 ---
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ## Historial de Control de Cambios
 

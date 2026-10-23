@@ -20,7 +20,7 @@
 
 ## Historias de Usuario completadas en este Sprint
 
-Compromiso del sprint: 5 ítems y 26 Story Points. Detalle y evidencias en [`01 Sprint 3 Plan de ejecución y estado`](../01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_6_0.md).
+Compromiso del sprint: 5 ítems y 26 Story Points. Detalle y evidencias en [`01 Sprint 3 Plan de ejecución y estado`](../01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_7_0.md).
 
 | ID | Historia | Épica | SP | Estado |
 |---|---|---|---|---|
@@ -77,7 +77,7 @@ Entre otros: cancelar un pedido ya asignado, panel de incidentes de tráfico, co
 - **Vínculo conductor-usuario**: se hace por correo; no hay pantalla para asignarlo a mano.
 - **Calibración** de los factores de hora punta con datos reales.
 - **Checklist formal de políticas RLS** y **versión de Python fijada en Render** (acciones heredadas).
-- **Aprobación de los Pull Request por un compañero** en GitHub: por confirmar (criterio 3 del Definition of Done).
+- **Aprobación de los Pull Request por un compañero** en GitHub (criterio 3 del Definition of Done): El Pull Request #60 fue aprobado en GitHub por Uscuvilca Ramos Abraham Luis (cuenta AbranUs) el 23-10-2026, antes del merge a `main`; los Pull Request #54 a #59 se fusionaron sin aprobación registrada en GitHub. Desde el #60 cada Pull Request se integra después de la aprobación de un compañero.
 
 ## Aporte por integrante
 
@@ -103,3 +103,4 @@ La columna «Asignación en Jira» es el dato objetivo del tablero. La columna �
 | V_1_0_0 | 2026-10-20 | Versión inicial: estructura de la revisión con el alcance comprometido; el resto se completa al cierre | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-22 | Se completan el resultado (26 de 26 SP), la demostración de 10 minutos, los resultados medidos, el trabajo adicional y los pendientes; el aporte por integrante queda por completar | Inciso Aguilar Elizabeth Antonela |
 | V_1_2_0 | 2026-10-22 | Se completa el aporte por integrante con lo declarado por la líder | Inciso Aguilar Elizabeth Antonela |
+| V_1_3_0 | 2026-10-23 | Se registra la aprobación del Pull Request #60 por un compañero (criterio 3 del Definition of Done) | Inciso Aguilar Elizabeth Antonela |

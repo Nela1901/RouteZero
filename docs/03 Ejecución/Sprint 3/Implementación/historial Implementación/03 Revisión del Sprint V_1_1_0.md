@@ -20,7 +20,7 @@
 
 ## Historias de Usuario completadas en este Sprint
 
-Compromiso del sprint: 5 ítems y 26 Story Points. Detalle y evidencias en [`01 Sprint 3 Plan de ejecución y estado`](../../01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_6_0.md).
+Compromiso del sprint: 5 ítems y 26 Story Points. Detalle y evidencias en [`01 Sprint 3 Plan de ejecución y estado`](../../historial%20Sprint%203/01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_6_0.md).
 
 | ID | Historia | Épica | SP | Estado |
 |---|---|---|---|---|
