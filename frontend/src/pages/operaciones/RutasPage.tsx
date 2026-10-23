@@ -271,15 +271,14 @@ export function RutasPage() {
       </div>
 
       {generando && (
-        <div role="status" style={{ ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
+        <output style={{ display: "block", ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
           Calculando las rutas óptimas por calles reales. Puede tardar hasta 40 segundos; no cierre esta página.
-        </div>
+        </output>
       )}
       {error && <div style={estiloAviso}>{error}</div>}
 
       {borradores.length > 0 && (
-        <div
-          role="status"
+        <div role="status"
           style={{
             display: "flex",
             alignItems: "center",
@@ -336,13 +335,14 @@ export function RutasPage() {
   );
 }
 
-function ResumenGeneracion({ resultado }: { resultado: ResultadoGeneracion }) {
-  const fuente =
-    resultado.fuente_distancias === "calles"
-      ? "calles reales"
-      : resultado.fuente_distancias === "mixta"
-        ? `calles reales y ${resultado.puntos_aproximados} punto(s) aproximado(s)`
-        : "distancia aproximada (en línea recta)";
+function descripcionDeFuente(resultado: ResultadoGeneracion): string {
+  if (resultado.fuente_distancias === "calles") return "calles reales";
+  if (resultado.fuente_distancias === "mixta") return `calles reales y ${resultado.puntos_aproximados} punto(s) aproximado(s)`;
+  return "distancia aproximada (en línea recta)";
+}
+
+function ResumenGeneracion({ resultado }: Readonly<{ resultado: ResultadoGeneracion }>) {
+  const fuente = descripcionDeFuente(resultado);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {resultado.imposible && <div style={estiloAviso}>{resultado.mensaje}</div>}
@@ -373,12 +373,12 @@ function ResumenGeneracion({ resultado }: { resultado: ResultadoGeneracion }) {
   );
 }
 
-function ResumenReoptimizacion({ resultado }: { resultado: ResultadoReoptimizacion }) {
+function ResumenReoptimizacion({ resultado }: Readonly<{ resultado: ResultadoReoptimizacion }>) {
   if (resultado.sin_rutas_activas) {
     return (
-      <div role="status" style={{ ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
+      <output style={{ display: "block", ...estiloAviso, background: "var(--rz-accent-soft-bg)", color: "var(--rz-accent)" }}>
         {resultado.mensaje}
-      </div>
+      </output>
     );
   }
   return (
@@ -410,11 +410,11 @@ function TarjetaRuta({
   ruta,
   puedeRegistrarEntregas,
   onCambio,
-}: {
+}: Readonly<{
   ruta: Ruta;
   puedeRegistrarEntregas: boolean;
   onCambio: () => void;
-}) {
+}>) {
   const { notificar } = useToast();
   const [abierta, setAbierta] = useState(false);
   const [paradas, setParadas] = useState<Parada[]>(ruta.paradas);
@@ -540,7 +540,7 @@ function TarjetaRuta({
   );
 }
 
-function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
+function Dato({ etiqueta, valor }: Readonly<{ etiqueta: string; valor: string }>) {
   return (
     <div>
       <div style={{ color: "var(--rz-text-muted)", fontSize: 11.5 }}>{etiqueta}</div>

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 
 type TipoToast = "exito" | "error" | "info";
 
@@ -16,7 +16,7 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 const DURACION_MS = 3500;
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+export function ToastProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const siguienteId = useRef(0);
 
@@ -28,8 +28,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }, DURACION_MS);
   }, []);
 
+  const valor = useMemo(() => ({ notificar }), [notificar]);
+
   return (
-    <ToastContext.Provider value={{ notificar }}>
+    <ToastContext.Provider value={valor}>
       {children}
       <div
         aria-live="polite"
@@ -45,10 +47,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         }}
       >
         {toasts.map((t) => (
-          <div
+          <output
             key={t.id}
-            role="status"
-            style={{
+            style={{ display: "block",
               padding: "12px 16px",
               borderRadius: 12,
               fontSize: 13.5,
@@ -58,7 +59,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             }}
           >
             {t.mensaje}
-          </div>
+          </output>
         ))}
       </div>
     </ToastContext.Provider>

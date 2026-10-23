@@ -38,7 +38,8 @@ for (const pantalla of PANTALLAS) {
             if (a.score !== null && a.score < 1 && a.scoreDisplayMode !== "informative" && a.scoreDisplayMode !== "notApplicable") {
               const detalle = ((a.details as { items?: { node?: { snippet?: string } }[] } | undefined)?.items ?? [])
                 .map((i) => i.node?.snippet).filter(Boolean).slice(0, 3).join(" | ");
-              console.log(`  [${c}] ${a.title}${detalle ? ` -> ${detalle.slice(0, 200)}` : ""}`);
+              const resumen = detalle ? ` -> ${detalle.slice(0, 200)}` : "";
+              console.log(`  [${c}] ${a.title}${resumen}`);
             }
           }
         }

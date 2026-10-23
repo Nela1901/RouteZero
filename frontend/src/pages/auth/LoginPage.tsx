@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { ErrorApi } from "../../api/client";
 import { BotonTema } from "../../components/BotonTema";
@@ -41,8 +41,7 @@ export function LoginPage() {
     <div style={{ minHeight: "100vh", display: "flex", background: "var(--rz-bg)", color: "var(--rz-text)" }}>
       <PanelDeMarca />
 
-      <div
-        role="main"
+      <main
         style={{
           flexGrow: 1,
           display: "flex",
@@ -136,7 +135,7 @@ export function LoginPage() {
             Acceso exclusivo para personal de Andina Reparto S.A.C.
           </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
@@ -280,7 +279,7 @@ function Logotipo() {
   );
 }
 
-function Campo(props: {
+function Campo(props: Readonly<{
   etiqueta: string;
   tipo: string;
   valor: string;
@@ -291,8 +290,14 @@ function Campo(props: {
   monoespaciado?: boolean;
   icono?: React.ReactNode;
   placeholder?: string;
-}) {
+}>) {
   const id = `campo-${props.etiqueta.toLowerCase().replace(/\s+/g, "-")}`;
+  const entrada = useRef<HTMLInputElement>(null);
+  const { autoFocus } = props;
+  useEffect(() => {
+    if (autoFocus) entrada.current?.focus();
+  }, [autoFocus]);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <label htmlFor={id} style={{ fontSize: 13, color: "var(--rz-text-muted)", fontWeight: 600 }}>
@@ -319,7 +324,7 @@ function Campo(props: {
           value={props.valor}
           onChange={(evento) => props.onCambio(evento.target.value)}
           required
-          autoFocus={props.autoFocus}
+          ref={entrada}
           inputMode={props.inputMode}
           maxLength={props.maxLength}
           placeholder={props.placeholder}
@@ -341,7 +346,7 @@ function Campo(props: {
   );
 }
 
-function BotonPrimario({ texto, enviando }: { texto: string; enviando: boolean }) {
+function BotonPrimario({ texto, enviando }: Readonly<{ texto: string; enviando: boolean }>) {
   return (
     <button
       type="submit"
@@ -373,7 +378,7 @@ function BotonPrimario({ texto, enviando }: { texto: string; enviando: boolean }
   );
 }
 
-function Aviso({ mensaje }: { mensaje: string }) {
+function Aviso({ mensaje }: Readonly<{ mensaje: string }>) {
   return (
     <div
       role="alert"
@@ -392,7 +397,7 @@ function Aviso({ mensaje }: { mensaje: string }) {
 
 function IconoCorreo() {
   return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="5" width="18" height="14" rx="2" />
       <path d="M3 7l9 6 9-6" />
     </svg>
@@ -401,7 +406,7 @@ function IconoCorreo() {
 
 function IconoCandado() {
   return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="4" y="11" width="16" height="10" rx="2" />
       <path d="M8 11V7a4 4 0 018 0v4" />
     </svg>
@@ -410,7 +415,7 @@ function IconoCandado() {
 
 function IconoLlave() {
   return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="8" cy="15" r="4" />
       <path d="M10.5 12.5L20 3M20 3h-4M20 3v4" />
     </svg>

@@ -4,7 +4,7 @@ import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 import { SelectorUbicacion } from "../../components/SelectorUbicacion";
 import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
-import { estiloBotonSecundario, filtrarNombreNegocio, filtrarTexto, soloCambios } from "../../components/utilesCrud";
+import { estiloBotonSecundario, filtrarNombreNegocio, filtrarTexto, soloCambios, textoGuardar } from "../../components/utilesCrud";
 import {
   CampoSelect,
   CampoTexto,
@@ -179,7 +179,7 @@ export function ClientesPage() {
   );
 }
 
-function FormularioCliente({ inicial, onGuardado }: { inicial?: Cliente; onGuardado: () => void }) {
+function FormularioCliente({ inicial, onGuardado }: Readonly<{ inicial?: Cliente; onGuardado: () => void }>) {
   const [nombre, setNombre] = useState(inicial?.nombre ?? "");
   const [tipo, setTipo] = useState<TipoNegocio>(inicial?.tipo_negocio ?? "BODEGA");
   const [horarioInicio, setHorarioInicio] = useState(inicial ? hora(inicial.horario_inicio) : "08:00");
@@ -291,7 +291,7 @@ function FormularioCliente({ inicial, onGuardado }: { inicial?: Cliente; onGuard
       {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
-          {enviando ? "Guardando…" : inicial ? "Guardar cambios" : "Guardar cliente"}
+          {textoGuardar(enviando, Boolean(inicial), "Guardar cliente")}
         </button>
       </div>
     </form>

@@ -38,7 +38,7 @@ export function mensajeDeError(err: unknown, porDefecto: string): string {
   if (typeof err.detalle === "string") return err.detalle;
   if (Array.isArray(err.detalle)) {
     const partes = err.detalle.map((e: { loc?: unknown[]; msg?: string }) => {
-      const campo = Array.isArray(e.loc) ? String(e.loc[e.loc.length - 1]) : "";
+      const campo = Array.isArray(e.loc) ? String(e.loc.at(-1)) : "";
       return campo ? `${campo}: ${e.msg ?? "valor inválido"}` : (e.msg ?? "valor inválido");
     });
     return `Datos inválidos — ${partes.join("; ")}`;

@@ -3,7 +3,7 @@ import { api, mensajeDeError } from "../../api/client";
 import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
-import { estiloBotonSecundario, filtrarPlaca, soloCambios } from "../../components/utilesCrud";
+import { estiloBotonSecundario, filtrarPlaca, soloCambios, textoGuardar } from "../../components/utilesCrud";
 import {
   CampoSelect,
   CampoTexto,
@@ -259,7 +259,7 @@ export function FlotaPage() {
   );
 }
 
-function CeldaDocumento(props: { etiqueta: string; fecha: string | null; onCambio: (fecha: string) => void }) {
+function CeldaDocumento(props: Readonly<{ etiqueta: string; fecha: string | null; onCambio: (fecha: string) => void }>) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <input
@@ -274,7 +274,7 @@ function CeldaDocumento(props: { etiqueta: string; fecha: string | null; onCambi
   );
 }
 
-function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGuardado: () => void }) {
+function FormularioVehiculo({ inicial, onGuardado }: Readonly<{ inicial?: Vehiculo; onGuardado: () => void }>) {
   const [placa, setPlaca] = useState(inicial?.placa ?? "");
   const [tipo, setTipo] = useState<TipoVehiculo>(inicial?.tipo ?? "CAMIONETA");
   const [capacidadKg, setCapacidadKg] = useState(inicial?.capacidad_kg ?? "");
@@ -433,7 +433,7 @@ function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGua
       {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
-          {enviando ? "Guardando…" : inicial ? "Guardar cambios" : "Guardar vehículo"}
+          {textoGuardar(enviando, Boolean(inicial), "Guardar vehículo")}
         </button>
       </div>
     </form>

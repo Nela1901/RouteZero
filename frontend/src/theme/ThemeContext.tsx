@@ -16,11 +16,11 @@ function leerTemaGuardado(): Tema {
   return guardado === "claro" ? "claro" : "oscuro";
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [tema, setTema] = useState<Tema>(leerTemaGuardado);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", tema === "claro" ? "light" : "dark");
+    document.documentElement.dataset.theme = tema === "claro" ? "light" : "dark";
     window.localStorage.setItem(CLAVE_ALMACENAMIENTO, tema);
   }, [tema]);
 

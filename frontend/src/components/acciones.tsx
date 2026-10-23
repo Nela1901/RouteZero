@@ -18,7 +18,7 @@ const estiloBotonIcono: React.CSSProperties = {
   flexShrink: 0,
 };
 
-function BotonIcono(props: { etiqueta: string; onClick: () => void; peligro?: boolean; children: ReactNode }) {
+function BotonIcono(props: Readonly<{ etiqueta: string; onClick: () => void; peligro?: boolean; children: ReactNode }>) {
   return (
     <button
       type="button"
@@ -39,13 +39,13 @@ function BotonIcono(props: { etiqueta: string; onClick: () => void; peligro?: bo
  * Ver detalle, editar y eliminar de un registro. `nombre` identifica la fila en el nombre
  * accesible de cada botón (por ejemplo "Editar Bodega San José"). Una acción sin manejador no se muestra.
  */
-export function AccionesFila(props: {
+export function AccionesFila(props: Readonly<{
   nombre: string;
   onVer?: () => void;
   onEditar?: () => void;
   onEliminar?: () => void;
   textoEliminar?: string;
-}) {
+}>) {
   return (
     <div style={{ display: "inline-flex", gap: 6 }}>
       {props.onVer && (
@@ -68,7 +68,7 @@ export function AccionesFila(props: {
 }
 
 /** Ventana modal accesible: se cierra con Escape, con el fondo o con el botón de cierre. */
-export function Modal(props: { titulo: string; onCerrar: () => void; ancho?: number; children: ReactNode }) {
+export function Modal(props: Readonly<{ titulo: string; onCerrar: () => void; ancho?: number; children: ReactNode }>) {
   const idTitulo = useId();
   const { onCerrar } = props;
 
@@ -83,7 +83,7 @@ export function Modal(props: { titulo: string; onCerrar: () => void; ancho?: num
   return (
     <div
       role="presentation"
-      onClick={onCerrar}
+      onClick={(e) => e.target === e.currentTarget && onCerrar()}
       style={{
         position: "fixed",
         inset: 0,
@@ -99,7 +99,6 @@ export function Modal(props: { titulo: string; onCerrar: () => void; ancho?: num
         role="dialog"
         aria-modal="true"
         aria-labelledby={idTitulo}
-        onClick={(e) => e.stopPropagation()}
         style={{
           width: "100%",
           maxWidth: props.ancho ?? 480,
@@ -135,7 +134,7 @@ export function Modal(props: { titulo: string; onCerrar: () => void; ancho?: num
   );
 }
 
-export function FilaDetalle({ etiqueta, valor }: { etiqueta: string; valor: ReactNode }) {
+export function FilaDetalle({ etiqueta, valor }: Readonly<{ etiqueta: string; valor: ReactNode }>) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", gap: 16, fontSize: 13 }}>
       <span style={{ color: "var(--rz-text-muted)" }}>{etiqueta}</span>

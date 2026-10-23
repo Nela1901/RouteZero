@@ -3,7 +3,7 @@ import { api, mensajeDeError } from "../../api/client";
 import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
-import { estiloBotonSecundario, filtrarNombrePersona, soloCambios } from "../../components/utilesCrud";
+import { estiloBotonSecundario, filtrarNombrePersona, soloCambios, textoGuardar } from "../../components/utilesCrud";
 import {
   CampoSelect,
   CampoTexto,
@@ -60,9 +60,7 @@ export function ConductoresPage() {
     void cargar();
   }, []);
 
-  const visibles = conductores.filter((c) =>
-    filtro === "todos" ? true : filtro === "disponibles" ? c.disponible : !c.disponible,
-  );
+  const visibles = conductores.filter((c) => cumpleFiltro(c.disponible, filtro));
 
   async function cambiarDisponibilidad(conductorId: string, disponible: boolean) {
     setError(null);
@@ -245,7 +243,7 @@ function mañana(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function FormularioConductor({ inicial, onGuardado }: { inicial?: Conductor; onGuardado: () => void }) {
+function FormularioConductor({ inicial, onGuardado }: Readonly<{ inicial?: Conductor; onGuardado: () => void }>) {
   const [nombre, setNombre] = useState(inicial?.nombre ?? "");
   const [dni, setDni] = useState(inicial?.dni ?? "");
   const [categoria, setCategoria] = useState(inicial?.categoria_licencia ?? "A-IIb");
@@ -385,7 +383,7 @@ function FormularioConductor({ inicial, onGuardado }: { inicial?: Conductor; onG
             checked={consentimiento}
             onChange={(e) => setConsentimiento(e.target.checked)}
             style={{ marginTop: 3 }}
-          />
+          />{" "}
           El conductor autoriza de forma expresa el tratamiento de sus datos personales (nombre, DNI, licencia y contacto)
           para la asignación de rutas, conforme a la Ley N° 29733.
         </label>
@@ -394,9 +392,14 @@ function FormularioConductor({ inicial, onGuardado }: { inicial?: Conductor; onG
       {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
-          {enviando ? "Guardando…" : inicial ? "Guardar cambios" : "Guardar conductor"}
+          {textoGuardar(enviando, Boolean(inicial), "Guardar conductor")}
         </button>
       </div>
     </form>
   );
+}
+
+function cumpleFiltro(disponible: boolean, filtro: string): boolean {
+  if (filtro === "todos") return true;
+  return filtro === "disponibles" ? disponible : !disponible;
 }

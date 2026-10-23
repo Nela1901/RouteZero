@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 
 interface OpcionesConfirmacion {
   titulo?: string;
@@ -18,7 +18,7 @@ interface ConfirmContextValue {
 
 const ConfirmContext = createContext<ConfirmContextValue | null>(null);
 
-export function ConfirmProvider({ children }: { children: ReactNode }) {
+export function ConfirmProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [dialogo, setDialogo] = useState<EstadoDialogo | null>(null);
   const resolverActual = useRef<((valor: boolean) => void) | null>(null);
 
@@ -36,13 +36,15 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
     setDialogo(null);
   }
 
+  const valor = useMemo(() => ({ confirmar }), [confirmar]);
+
   return (
-    <ConfirmContext.Provider value={{ confirmar }}>
+    <ConfirmContext.Provider value={valor}>
       {children}
       {dialogo && (
         <div
           role="presentation"
-          onClick={() => responder(false)}
+          onClick={(e) => e.target === e.currentTarget && responder(false)}
           style={{
             position: "fixed",
             inset: 0,
@@ -58,7 +60,6 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
             role="alertdialog"
             aria-modal="true"
             aria-label={dialogo.titulo ?? "Confirmación"}
-            onClick={(e) => e.stopPropagation()}
             style={{
               width: "100%",
               maxWidth: 380,
@@ -102,7 +103,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
   );
 }
 
-function IconoAlerta({ peligroso }: { peligroso?: boolean }) {
+function IconoAlerta({ peligroso }: Readonly<{ peligroso?: boolean }>) {
   const color = peligroso ? "var(--rz-danger)" : "var(--rz-accent)";
   const fondo = peligroso ? "var(--rz-danger-soft-bg)" : "var(--rz-accent-soft-bg)";
   return (

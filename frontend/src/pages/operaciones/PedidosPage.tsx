@@ -5,7 +5,7 @@ import { useConfirm } from "../../context/ConfirmContext";
 import { SelectorUbicacion } from "../../components/SelectorUbicacion";
 import { Ayuda, CampoSelect, CampoTexto } from "../../components/ui";
 import { AccionesFila, FilaDetalle, Modal } from "../../components/acciones";
-import { filtrarNombreNegocio, filtrarTexto, soloCambios } from "../../components/utilesCrud";
+import { filtrarNombreNegocio, filtrarTexto, soloCambios, textoGuardar } from "../../components/utilesCrud";
 
 type Prioridad = "EXPRESS" | "ESTANDAR" | "ECONOMICO";
 type EstadoPedido = "PENDIENTE" | "ASIGNADO" | "EN_CAMINO" | "ENTREGADO" | "CANCELADO";
@@ -224,11 +224,11 @@ function DetallePedido({
   pedido,
   cliente,
   onCerrar,
-}: {
+}: Readonly<{
   pedido: Pedido;
   cliente?: Cliente;
   onCerrar: () => void;
-}) {
+}>) {
   return (
     <Modal titulo={pedido.descripcion ?? "Pedido sin descripción"} onCerrar={onCerrar} ancho={440}>
       <span
@@ -263,6 +263,36 @@ function DetallePedido({
   );
 }
 
+const horaCorta = (hora: Readonly<string>) => hora.slice(0, 5);
+
+/** Valores con los que arranca el formulario: los del pedido que se edita o los de un pedido nuevo. */
+function valoresIniciales(inicial: Pedido | undefined, clientes: Cliente[]) {
+  return {
+    clienteId: inicial?.cliente_id ?? clientes[0]?.cliente_id ?? "",
+    descripcion: inicial?.descripcion ?? "",
+    pesoKg: inicial?.peso_kg ?? "",
+    prioridad: (inicial?.prioridad ?? "ESTANDAR") as Prioridad,
+    latitud: inicial?.latitud ?? "-12.0653",
+    longitud: inicial?.longitud ?? "-75.2049",
+    ventanaInicio: inicial ? horaCorta(inicial.ventana_inicio) : "09:00",
+    ventanaFin: inicial ? horaCorta(inicial.ventana_fin) : "18:00",
+  };
+}
+
+/** Los campos del pedido tal como los guarda la API, para comparar contra lo que escribió la persona. */
+function camposDelPedido(pedido: Pedido) {
+  return {
+    cliente_id: pedido.cliente_id,
+    descripcion: pedido.descripcion,
+    peso_kg: pedido.peso_kg,
+    prioridad: pedido.prioridad,
+    latitud: pedido.latitud,
+    longitud: pedido.longitud,
+    ventana_inicio: `${horaCorta(pedido.ventana_inicio)}:00`,
+    ventana_fin: `${horaCorta(pedido.ventana_fin)}:00`,
+  };
+}
+
 function FormularioPedido({
   clientes,
   inicial,
@@ -274,14 +304,15 @@ function FormularioPedido({
   onCreado: () => void;
   onClienteCreado: () => void;
 }) {
-  const [clienteId, setClienteId] = useState(inicial?.cliente_id ?? clientes[0]?.cliente_id ?? "");
-  const [descripcion, setDescripcion] = useState(inicial?.descripcion ?? "");
-  const [pesoKg, setPesoKg] = useState(inicial?.peso_kg ?? "");
-  const [prioridad, setPrioridad] = useState<Prioridad>(inicial?.prioridad ?? "ESTANDAR");
-  const [latitud, setLatitud] = useState(inicial?.latitud ?? "-12.0653");
-  const [longitud, setLongitud] = useState(inicial?.longitud ?? "-75.2049");
-  const [ventanaInicio, setVentanaInicio] = useState(inicial ? inicial.ventana_inicio.slice(0, 5) : "09:00");
-  const [ventanaFin, setVentanaFin] = useState(inicial ? inicial.ventana_fin.slice(0, 5) : "18:00");
+  const [valores] = useState(() => valoresIniciales(inicial, clientes));
+  const [clienteId, setClienteId] = useState(valores.clienteId);
+  const [descripcion, setDescripcion] = useState(valores.descripcion);
+  const [pesoKg, setPesoKg] = useState(valores.pesoKg);
+  const [prioridad, setPrioridad] = useState<Prioridad>(valores.prioridad);
+  const [latitud, setLatitud] = useState(valores.latitud);
+  const [longitud, setLongitud] = useState(valores.longitud);
+  const [ventanaInicio, setVentanaInicio] = useState(valores.ventanaInicio);
+  const [ventanaFin, setVentanaFin] = useState(valores.ventanaFin);
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [mostrarClienteNuevo, setMostrarClienteNuevo] = useState(!inicial && clientes.length === 0);
@@ -302,17 +333,7 @@ function FormularioPedido({
         ventana_fin: `${ventanaFin}:00`,
       };
       if (inicial) {
-        const original = {
-          cliente_id: inicial.cliente_id,
-          descripcion: inicial.descripcion,
-          peso_kg: inicial.peso_kg,
-          prioridad: inicial.prioridad,
-          latitud: inicial.latitud,
-          longitud: inicial.longitud,
-          ventana_inicio: `${inicial.ventana_inicio.slice(0, 5)}:00`,
-          ventana_fin: `${inicial.ventana_fin.slice(0, 5)}:00`,
-        };
-        const cambios = soloCambios(original, cuerpo);
+        const cambios = soloCambios(camposDelPedido(inicial), cuerpo);
         if (Object.keys(cambios).length === 0) {
           setError("No hay cambios para guardar");
           return;
@@ -419,7 +440,7 @@ function FormularioPedido({
           {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
           <div style={{ gridColumn: "1 / -1" }}>
             <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
-              {enviando ? "Guardando…" : inicial ? "Guardar cambios" : "Guardar pedido"}
+              {textoGuardar(enviando, Boolean(inicial), "Guardar pedido")}
             </button>
           </div>
         </form>
@@ -431,10 +452,10 @@ function FormularioPedido({
 function FormularioClienteRapido({
   onCreado,
   onCancelar,
-}: {
+}: Readonly<{
   onCreado: (cliente: Cliente) => void;
   onCancelar?: () => void;
-}) {
+}>) {
   const [nombre, setNombre] = useState("");
   const [latitud, setLatitud] = useState("-12.0653");
   const [longitud, setLongitud] = useState("-75.2049");

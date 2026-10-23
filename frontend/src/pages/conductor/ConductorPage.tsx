@@ -1,4 +1,5 @@
 import { CircleMarker, MapContainer, Polyline, Popup, TileLayer, Tooltip } from "react-leaflet";
+import { ETIQUETA_ESTADO_RUTA, marcaDeEntrega } from "../../components/utilesEntrega";
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useState } from "react";
 import { api, mensajeDeError } from "../../api/client";
@@ -156,10 +157,10 @@ export function ConductorPage() {
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
           <h1 style={{ fontFamily: "var(--rz-font-display)", fontWeight: 700, fontSize: 16, margin: 0, overflowWrap: "anywhere" }}>Hola, {nombre}</h1>
-          <span style={{ fontSize: 12, color: "var(--rz-text-muted)" }} role="status">
+          <output style={{ fontSize: 12, color: "var(--rz-text-muted)" }}>
             Vista de conductor ·{" "}
-            {cargando && datos === null ? "Cargando tu ruta…" : cargando ? "Actualizando…" : actualizado ? `Actualizado a las ${actualizado}` : ""}
-          </span>
+            {textoDeActualizacion(cargando, datos === null, actualizado)}
+          </output>
         </div>
         <div style={{ flexGrow: 1 }} />
         <BotonTema />
@@ -198,7 +199,7 @@ export function ConductorPage() {
               </section>
             )}
 
-            <div role="region" aria-label="Mapa de tu ruta" style={{ flexShrink: 0, height: 240, position: "relative" }}>
+            <section aria-label="Mapa de tu ruta" style={{ flexShrink: 0, height: 240, position: "relative" }}>
               <MapContainer center={CENTRO_HUANCAYO} zoom={14} style={{ height: "100%", width: "100%" }} zoomControl={false}>
                 <TileLayer url={OSM_TILES} attribution="&copy; OpenStreetMap contributors" />
                 {datos.alertas.filter((a) => a.en_tu_ruta).map((a) => (
@@ -211,7 +212,7 @@ export function ConductorPage() {
                   const cancelada = p.pedido_estado === "CANCELADO";
                   const esSiguiente = p.orden === datos.siguiente_orden;
                   const relleno = cancelada ? COLOR_ENTREGA.CANCELADO : (COLOR_ENTREGA[p.estado_entrega] ?? COLOR_RUTA);
-                  const marca = cancelada ? "✕" : p.estado_entrega === "ENTREGADO" ? "✓" : p.estado_entrega === "FALLIDO" ? "✗" : "";
+                  const marca = marcaDeEntrega(cancelada, p.estado_entrega);
                   return (
                     <CircleMarker
                       key={p.pedido_id}
@@ -232,7 +233,7 @@ export function ConductorPage() {
                   <Tooltip permanent direction="top">Depósito</Tooltip>
                 </CircleMarker>
               </MapContainer>
-            </div>
+            </section>
 
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 14 }}>
               {siguiente ? (
@@ -260,7 +261,7 @@ export function ConductorPage() {
                   </div>
                 </section>
               ) : (
-                <div role="status" style={estiloTarjeta}>
+                <div role="status" style={{ ...estiloTarjeta }}>
                   <div style={{ fontFamily: "var(--rz-font-display)", fontWeight: 700, fontSize: 18 }}>
                     {ruta.estado === "COMPLETADA" ? "Ruta completada" : "Sin paradas pendientes"}
                   </div>
@@ -336,7 +337,7 @@ export function ConductorPage() {
   );
 }
 
-function ResumenRuta({ datos }: { datos: MiRuta }) {
+function ResumenRuta({ datos }: Readonly<{ datos: MiRuta }>) {
   const total = datos.entregadas + datos.pendientes;
   const porcentaje = total === 0 ? 0 : Math.round((100 * datos.entregadas) / total);
   const r = datos.ruta!;
@@ -347,7 +348,7 @@ function ResumenRuta({ datos }: { datos: MiRuta }) {
           {datos.entregadas} de {total} entregas
         </strong>
         <span style={{ color: "var(--rz-text-muted)" }}>
-          {hora(r.hora_salida)}–{hora(r.hora_regreso)} · {r.estado === "EN_EJECUCION" ? "En ejecución" : r.estado === "COMPLETADA" ? "Completada" : "Confirmada"}
+          {hora(r.hora_salida)}–{hora(r.hora_regreso)} · {ETIQUETA_ESTADO_RUTA[r.estado] ?? "Confirmada"}
         </span>
       </div>
       <div role="progressbar" aria-label="Avance de entregas" aria-valuemin={0} aria-valuemax={100} aria-valuenow={porcentaje} style={{ height: 8, borderRadius: 999, background: "var(--rz-track-bg)", overflow: "hidden" }}>
@@ -401,3 +402,8 @@ const estiloTab: React.CSSProperties = {
   padding: "12px 0",
   cursor: "pointer",
 };
+
+function textoDeActualizacion(cargando: boolean, sinDatos: boolean, actualizado: string | null): string {
+  if (cargando) return sinDatos ? "Cargando tu ruta…" : "Actualizando…";
+  return actualizado ? `Actualizado a las ${actualizado}` : "";
+}

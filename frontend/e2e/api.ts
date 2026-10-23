@@ -38,7 +38,7 @@ export interface Parada {
 }
 
 export function parada(orden: number, extra: Partial<Parada> = {}): Parada {
-  const [latitud, longitud] = PUNTOS[orden] ?? PUNTOS[PUNTOS.length - 1];
+  const [latitud, longitud] = PUNTOS[orden] ?? PUNTOS.at(-1)!;
   return {
     orden,
     pedido_id: `00000000-0000-4000-8000-00000000000${orden}`,
@@ -188,7 +188,7 @@ export async function simularApi(page: Page, escenario: Escenario = {}): Promise
   // Sin mosaicos del mapa: las pruebas no dependen de internet
   await page.route("https://tile.openstreetmap.org/**", (r) => r.fulfill({ status: 200, contentType: "image/png", body: PNG_TRANSPARENTE }));
 
-  await page.route("**/api/**", async (route: Route) => {
+  await page.route("**/api/**", (route: Route) => {
     const peticion = route.request();
     const url = new URL(peticion.url());
     const metodo = peticion.method();
