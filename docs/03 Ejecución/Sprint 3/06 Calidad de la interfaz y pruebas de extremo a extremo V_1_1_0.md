@@ -10,7 +10,7 @@
 | **Sprint** | Sprint 3 — Rutas y Visualización (17 oct – 30 oct 2026) |
 | **Ítems** | HT-09 (Diseño responsive y cumplimiento WCAG 2.1 AA) y HT-10 (Pruebas de integración del mapa interactivo) |
 | **Fecha** | 2026-10-22 |
-| **Versión** | 1.0.0 |
+| **Versión** | 1.1.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -59,7 +59,19 @@ La auditoría se ejecuta con `npm run auditar` (configuración `playwright.audit
 
 La única observación de Lighthouse es informativa: «Missing source maps for large first-party JavaScript» (la compilación de producción no publica mapas de código).
 
-**Alcance de estos números:** accesibilidad, buenas prácticas y SEO son comparables con producción. El **rendimiento no lo es**: aquí la API simulada responde al instante, mientras que en producción cada petición cuesta unos 2 s por la latencia hacia la base de datos (IMP-016; en el Sprint 2 dio entre 85 y 100). Queda pendiente medirlo en producción una vez desplegados los cambios.
+**Alcance de estos números:** accesibilidad, buenas prácticas y SEO son comparables con producción. El **rendimiento no lo es**: aquí la API simulada responde al instante. Por eso se midió también en producción (sección 2.3).
+
+### 2.3 Lighthouse en producción (22-10-2026)
+
+Se ejecuta con `npm run auditar:produccion` contra Vercel y Render (con `CLAVE_PRUEBA` y una ruta de demostración de hoy, que se borra al terminar): inicia sesión por la API con las cuentas de prueba, inyecta los tokens y mide cada pantalla. Se comprobó que el despliegue tenía la versión del sprint (el panel plegable, el aviso de carga y la corrección responsive estaban en el bundle de Vercel).
+
+| Pantalla | Móvil: rend. / acces. / buenas prácticas / SEO | Escritorio: rend. / acces. / buenas prácticas / SEO | FCP y LCP en móvil | TBT y CLS |
+|---|---|---|---|---|
+| Mapa | 94 / 100 / 100 / 100 | 91 / 100 / 100 / 100 | 2.4 s y 2.4 s | 0 ms y 0 |
+| Rutas | 94 / 100 / 100 / 100 | 98 / 100 / 100 / 100 | 2.5 s y 2.5 s | 0 ms y 0 |
+| Conductor | 94 / 100 / 100 / 100 | 98 / 100 / 100 / 100 | 2.5 s y 2.5 s | 0 ms y 0 |
+
+**Todas las mediciones cumplen la meta de 90** (en el Sprint 2 el mapa daba 88-89 y Pedidos 85). El hilo principal no se bloquea (TBT 0 ms) y no hay desplazamientos de diseño; lo que más pesa es el primer dibujo, por la latencia de la API en Render gratuito (IMP-016).
 
 ## 3. Pruebas de extremo a extremo (HT-10)
 
@@ -84,7 +96,7 @@ La única observación de Lighthouse es informativa: «Missing source maps for l
 | `conductor-movil.spec.ts` (5) | Móvil | Su ruta, registro de una entrega y paso a la siguiente parada, ruta completada, sin ruta, cuenta sin vincular, sin desplazamiento horizontal y botones táctiles. |
 | `operaciones-movil.spec.ts` (2) | Móvil | Mapa y Rutas caben en el ancho del celular; el panel del mapa empieza cerrado. |
 
-Comandos (desde `frontend/`): `npm run test:e2e` para las pruebas y `npm run auditar` para Lighthouse y W3C.
+Comandos (desde `frontend/`): `npm run test:e2e` para las pruebas, `npm run auditar` para Lighthouse y W3C sobre datos sintéticos y `npm run auditar:produccion` para Lighthouse en producción.
 
 ## 4. Integración continua, fase 1 (HT-10)
 
@@ -100,9 +112,9 @@ Decisiones:
 
 - Se usa `bandit -lll` (solo severidad alta) y no `-ll`: los 16 avisos de severidad media son el mismo falso positivo de SQL (B608, confianza baja) sobre nombres de columna que son constantes del código. El criterio del proyecto es no tener hallazgos de severidad alta.
 - `npm audit --audit-level=high`: falla con vulnerabilidades altas o críticas, no con las moderadas, para que un aviso nuevo de una dependencia de desarrollo no bloquee todos los Pull Request.
-- **Fase 2 pospuesta:** las pruebas de pytest corren contra la base real de Supabase y no están en CI; se siguen ejecutando en local antes de cada Pull Request. Se reevalúa al terminar todos los sprints (ver [`03 Estrategia y resultados de pruebas`](03%20Estrategia%20y%20resultados%20de%20pruebas%20V_1_5_0.md)).
+- **Fase 2 pospuesta:** las pruebas de pytest corren contra la base real de Supabase y no están en CI; se siguen ejecutando en local antes de cada Pull Request. Se reevalúa al terminar todos los sprints (ver [`03 Estrategia y resultados de pruebas`](03%20Estrategia%20y%20resultados%20de%20pruebas%20V_1_6_0.md)).
 
-Comprobado en local: los comandos de los tres trabajos terminan bien (`npm run lint`, Vitest, la compilación, `npm audit`, las 19 pruebas de Playwright, `bandit -lll` y `pip-audit`: sin vulnerabilidades conocidas) y el archivo es YAML válido. **Falta ver el workflow en verde en GitHub**, lo que solo ocurre al abrir el primer Pull Request con él.
+**Comprobado en GitHub el 22-10-2026:** el Pull Request #59 y la integración a `main` ejecutaron los tres trabajos en verde (frontend 20 s, Playwright 56 s y backend 24 s), con la instalación limpia de Linux. Antes se habían comprobado los comandos uno por uno en local (`npm run lint`, Vitest, la compilación, `npm audit`, las 19 pruebas de Playwright, `bandit -lll` y `pip-audit`).
 
 ## 5. Dependencias
 
@@ -110,9 +122,9 @@ Se agregaron como dependencias de desarrollo `@playwright/test` y `lighthouse`. 
 
 ## 6. Limitaciones
 
-- Lighthouse se mide sobre la aplicación compilada con la API simulada; el rendimiento en producción queda por medir.
+- Lighthouse de la sección 2.2 se mide con la API simulada; el de producción (2.3) depende de la latencia de Render y varía entre ejecuciones.
 - La validación W3C usa el servicio público del W3C (con el DOM de datos sintéticos): no puede ejecutarse sin internet ni en CI.
-- El workflow de GitHub Actions no se ha ejecutado todavía en GitHub.
+- El workflow no ejecuta pytest (fase 2 pospuesta) ni la auditoría de Lighthouse y W3C, que necesitan internet y tardan más.
 - Las pruebas de extremo a extremo no ejercitan el backend real: lo cubren las pruebas de pytest.
 - Solo se prueban Chrome y Chromium; Firefox y WebKit quedan fuera (orden de recorte del plan).
 
@@ -125,3 +137,4 @@ Se agregaron como dependencias de desarrollo `@playwright/test` y `lighthouse`. 
 | Versión | Fecha | Cambio realizado | Responsable |
 |---|---|---|---|
 | V_1_0_0 | 2026-10-22 | Versión inicial: corrección del diseño responsive, auditoría de Lighthouse y W3C de las pantallas del sprint, pruebas de extremo a extremo con Playwright, integración continua fase 1 y dependencias | Inciso Aguilar Elizabeth Antonela |
+| V_1_1_0 | 2026-10-22 | Se agregan Lighthouse en producción y la comprobación del workflow en GitHub, y se actualizan los comandos y las limitaciones | Inciso Aguilar Elizabeth Antonela |

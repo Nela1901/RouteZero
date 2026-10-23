@@ -12,7 +12,7 @@
 | **Periodo del Informe** | 17-10-2026 – 30-10-2026 (Sprint 3 — Rutas y Visualización) |
 | **Versión** | 1.5.0 |
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ---
 
@@ -20,9 +20,9 @@
 
 | Variables de control | Descripción del estado |
 |---|---|
-| **Alcance** | 4/5 ítems completados al 22-10-2026 (21 de 26 Story Points: HU-012, que cierra HT-07, HU-013, HU-014 y HT-09). HT-10 está parcial: las pruebas de extremo a extremo pasan en local y falta ver el workflow de GitHub Actions en verde. Detalle por ítem en [`01 Sprint 3 Plan de ejecución y estado V_1_5_0.md`](../01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_5_0.md) y en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_0_0.md). |
+| **Alcance** | 4/5 ítems completados al 22-10-2026 (21 de 26 Story Points: HU-012, que cierra HT-07, HU-013, HU-014 y HT-09). HT-10 está parcial: las pruebas de extremo a extremo pasan en local y falta ver el workflow de GitHub Actions en verde. Detalle por ítem en [`01 Sprint 3 Plan de ejecución y estado V_1_5_0.md`](../../historial%20Sprint%203/01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_5_0.md) y en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../../historial%20Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_0_0.md). |
 | **Cronograma** | Sprint iniciado el 17-10-2026; Jira lo cierra el 30-10-2026 y la fecha de inspección aún no está confirmada. Al corte (22-10-2026) van 6 de 14 días y 21 de 26 SP están completados. |
-| **Costos** | Presupuesto estimado académico: **USD $10,304.00** (ver [`04 Presupuesto del proyecto V_1_1_0.md`](../../../02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_1_0.md)). Sin desviación al corte: la infraestructura (Render, Vercel, Supabase) sigue en planes gratuitos, OPEX ejecutado **USD $0.00**. |
+| **Costos** | Presupuesto estimado académico: **USD $10,304.00** (ver [`04 Presupuesto del proyecto V_1_1_0.md`](../../../../02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_1_0.md)). Sin desviación al corte: la infraestructura (Render, Vercel, Supabase) sigue en planes gratuitos, OPEX ejecutado **USD $0.00**. |
 | **Calidad** | Backend: 328 pruebas, 98 % de cobertura (96 % al cierre del Sprint 2); frontend: 89 pruebas y build sin errores; 19 pruebas de extremo a extremo con Playwright. Lighthouse con accesibilidad, buenas prácticas y SEO en 100 y W3C sin errores en las pantallas del sprint. `npm audit` y `pip-audit` sin vulnerabilidades y Bandit sin hallazgos de severidad alta. |
 
 ## Riesgos
@@ -49,7 +49,7 @@ El sistema sigue desplegado en Render (backend) y Vercel (frontend). La rama de 
 
 ---
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ## Historial de Control de Cambios
 
