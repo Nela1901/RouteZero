@@ -11,11 +11,11 @@
 | **Sprint** | Sprint 3 — Rutas y Visualización (17-10-2026 – 30-10-2026) |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ---
 
-La numeración continúa la del [Registro del Sprint 2](../../Sprint%202/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_2_0.md) (IMP-005 a IMP-017). Se arrastran los impedimentos que siguen abiertos.
+La numeración continúa la del [Registro del Sprint 2](../../../Sprint%202/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_2_0.md) (IMP-005 a IMP-017). Se arrastran los impedimentos que siguen abiertos.
 
 | Impedimento # | Fecha de Registro | Descripción del Impedimento así como el Impacto en el Proyecto | Prioridad | Reportado por | Fecha tope de Resolución | Estado | Fecha de Resolución | Resolución/Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -25,7 +25,7 @@ La numeración continúa la del [Registro del Sprint 2](../../Sprint%202/Impleme
 
 ---
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ## Historial de Control de Cambios
 

@@ -10,13 +10,13 @@
 | **Sprint** | Sprint 3 — Rutas y Visualización (17 oct – 30 oct 2026) |
 | **Ítem** | HU-014 (Visualizar ruta asignada en modo conductor) |
 | **Fecha** | 2026-10-20 |
-| **Versión** | 1.1.0 |
+| **Versión** | 1.2.0 |
 
 [← Volver al README Principal](../../../README.md)
 
 ---
 
-Este documento registra cómo se implementó la vista del conductor (HU-014): qué ve, cómo se vincula su cuenta con su ficha de conductor, qué puede hacer y qué pruebas la respaldan. Reutiliza el trazado por calles y la congestión por horas punta de [`04 Implementación del mapa de rutas`](04%20Implementaci%C3%B3n%20del%20mapa%20de%20rutas%20V_1_2_0.md).
+Este documento registra cómo se implementó la vista del conductor (HU-014): qué ve, cómo se vincula su cuenta con su ficha de conductor, qué puede hacer y qué pruebas la respaldan. Reutiliza el trazado por calles y la congestión por horas punta de [`04 Implementación del mapa de rutas`](04%20Implementaci%C3%B3n%20del%20mapa%20de%20rutas%20V_1_3_0.md).
 
 ## 1. Qué hace
 
@@ -81,7 +81,7 @@ Limitaciones:
 - El vínculo depende de que el correo de la ficha coincida con el de la cuenta; no hay una pantalla para asignarlo a mano ni para corregirlo si el correo cambia.
 - Una entrega fallida deja el pedido `ASIGNADO` y no se re-planifica sola (misma limitación de HU-012).
 - El conductor ve solo su ruta de la fecha; no hay historial de jornadas anteriores.
-- Falta medir el rendimiento de Lighthouse en producción (con la API simulada la vista da 96 en móvil; ver [`06 Calidad de la interfaz y pruebas de extremo a extremo`](06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_0_0.md)).
+- La primera petición de `mi-ruta` tarda unos 4 s en Render porque calcula el recorrido; el rendimiento de Lighthouse en producción es de 94 en móvil y 98 en escritorio (ver la sección 2.3 de [`06 Calidad de la interfaz y pruebas de extremo a extremo`](06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md)).
 
 ## 7. Hallazgo: cuenta conductora rechazada por `token_version`
 
@@ -98,10 +98,10 @@ Al probar la API con la cuenta `conductor.prueba@routezero.dev`, **todos los end
 Resultados al 20-10-2026:
 
 - Frontend: **89 pruebas pasan** y el `npm run build` completo termina sin errores.
-- Backend: la suite completa pasa con **328 pruebas y 98 % de cobertura** (24 min), incluidas las 13 del conductor; el detalle está en [`03 Estrategia y resultados de pruebas`](03%20Estrategia%20y%20resultados%20de%20pruebas%20V_1_5_0.md).
+- Backend: la suite completa pasa con **328 pruebas y 98 % de cobertura** (24 min), incluidas las 13 del conductor; el detalle está en [`03 Estrategia y resultados de pruebas`](03%20Estrategia%20y%20resultados%20de%20pruebas%20V_1_6_0.md).
 - La pantalla se revisó a mano en local con una ruta de demostración de hoy (6 paradas, dos de ellas sobre Av. Ferrocarril y Calle Real) y se vio correcta. El script `backend/tests_manual/demo_conductor.py` crea y borra esos datos (local y no versionado).
 - Medida en Render el 22-10-2026 con una ruta de demostración de 6 paradas: **3.8 s la primera petición** (vincula la cuenta, calcula el recorrido por calles y llena la caché) y **2.6 s desde la caché**, con 49 KB; casi todo es la latencia base de ~2 s por petición (IMP-016). A las 08:30 la respuesta traía 3 alertas, todas en su ruta; a las 10:00, ninguna. El script es `backend/tests_manual/medir_mi_ruta_render.py` (local y no versionado).
-- Lighthouse y W3C el 22-10-2026: accesibilidad, buenas prácticas y SEO en 100 y 0 errores de HTML, con y sin ruta; y pruebas de extremo a extremo en el viewport de un celular, sin desplazamiento horizontal y con botones de al menos 44 px (ver [`06 Calidad de la interfaz y pruebas de extremo a extremo`](06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_0_0.md)).
+- Lighthouse y W3C el 22-10-2026: accesibilidad, buenas prácticas y SEO en 100 y 0 errores de HTML, con y sin ruta; y pruebas de extremo a extremo en el viewport de un celular, sin desplazamiento horizontal y con botones de al menos 44 px (ver [`06 Calidad de la interfaz y pruebas de extremo a extremo`](06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md)).
 
 ---
 
@@ -113,3 +113,4 @@ Resultados al 20-10-2026:
 |---|---|---|---|
 | V_1_0_0 | 2026-10-20 | Versión inicial: vista del conductor (HU-014), vínculo por correo, API, alertas, pantalla, decisiones, hallazgo del token y pruebas | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-22 | Se agregan la medición en Render, Lighthouse, W3C y las pruebas de extremo a extremo en el celular | Inciso Aguilar Elizabeth Antonela |
+| V_1_2_0 | 2026-10-22 | Se agrega Lighthouse en producción y el costo de la primera petición en Render | Inciso Aguilar Elizabeth Antonela |

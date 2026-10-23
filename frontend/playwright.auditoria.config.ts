@@ -8,6 +8,7 @@ const PUERTO = 4173;
 export default defineConfig({
   testDir: "./e2e/auditoria",
   testMatch: /.*\.auditoria\.ts$/,
+  testIgnore: /produccion\.auditoria\.ts$/, // el de producción tiene su propia configuración
   workers: 1,
   timeout: 240_000,
   reporter: "list",
