@@ -48,7 +48,8 @@ def por_calle(respuesta: dict) -> dict:
 def test_sin_rutas_el_mapa_viene_vacio_con_el_deposito(datos):
     m = mapa(datos)
     assert m["rutas"] == []
-    assert m["deposito"]["latitud"] < 0 and m["deposito"]["longitud"] < 0
+    assert m["deposito"]["latitud"] < 0
+    assert m["deposito"]["longitud"] < 0
 
 
 def test_cada_ruta_trae_un_tramo_por_parada_mas_el_regreso_y_empalma_con_ellas(datos):
@@ -60,10 +61,12 @@ def test_cada_ruta_trae_un_tramo_por_parada_mas_el_regreso_y_empalma_con_ellas(d
         paradas, tramos = ruta["paradas"], ruta["tramos"]
         assert len(tramos) == len(paradas) + 1
         assert (tramos[0]["desde"], tramos[-1]["hasta"]) == (0, 0)
-        assert tramos[0]["puntos"][0] == deposito and tramos[-1]["puntos"][-1] == deposito
+        assert tramos[0]["puntos"][0] == deposito
+        assert tramos[-1]["puntos"][-1] == deposito
         for i, p in enumerate(paradas):
             punto = [round(float(p["latitud"]), 5), round(float(p["longitud"]), 5)]
-            assert tramos[i]["puntos"][-1] == punto and tramos[i + 1]["puntos"][0] == punto
+            assert tramos[i]["puntos"][-1] == punto
+            assert tramos[i + 1]["puntos"][0] == punto
             assert tramos[i]["hasta"] == tramos[i + 1]["desde"] == p["orden"]
         assert all(len(t["puntos"]) >= 2 and t["distancia_km"] >= 0 and t["duracion_min"] >= 0 for t in tramos)
         assert all(p["estado_entrega"] == "PENDIENTE" for p in paradas)
@@ -93,7 +96,8 @@ def test_a_las_diez_las_tres_vias_estan_en_verde_y_en_hora_punta_en_amarillo(dat
     assert punta["en_punta"] is True
     vias = por_calle(punta)
     assert {v["nivel"] for v in vias.values()} == {"AMARILLO"}
-    assert vias["Av. Ferrocarril"]["factor"] == 1.8 and vias["Av. Ferrocarril"]["motivos"] == ["hora punta"]
+    assert vias["Av. Ferrocarril"]["factor"] == 1.8
+    assert vias["Av. Ferrocarril"]["motivos"] == ["hora punta"]
     assert all(len(v["segmentos"]) > 0 and len(v["segmentos"][0]) == 2 for v in vias.values())
 
 
@@ -102,7 +106,8 @@ def test_un_incidente_pone_la_via_en_rojo_y_se_suma_a_la_hora_punta(datos):
         s.registrar_incidente("Av. Ferrocarril", 3.0, MARCA_INCIDENTE, "444a2660-2006-4deb-9cee-61552721128e")
         s.registrar_incidente("Calle Real", 1.5, MARCA_INCIDENTE, "444a2660-2006-4deb-9cee-61552721128e")
     fuera = por_calle(congestion(datos, DIEZ))
-    assert fuera["Av. Ferrocarril"]["nivel"] == "ROJO" and fuera["Av. Ferrocarril"]["motivos"] == ["incidente"]
+    assert fuera["Av. Ferrocarril"]["nivel"] == "ROJO"
+    assert fuera["Av. Ferrocarril"]["motivos"] == ["incidente"]
     assert fuera["Calle Real"]["nivel"] == "AMARILLO"
     assert fuera["Av. Giráldez"]["nivel"] == "VERDE"
     punta = por_calle(congestion(datos, OCHO_Y_MEDIA))
@@ -118,16 +123,20 @@ def test_la_api_del_mapa_y_la_congestion_y_su_control_de_acceso(client, datos, m
     tok_op = login(client, "Dev-Mapa-Op", email=EMAIL_OPERADOR, password=PASSWORD_OPERADOR).json()["access_token"]
 
     sin = client.get("/api/rutas/mapa", headers=auth(tok_op), params={"fecha": FECHA.isoformat()})
-    assert sin.status_code == 200 and sin.json()["rutas"] == []
+    assert sin.status_code == 200
+    assert sin.json()["rutas"] == []
     assert client.get("/api/rutas/mapa", headers=auth(tok_op), params={"fecha": "no-es-fecha"}).status_code == 422
     assert client.get("/api/rutas/mapa", params={"fecha": FECHA.isoformat()}).status_code in (401, 403)
 
     generado = client.post("/api/rutas/generar", headers=auth(tok_admin), json={"fecha_jornada": FECHA.isoformat(), "tiempo_max_s": PRESUPUESTO_S})
     assert generado.status_code == 201
     con = client.get("/api/rutas/mapa", headers=auth(tok_op), params={"fecha": FECHA.isoformat()})
-    assert con.status_code == 200 and len(con.json()["rutas"]) == len(generado.json()["rutas"])
+    assert con.status_code == 200
+    assert len(con.json()["rutas"]) == len(generado.json()["rutas"])
 
     c = client.get("/api/rutas/congestion", headers=auth(tok_op), params={"hora": "08:30"})
-    assert c.status_code == 200 and c.json()["en_punta"] is True and len(c.json()["vias"]) == 3
+    assert c.status_code == 200
+    assert c.json()["en_punta"] is True
+    assert len(c.json()["vias"]) == 3
     assert client.get("/api/rutas/congestion", headers=auth(tok_op)).status_code == 200  # sin hora: la actual
     assert client.get("/api/rutas/congestion", headers=auth(tok_op), params={"hora": "25:99"}).status_code == 422

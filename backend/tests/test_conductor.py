@@ -67,15 +67,19 @@ def marcar(datos: dict, ruta_id: str, pedido_id: str, estado="ENTREGADO", correo
 # ----------------------------------------------------------------------------------- vínculo
 def test_una_cuenta_sin_conductor_con_su_correo_recibe_un_mensaje_claro(datos):
     r = mi_ruta(datos, correo="nadie@routezero.dev")
-    assert r["vinculado"] is False and r["ruta"] is None and r["conductor"] is None
-    assert "vinculado" in r["mensaje"] and "correo" in r["mensaje"]
+    assert r["vinculado"] is False
+    assert r["ruta"] is None
+    assert r["conductor"] is None
+    assert "vinculado" in r["mensaje"]
+    assert "correo" in r["mensaje"]
 
 
 def test_el_vinculo_se_hace_por_correo_sin_distinguir_mayusculas_y_queda_guardado(dos_rutas, datos):
     conductor = conductor_de(dos_rutas["rutas"][0])
     dar_correo(conductor, "Conductor.Prueba@RouteZero.dev")
     r = mi_ruta(datos, correo="conductor.prueba@routezero.dev")
-    assert r["vinculado"] and r["conductor"]["conductor_id"] == conductor
+    assert r["vinculado"]
+    assert r["conductor"]["conductor_id"] == conductor
     assert str(admin_db("SELECT usuario_id FROM conductores WHERE conductor_id = %s", (conductor,), fetch=True)[0][0]) == UID
     # ya vinculado, no necesita el correo
     assert mi_ruta(datos, correo=None)["conductor"]["conductor_id"] == conductor
@@ -86,12 +90,16 @@ def test_el_conductor_ve_su_ruta_con_sus_paradas_y_la_siguiente(dos_rutas, datos
     propia = dos_rutas["rutas"][0]
     dar_correo(conductor_de(propia))
     r = mi_ruta(datos)
-    assert r["ruta"]["ruta_id"] == propia["ruta_id"] and r["ruta"]["estado"] == "CONFIRMADA"
+    assert r["ruta"]["ruta_id"] == propia["ruta_id"]
+    assert r["ruta"]["estado"] == "CONFIRMADA"
     assert [p["pedido_id"] for p in r["ruta"]["paradas"]] == [p["pedido_id"] for p in propia["paradas"]]
-    assert r["pendientes"] == len(propia["paradas"]) and r["entregadas"] == 0 and r["siguiente_orden"] == 1
+    assert r["pendientes"] == len(propia["paradas"])
+    assert r["entregadas"] == 0
+    assert r["siguiente_orden"] == 1
     assert len(r["ruta"]["tramos"]) == len(propia["paradas"]) + 1
     assert all("nodos" not in t for t in r["ruta"]["tramos"])  # los nodos son internos, no se exponen
-    assert r["deposito"]["latitud"] < 0 and r["mensaje"] is None
+    assert r["deposito"]["latitud"] < 0
+    assert r["mensaje"] is None
 
 
 def test_cada_conductor_ve_solo_su_ruta(dos_rutas, datos):
@@ -108,15 +116,19 @@ def test_un_borrador_no_se_muestra_al_conductor(datos):
     r = generar(datos)  # sin confirmar
     dar_correo(conductor_de(r["rutas"][0]))
     m = mi_ruta(datos)
-    assert m["vinculado"] and m["ruta"] is None
+    assert m["vinculado"]
+    assert m["ruta"] is None
     assert m["mensaje"] == "No tienes rutas asignadas por el momento."
 
 
 def test_sin_ruta_ese_dia_el_conductor_recibe_el_aviso(dos_rutas, datos):
     dar_correo(conductor_de(dos_rutas["rutas"][0]))
     m = mi_ruta(datos, fecha=FECHA + timedelta(days=1))
-    assert m["vinculado"] and m["ruta"] is None and m["mensaje"] == "No tienes rutas asignadas por el momento."
-    assert m["siguiente_orden"] is None and m["pendientes"] == 0
+    assert m["vinculado"]
+    assert m["ruta"] is None
+    assert m["mensaje"] == "No tienes rutas asignadas por el momento."
+    assert m["siguiente_orden"] is None
+    assert m["pendientes"] == 0
 
 
 # ----------------------------------------------------------------------------------- entregas propias
@@ -127,11 +139,15 @@ def test_el_conductor_avanza_por_sus_paradas_hasta_completar_la_ruta(dos_rutas, 
     for i, p in enumerate(paradas[:-1], start=1):
         assert marcar(datos, propia["ruta_id"], p["pedido_id"])["estado_ruta"] == "EN_EJECUCION"
         m = mi_ruta(datos)
-        assert m["entregadas"] == i and m["siguiente_orden"] == i + 1 and m["ruta"]["estado"] == "EN_EJECUCION"
+        assert m["entregadas"] == i
+        assert m["siguiente_orden"] == i + 1
+        assert m["ruta"]["estado"] == "EN_EJECUCION"
     ultimo = marcar(datos, propia["ruta_id"], paradas[-1]["pedido_id"], "FALLIDO")
     assert ultimo["estado_ruta"] == "COMPLETADA"
     m = mi_ruta(datos)
-    assert m["siguiente_orden"] is None and m["pendientes"] == 0 and m["ruta"]["estado"] == "COMPLETADA"
+    assert m["siguiente_orden"] is None
+    assert m["pendientes"] == 0
+    assert m["ruta"]["estado"] == "COMPLETADA"
 
 
 def test_un_conductor_no_puede_registrar_entregas_de_otra_ruta(dos_rutas, datos):
@@ -183,8 +199,10 @@ def test_la_alerta_marca_la_via_que_cruza_la_ruta_del_conductor(datos):
     dar_correo(conductor_de(ruta))
     alertas = mi_ruta(datos, hora=DIEZ)["alertas"]
     assert [a["calle"] for a in alertas] == ["Av. Ferrocarril"]
-    assert alertas[0]["nivel"] == "ROJO" and alertas[0]["motivos"] == ["incidente"]
-    assert alertas[0]["en_tu_ruta"] is True and len(alertas[0]["segmentos"]) > 0
+    assert alertas[0]["nivel"] == "ROJO"
+    assert alertas[0]["motivos"] == ["incidente"]
+    assert alertas[0]["en_tu_ruta"] is True
+    assert len(alertas[0]["segmentos"]) > 0
 
 
 # ----------------------------------------------------------------------------------- API y roles
@@ -202,14 +220,16 @@ def test_la_api_del_conductor_y_su_control_de_acceso(client, dos_rutas, datos, m
     assert client.get("/api/rutas/mi-ruta", headers=auth(tok_op), params=params).status_code == 403
     assert client.get("/api/rutas/mi-ruta", params=params).status_code in (401, 403)
     ok = client.get("/api/rutas/mi-ruta", headers=auth(tok_cond), params=params)
-    assert ok.status_code == 200 and ok.json()["ruta"]["ruta_id"] == propia["ruta_id"]
+    assert ok.status_code == 200
+    assert ok.json()["ruta"]["ruta_id"] == propia["ruta_id"]
     assert client.get("/api/rutas/mi-ruta", headers=auth(tok_cond), params={"hora": "25:99"}).status_code == 422
 
     # y solo registra las entregas de su ruta
     url = lambda r, p: f"/api/rutas/{r['ruta_id']}/paradas/{p['paradas'][0]['pedido_id']}/entrega"  # noqa: E731
     assert client.patch(url(ajena, ajena), headers=auth(tok_cond), json={"estado": "ENTREGADO"}).status_code == 403
     propia_ok = client.patch(url(propia, propia), headers=auth(tok_cond), json={"estado": "ENTREGADO"})
-    assert propia_ok.status_code == 200 and propia_ok.json()["estado_ruta"] == "EN_EJECUCION"
+    assert propia_ok.status_code == 200
+    assert propia_ok.json()["estado_ruta"] == "EN_EJECUCION"
     # el conductor sigue sin acceso a lo que no es suyo
     assert client.post("/api/rutas/reoptimizar", headers=auth(tok_cond), json={"fecha_jornada": FECHA.isoformat()}).status_code == 403
     assert client.get("/api/rutas/mapa", headers=auth(tok_cond), params={"fecha": FECHA.isoformat()}).status_code == 403

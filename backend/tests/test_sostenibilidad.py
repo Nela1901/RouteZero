@@ -38,11 +38,13 @@ def test_sin_fechas_el_periodo_es_el_mes_en_curso():
 
 
 def test_un_periodo_invertido_o_de_mas_de_un_anio_se_rechaza():
+    desde, hasta, hoy = date(2026, 10, 5), date(2026, 10, 1), date(2026, 10, 23)
     with pytest.raises(HTTPException) as e:
-        periodo_valido(date(2026, 10, 5), date(2026, 10, 1), date(2026, 10, 23))
+        periodo_valido(desde, hasta, hoy)
     assert e.value.status_code == 422
+    desde, hasta = date(2025, 1, 1), date(2025, 1, 1) + timedelta(days=MAXIMO_DIAS)
     with pytest.raises(HTTPException) as e:
-        periodo_valido(date(2025, 1, 1), date(2025, 1, 1) + timedelta(days=MAXIMO_DIAS), date(2026, 10, 23))
+        periodo_valido(desde, hasta, hoy)
     assert e.value.status_code == 422
     assert periodo_valido(date(2025, 1, 1), date(2025, 1, 1) + timedelta(days=MAXIMO_DIAS - 1), date(2026, 10, 23))
 
@@ -52,12 +54,14 @@ def test_sin_jornadas_el_dashboard_muestra_ceros_y_un_mensaje(client, token_admi
     r = dashboard(client, token_admin, SIN_DATOS)
     assert r.status_code == 200
     cuerpo = r.json()
-    assert cuerpo["hay_datos"] is False and "No hay jornadas" in cuerpo["mensaje"]
+    assert cuerpo["hay_datos"] is False
+    assert "No hay jornadas" in cuerpo["mensaje"]
     assert cuerpo["totales"] == {
         "rutas": 0, "distancia_km": 0, "emision_co2_kg": 0, "combustible_l": 0, "combustible_ahorrado_l": 0,
         "ahorro_soles": 0, "cumplimiento_ventanas_pct": 0,
     }
-    assert cuerpo["entregas"] == {"entregadas": 0, "pendientes": 0, "fallidas": 0} and cuerpo["por_dia"] == []
+    assert cuerpo["entregas"] == {"entregadas": 0, "pendientes": 0, "fallidas": 0}
+    assert cuerpo["por_dia"] == []
 
 
 def test_un_borrador_no_cuenta_como_jornada(client, token_admin, datos):
@@ -76,13 +80,15 @@ def test_el_dashboard_suma_las_metricas_de_las_rutas_confirmadas(client, token_a
         (lote["lote_id"],), fetch=True,
     )[0]
     t = cuerpo["totales"]
-    assert cuerpo["hay_datos"] is True and cuerpo["mensaje"] is None
+    assert cuerpo["hay_datos"] is True
+    assert cuerpo["mensaje"] is None
     assert t["rutas"] == esperado[0] == len(lote["rutas"])
     assert t["emision_co2_kg"] == pytest.approx(float(esperado[1]), abs=0.01)
     assert t["combustible_l"] == pytest.approx(float(esperado[2]), abs=0.01)
     assert t["combustible_ahorrado_l"] == pytest.approx(float(esperado[3]), abs=0.01)
     assert t["distancia_km"] == pytest.approx(float(esperado[4]), abs=0.01)
-    assert t["emision_co2_kg"] > 0 and 0 <= t["cumplimiento_ventanas_pct"] <= 100
+    assert t["emision_co2_kg"] > 0
+    assert 0 <= t["cumplimiento_ventanas_pct"] <= 100
     # RN-009: emisión = distancia × factor de emisión del vehículo (0.20 y 0.25 kg/km en los vehículos de prueba)
     assert 0.20 * t["distancia_km"] - 0.01 <= t["emision_co2_kg"] <= 0.25 * t["distancia_km"] + 0.01
     # El ahorro en soles es el combustible ahorrado por el precio del litro
@@ -118,7 +124,8 @@ def test_solo_el_administrador_ve_el_dashboard(client, token_admin):
 def test_sin_parametros_el_dashboard_responde_el_mes_en_curso(client, token_admin):
     cuerpo = client.get("/api/sostenibilidad/dashboard", headers=auth(token_admin)).json()
     hoy = modulo_servicio.hoy_en_peru()
-    assert cuerpo["desde"] == hoy.replace(day=1).isoformat() and cuerpo["hasta"] == hoy.isoformat()
+    assert cuerpo["desde"] == hoy.replace(day=1).isoformat()
+    assert cuerpo["hasta"] == hoy.isoformat()
 
 
 # ------------------------------------------------------------------------ compensación (HU-017)
@@ -145,25 +152,35 @@ def plan(emision: float) -> dict:
 
 def test_los_arboles_necesarios_salen_de_las_emisiones_y_se_redondean_hacia_arriba():
     p = plan(1000.0)  # una tonelada
-    assert p["hay_datos"] is True and p["toneladas_co2"] == 1.0
+    assert p["hay_datos"] is True
+    assert p["toneladas_co2"] == 1.0
     assert p["arboles_necesarios"] == 46  # ceil(1000 / 22)
-    assert len(p["alianzas"]) >= 1 and p["mensaje"] is None
-    assert plan(22.0)["arboles_necesarios"] == 1 and plan(22.1)["arboles_necesarios"] == 2
+    assert len(p["alianzas"]) >= 1
+    assert p["mensaje"] is None
+    assert plan(22.0)["arboles_necesarios"] == 1
+    assert plan(22.1)["arboles_necesarios"] == 2
 
 
 def test_sin_emisiones_el_plan_pide_ejecutar_una_jornada():
     p = plan(0.0)
-    assert p["hay_datos"] is False and p["arboles_necesarios"] == 0 and p["alianzas"] == [] and p["acciones"] == []
+    assert p["hay_datos"] is False
+    assert p["arboles_necesarios"] == 0
+    assert p["alianzas"] == []
+    assert p["acciones"] == []
     assert "al menos una jornada operativa" in p["mensaje"]
 
 
 def test_si_el_mes_supera_la_meta_se_alerta_y_se_sugieren_acciones():
     p = plan(150.0)
     mes = p["mes_evaluado"]
-    assert mes["excede_meta"] is True and mes["porcentaje_meta"] == 150.0 and mes["meta_kg"] == 100.0
+    assert mes["excede_meta"] is True
+    assert mes["porcentaje_meta"] == 150.0
+    assert mes["meta_kg"] == 100.0
     assert len(p["acciones"]) == 3
     ok = plan(60.0)
-    assert ok["mes_evaluado"]["excede_meta"] is False and ok["acciones"] == [] and ok["mes_evaluado"]["porcentaje_meta"] == 60.0
+    assert ok["mes_evaluado"]["excede_meta"] is False
+    assert ok["acciones"] == []
+    assert ok["mes_evaluado"]["porcentaje_meta"] == 60.0
 
 
 def test_la_meta_se_compara_con_el_mes_de_la_fecha_final_aunque_el_periodo_sea_mas_largo():
@@ -172,20 +189,25 @@ def test_la_meta_se_compara_con_el_mes_de_la_fecha_final_aunque_el_periodo_sea_m
             return {"emision_co2_kg": 500.0 if desde == date(2026, 9, 1) else 40.0}
 
     p = modulo_servicio.ServicioSostenibilidad(PorPeriodo(), Config()).compensacion(date(2026, 9, 1), date(2026, 10, 20))
-    assert p["emision_co2_kg"] == 500.0 and p["arboles_necesarios"] == 23
-    assert p["mes_evaluado"]["desde"] == date(2026, 10, 1) and p["mes_evaluado"]["emision_co2_kg"] == 40.0
+    assert p["emision_co2_kg"] == 500.0
+    assert p["arboles_necesarios"] == 23
+    assert p["mes_evaluado"]["desde"] == date(2026, 10, 1)
+    assert p["mes_evaluado"]["emision_co2_kg"] == 40.0
     assert p["mes_evaluado"]["excede_meta"] is False
 
 
 def test_la_compensacion_por_la_api_usa_las_emisiones_de_las_rutas_confirmadas(client, token_admin, datos):
     sin = client.get("/api/sostenibilidad/compensacion", headers=auth(token_admin), params={"desde": SIN_DATOS.isoformat(), "hasta": SIN_DATOS.isoformat()})
-    assert sin.status_code == 200 and sin.json()["hay_datos"] is False and sin.json()["arboles_necesarios"] == 0
+    assert sin.status_code == 200
+    assert sin.json()["hay_datos"] is False
+    assert sin.json()["arboles_necesarios"] == 0
 
     lote = generar(datos)
     confirmar(datos, lote["lote_id"])
     p = client.get("/api/sostenibilidad/compensacion", headers=auth(token_admin), params={"desde": FECHA.isoformat(), "hasta": FECHA.isoformat()}).json()
     esperado = dashboard(client, token_admin, FECHA).json()["totales"]["emision_co2_kg"]
-    assert p["hay_datos"] is True and p["emision_co2_kg"] == pytest.approx(esperado)
+    assert p["hay_datos"] is True
+    assert p["emision_co2_kg"] == pytest.approx(esperado)
     assert p["arboles_necesarios"] == -(-p["emision_co2_kg"] // settings.kg_co2_por_arbol_anio)
 
 

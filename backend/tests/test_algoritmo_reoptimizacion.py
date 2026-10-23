@@ -51,7 +51,8 @@ def test_un_vehiculo_en_ruta_parte_de_su_punto_y_a_la_hora_indicada():
     ctx = ContextoPar.crear(par, nuevo.parametros, nuevo.arranques[par.vehiculo.id])
     desde_deposito = ContextoPar.crear(par, nuevo.parametros)
     itinerario = simular_ruta([0], ctx, d)
-    assert ctx.nodo_inicio > 0 and itinerario.salida_s == AHORA_S
+    assert ctx.nodo_inicio > 0
+    assert itinerario.salida_s == AHORA_S
     # el primer tramo sale del punto del vehículo, no del depósito
     assert itinerario.distancia_m != simular_ruta([0], desde_deposito, d).distancia_m
 
@@ -122,7 +123,8 @@ def test_sin_pedidos_restantes_no_hay_nada_que_reoptimizar():
     vacio = Problema([], nuevo.vehiculos, nuevo.conductores, nuevo.distancia_m, nuevo.tiempo_s, nuevo.parametros,
                      pares_fijos=nuevo.pares_fijos, arranques=nuevo.arranques)
     r = resolver(vacio)
-    assert r.rutas == [] and r.mensaje
+    assert r.rutas == []
+    assert r.mensaje
 
 
 def test_los_pares_fijos_no_se_vuelven_a_emparejar():

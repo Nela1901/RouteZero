@@ -157,24 +157,29 @@ def test_el_listado_es_una_pagina_con_el_total(client):
     r = client.get("/api/pedidos", headers=auth(estado["tok_admin"]))
     cuerpo = r.json()
     assert set(cuerpo) == {"items", "total", "limite", "desplazamiento"}
-    assert cuerpo["limite"] == 50 and cuerpo["desplazamiento"] == 0
-    assert len(cuerpo["items"]) <= 50 and cuerpo["total"] >= len(cuerpo["items"])
+    assert cuerpo["limite"] == 50
+    assert cuerpo["desplazamiento"] == 0
+    assert len(cuerpo["items"]) <= 50
+    assert cuerpo["total"] >= len(cuerpo["items"])
 
 
 def test_el_limite_y_el_desplazamiento_recortan_la_pagina(client):
     total = client.get("/api/pedidos", headers=auth(estado["tok_admin"])).json()["total"]
     r = client.get("/api/pedidos", headers=auth(estado["tok_admin"]), params={"limite": 1, "desplazamiento": 0})
-    assert len(r.json()["items"]) == min(1, total) and r.json()["total"] == total
+    assert len(r.json()["items"]) == min(1, total)
+    assert r.json()["total"] == total
     siguiente = client.get("/api/pedidos", headers=auth(estado["tok_admin"]), params={"limite": 1, "desplazamiento": 1}).json()
     if total >= 2:
         assert siguiente["items"][0]["pedido_id"] != r.json()["items"][0]["pedido_id"]
     fuera = client.get("/api/pedidos", headers=auth(estado["tok_admin"]), params={"desplazamiento": total + 10}).json()
-    assert fuera["items"] == [] and fuera["total"] == total
+    assert fuera["items"] == []
+    assert fuera["total"] == total
 
 
 def test_un_limite_mayor_que_200_se_rechaza_indicando_el_maximo(client):
     r = client.get("/api/pedidos", headers=auth(estado["tok_admin"]), params={"limite": 201})
-    assert r.status_code == 422 and "200" in str(r.json())
+    assert r.status_code == 422
+    assert "200" in str(r.json())
     assert client.get("/api/pedidos", headers=auth(estado["tok_admin"]), params={"limite": 0}).status_code == 422
     assert client.get("/api/pedidos", headers=auth(estado["tok_admin"]), params={"desplazamiento": -1}).status_code == 422
 
@@ -182,7 +187,8 @@ def test_un_limite_mayor_que_200_se_rechaza_indicando_el_maximo(client):
 def test_el_total_respeta_los_filtros_combinados(client):
     r = client.get("/api/pedidos", headers=auth(estado["tok_admin"]), params={"estado": "CANCELADO", "prioridad": "EXPRESS"})
     cuerpo = r.json()
-    assert r.status_code == 200 and cuerpo["total"] >= 1
+    assert r.status_code == 200
+    assert cuerpo["total"] >= 1
     assert all(p["estado"] == "CANCELADO" and p["prioridad"] == "EXPRESS" for p in cuerpo["items"])
 
 

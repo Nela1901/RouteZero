@@ -74,7 +74,9 @@ def estado_de(ruta_id: str) -> str:
 def test_sin_rutas_activas_informa_y_sugiere_generar(datos):
     generar(datos)  # solo hay un borrador: no cuenta como ruta activa
     r = reoptimizar(datos)
-    assert r["sin_rutas_activas"] is True and r["lote_id"] is None and r["rutas"] == []
+    assert r["sin_rutas_activas"] is True
+    assert r["lote_id"] is None
+    assert r["rutas"] == []
     assert "Genere" in r["mensaje"]
 
 
@@ -85,9 +87,12 @@ def test_un_pedido_urgente_nuevo_se_integra_dentro_del_limite_y_se_confirma(dato
     datos["pedidos"].append(urgente)
 
     r = reoptimizar(datos)
-    assert r["lote_id"] and not r["sin_rutas_activas"]
-    assert r["pedidos_nuevos"] == 1 and r["pedidos_retirados"] == 0
-    assert r["dentro_del_limite"] and r["tiempo_ejecucion_s"] <= 30
+    assert r["lote_id"]
+    assert not r["sin_rutas_activas"]
+    assert r["pedidos_nuevos"] == 1
+    assert r["pedidos_retirados"] == 0
+    assert r["dentro_del_limite"]
+    assert r["tiempo_ejecucion_s"] <= 30
     assert r["hora_considerada"] == DIEZ
     assert urgente in ids_en_resultado(r)
     assert all(x["estado"] == "PLANIFICADA" and x["reemplaza_ruta_id"] for x in r["rutas"])
@@ -97,7 +102,8 @@ def test_un_pedido_urgente_nuevo_se_integra_dentro_del_limite_y_se_confirma(dato
     assert {x["reemplaza_ruta_id"] for x in r["rutas"]} == originales
 
     c = confirmar_lote(datos, r["lote_id"])
-    assert c["rutas_confirmadas"] == len(originales) and c["pedidos_asignados"] == 1
+    assert c["rutas_confirmadas"] == len(originales)
+    assert c["pedidos_asignados"] == 1
     assert estados_pedidos([urgente])[urgente] == "ASIGNADO"
     en_rutas = [p[0] for ruta_id in originales for p in paradas_de(ruta_id)]
     assert sorted(str(i) for i in en_rutas) == sorted(datos["pedidos"])  # cada pedido, una sola vez, en las rutas de siempre
@@ -110,14 +116,17 @@ def test_lo_ya_entregado_no_se_altera_y_la_ruta_pasa_a_en_ejecucion(datos):
     ruta = original["rutas"][0]
     primera = ruta["paradas"][0]["pedido_id"]
     m = marcar(datos, ruta["ruta_id"], primera)
-    assert m["estado_entrega"] == "ENTREGADO" and m["estado_ruta"] == "EN_EJECUCION"
+    assert m["estado_entrega"] == "ENTREGADO"
+    assert m["estado_ruta"] == "EN_EJECUCION"
     assert estados_pedidos([primera])[primera] == "ENTREGADO"
 
     r = reoptimizar(datos)
     assert primera not in ids_en_resultado(r)  # lo entregado no se vuelve a planificar
     confirmar_lote(datos, r["lote_id"])
     paradas = paradas_de(ruta["ruta_id"])
-    assert str(paradas[0][0]) == primera and paradas[0][2] == "ENTREGADO" and paradas[0][1] == 1
+    assert str(paradas[0][0]) == primera
+    assert paradas[0][2] == "ENTREGADO"
+    assert paradas[0][1] == 1
     assert [p[1] for p in paradas] == list(range(1, len(paradas) + 1))  # orden continuo tras lo ya hecho
     assert estado_de(ruta["ruta_id"]) == "EN_EJECUCION"
 
@@ -140,7 +149,8 @@ def test_un_incidente_se_aplica_a_la_re_optimizacion_hasta_que_se_resuelve(datos
     confirmar(datos)
     with servicio(datos) as s:
         incidente = s.registrar_incidente("Av. Ferrocarril", 3.0, MARCA_INCIDENTE, UID)
-    assert incidente["activo"] and incidente["factor"] == 3.0
+    assert incidente["activo"]
+    assert incidente["factor"] == 3.0
 
     con = reoptimizar(datos)
     assert con["incidentes_aplicados"] == ["Av. Ferrocarril"]
@@ -194,7 +204,8 @@ def test_marcar_entregas_completa_la_ruta_al_atender_la_ultima(datos):
     for p in ruta["paradas"][:-1]:
         assert marcar(datos, ruta["ruta_id"], p["pedido_id"])["estado_ruta"] == "EN_EJECUCION"
     ultimo = marcar(datos, ruta["ruta_id"], ruta["paradas"][-1]["pedido_id"], "FALLIDO")
-    assert ultimo["estado_ruta"] == "COMPLETADA" and ultimo["estado_entrega"] == "FALLIDO"
+    assert ultimo["estado_ruta"] == "COMPLETADA"
+    assert ultimo["estado_entrega"] == "FALLIDO"
     # una entrega fallida no marca el pedido como entregado
     assert estados_pedidos([ruta["paradas"][-1]["pedido_id"]]).popitem()[1] == "ASIGNADO"
 
@@ -230,7 +241,8 @@ def test_la_api_de_re_optimizacion_entregas_e_incidentes_y_su_control_de_acceso(
     assert client.post("/api/rutas/incidentes", headers=auth(tok_admin), json={"calle": "Calle Real", "factor": 1.0}).status_code == 422
 
     sin = client.post("/api/rutas/reoptimizar", headers=auth(tok_admin), json=cuerpo)
-    assert sin.status_code == 201 and sin.json()["sin_rutas_activas"] is True
+    assert sin.status_code == 201
+    assert sin.json()["sin_rutas_activas"] is True
 
     r = client.post("/api/rutas/generar", headers=auth(tok_admin), json={"fecha_jornada": FECHA.isoformat(), "tiempo_max_s": PRESUPUESTO_S}).json()
     assert client.post(f"/api/rutas/lotes/{r['lote_id']}/confirmar", headers=auth(tok_admin)).status_code == 200
@@ -246,7 +258,8 @@ def test_la_api_de_re_optimizacion_entregas_e_incidentes_y_su_control_de_acceso(
     assert inc.json()["incidente_id"] in [i["incidente_id"] for i in activos]
 
     re = client.post("/api/rutas/reoptimizar", headers=auth(tok_admin), json=cuerpo)
-    assert re.status_code == 201 and re.json()["incidentes_aplicados"] == ["Calle Real"]
+    assert re.status_code == 201
+    assert re.json()["incidentes_aplicados"] == ["Calle Real"]
     assert client.post(f"/api/rutas/lotes/{re.json()['lote_id']}/confirmar", headers=auth(tok_admin)).status_code == 200
     assert client.delete(f"/api/rutas/incidentes/{inc.json()['incidente_id']}", headers=auth(tok_admin)).status_code == 200
     assert client.delete(f"/api/rutas/incidentes/{inc.json()['incidente_id']}", headers=auth(tok_admin)).status_code == 404

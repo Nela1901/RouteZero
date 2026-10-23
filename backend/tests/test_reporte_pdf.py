@@ -59,7 +59,8 @@ def datos_de_reporte(parcial: bool = False, excede: bool = True, rutas: int = 2,
 # ----------------------------------------------------------------------- el generador
 def test_el_pdf_es_valido_y_trae_las_secciones_y_las_cifras():
     contenido = generar_pdf(datos_de_reporte())
-    assert contenido.startswith(b"%PDF") and contenido.rstrip().endswith(b"%%EOF")
+    assert contenido.startswith(b"%PDF")
+    assert contenido.rstrip().endswith(b"%%EOF")
     texto = texto_del_pdf(contenido)
     for esperado in (
         "Reporte de sostenibilidad", "Andina Reparto S.A.C.", "01/10/2026 al 22/10/2026", "1. Resumen del periodo", "120.5 km", "28.4 kg",
@@ -78,14 +79,17 @@ def test_un_reporte_parcial_lo_indica_y_uno_completo_no():
 
 def test_los_vehiculos_sin_datos_de_compra_se_marcan_y_no_suman():
     texto = texto_del_pdf(generar_pdf(datos_de_reporte(sin_datos=2)))
-    assert "sin dato" in texto and "2 vehículo(s) no tienen precio de compra" in texto
-    assert "de los 1 vehículos con datos de compra" in texto and "S/ 564.97" in texto
+    assert "sin dato" in texto
+    assert "2 vehículo(s) no tienen precio de compra" in texto
+    assert "de los 1 vehículos con datos de compra" in texto
+    assert "S/ 564.97" in texto
     assert "no tienen precio de compra" not in texto_del_pdf(generar_pdf(datos_de_reporte(sin_datos=0)))
 
 
 def test_la_meta_cumplida_no_sugiere_acciones():
     texto = texto_del_pdf(generar_pdf(datos_de_reporte(excede=False)))
-    assert "La meta se cumple." in texto and "Regenerar y re-optimizar" not in texto
+    assert "La meta se cumple." in texto
+    assert "Regenerar y re-optimizar" not in texto
 
 
 def test_muchas_rutas_ocupan_varias_paginas_y_las_omitidas_se_avisan():
@@ -93,7 +97,8 @@ def test_muchas_rutas_ocupan_varias_paginas_y_las_omitidas_se_avisan():
     paginas = PdfReader(io.BytesIO(contenido)).pages
     assert len(paginas) >= 3
     texto = texto_del_pdf(contenido)
-    assert "faltan 15 rutas más antiguas" in texto and f"Página {len(paginas)} de {len(paginas)}" in texto
+    assert "faltan 15 rutas más antiguas" in texto
+    assert f"Página {len(paginas)} de {len(paginas)}" in texto
 
 
 def test_un_texto_fuera_de_latin1_no_rompe_el_pdf():
@@ -134,10 +139,12 @@ def reporte(repo: RepoSimulado, desde=date(2026, 10, 1), hasta=date(2026, 10, 10
 
 
 def test_sin_rutas_en_el_periodo_no_se_genera_reporte_y_se_sugiere_otro_periodo():
+    repo = RepoSimulado(rutas=0)
     with pytest.raises(HTTPException) as e:
-        reporte(RepoSimulado(rutas=0))
+        reporte(repo)
     assert e.value.status_code == 404
-    assert "No hay datos suficientes para generar el reporte" in e.value.detail and "Seleccione otro periodo" in e.value.detail
+    assert "No hay datos suficientes para generar el reporte" in e.value.detail
+    assert "Seleccione otro periodo" in e.value.detail
 
 
 def test_el_costo_del_ciclo_de_vida_prorratea_el_precio_y_suma_el_combustible():
@@ -151,7 +158,9 @@ def test_el_costo_del_ciclo_de_vida_prorratea_el_precio_y_suma_el_combustible():
     assert camioneta["depreciacion_soles"] == pytest.approx(73000 / (10 * 365) * 10)  # 200 soles
     assert camioneta["combustible_soles"] == pytest.approx(45.0)
     assert camioneta["costo_total_soles"] == pytest.approx(245.0)
-    assert moto["costo_total_soles"] is None and moto["depreciacion_soles"] is None and moto["combustible_soles"] == pytest.approx(18.0)
+    assert moto["costo_total_soles"] is None
+    assert moto["depreciacion_soles"] is None
+    assert moto["combustible_soles"] == pytest.approx(18.0)
     assert r["flota_sin_datos"] == 1
 
 
@@ -162,13 +171,15 @@ def test_el_reporte_es_parcial_si_quedan_rutas_sin_completar():
 
 def test_las_rutas_que_exceden_el_limite_se_resumen_como_omitidas():
     r = reporte(RepoSimulado(rutas=MAXIMO_RUTAS_EN_REPORTE + 25))
-    assert len(r["rutas"]) == MAXIMO_RUTAS_EN_REPORTE and r["rutas_omitidas"] == 25
+    assert len(r["rutas"]) == MAXIMO_RUTAS_EN_REPORTE
+    assert r["rutas_omitidas"] == 25
     assert r["totales"]["rutas"] == MAXIMO_RUTAS_EN_REPORTE + 25
 
 
 def test_el_reporte_valida_el_periodo():
+    repo, desde, hasta = RepoSimulado(), date(2026, 10, 10), date(2026, 10, 1)
     with pytest.raises(HTTPException) as e:
-        reporte(RepoSimulado(), desde=date(2026, 10, 10), hasta=date(2026, 10, 1))
+        reporte(repo, desde=desde, hasta=hasta)
     assert e.value.status_code == 422
 
 
@@ -194,11 +205,14 @@ def test_con_rutas_confirmadas_el_endpoint_descarga_un_pdf_y_lo_audita(client, t
     confirmar(datos, lote["lote_id"])
     r = pedir(client, token_admin, FECHA)
 
-    assert r.status_code == 200 and r.headers["content-type"] == "application/pdf"
+    assert r.status_code == 200
+    assert r.headers["content-type"] == "application/pdf"
     assert f'filename="reporte-sostenibilidad-{FECHA}-{FECHA}.pdf"' in r.headers["content-disposition"]
     assert r.content.startswith(b"%PDF")
     texto = texto_del_pdf(r.content)
-    assert f"{FECHA:%d/%m/%Y}" in texto and "Emisiones de CO2 por ruta" in texto and "REPORTE PARCIAL" in texto  # confirmadas, sin completar
+    assert f"{FECHA:%d/%m/%Y}" in texto
+    assert "Emisiones de CO2 por ruta" in texto
+    assert "REPORTE PARCIAL" in texto  # confirmadas, sin completar
     assert any(placa in texto for placa in (v for v in _placas(datos)))
     registro = admin_db(
         "SELECT COUNT(*) FROM logs_auditoria WHERE accion = 'reporte_generado' AND modulo = 'sostenibilidad' AND detalle = %s",
