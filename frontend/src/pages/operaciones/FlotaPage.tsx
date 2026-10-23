@@ -30,6 +30,8 @@ interface Vehiculo {
   estado: EstadoVehiculo;
   soat_vence: string | null;
   revision_tecnica_vence: string | null;
+  precio_compra_soles: string | null;
+  vida_util_anios: number | null;
 }
 
 const ESTADOS: EstadoVehiculo[] = ["DISPONIBLE", "EN_RUTA", "MANTENIMIENTO", "INACTIVO"];
@@ -228,6 +230,8 @@ export function FlotaPage() {
           <FilaDetalle etiqueta="Consumo" valor={`${detalle.consumo_km_l} km/L`} />
           <FilaDetalle etiqueta="Factor de CO₂" valor={`${detalle.factor_emision_co2} kg/km`} />
           <FilaDetalle etiqueta="Año de fabricación" valor={detalle.anio_fabricacion} />
+          <FilaDetalle etiqueta="Precio de compra" valor={detalle.precio_compra_soles ? `S/ ${detalle.precio_compra_soles}` : "Sin dato"} />
+          <FilaDetalle etiqueta="Vida útil" valor={detalle.vida_util_anios ? `${detalle.vida_util_anios} años` : "Sin dato"} />
           <FilaDetalle etiqueta="SOAT vence" valor={<EstadoVencimiento fecha={detalle.soat_vence} />} />
           <FilaDetalle
             etiqueta="Revisión técnica vence"
@@ -279,6 +283,8 @@ function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGua
   const [anio, setAnio] = useState(inicial ? String(inicial.anio_fabricacion) : String(new Date().getFullYear()));
   const [soatVence, setSoatVence] = useState(inicial?.soat_vence ?? "");
   const [revisionVence, setRevisionVence] = useState(inicial?.revision_tecnica_vence ?? "");
+  const [precioCompra, setPrecioCompra] = useState(inicial?.precio_compra_soles ?? "");
+  const [vidaUtil, setVidaUtil] = useState(inicial?.vida_util_anios ? String(inicial.vida_util_anios) : "");
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
@@ -296,6 +302,8 @@ function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGua
         anio_fabricacion: Number(anio),
         soat_vence: soatVence || null,
         revision_tecnica_vence: revisionVence || null,
+        precio_compra_soles: precioCompra || null,
+        vida_util_anios: vidaUtil ? Number(vidaUtil) : null,
       };
       if (inicial) {
         const original = {
@@ -307,6 +315,8 @@ function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGua
           anio_fabricacion: inicial.anio_fabricacion,
           soat_vence: inicial.soat_vence,
           revision_tecnica_vence: inicial.revision_tecnica_vence,
+          precio_compra_soles: inicial.precio_compra_soles,
+          vida_util_anios: inicial.vida_util_anios,
         };
         const cambios = soloCambios(original, cuerpo);
         if (Object.keys(cambios).length === 0) {
@@ -400,6 +410,25 @@ function FormularioVehiculo({ inicial, onGuardado }: { inicial?: Vehiculo; onGua
         tipo="date"
         opcional={Boolean(inicial)}
         ayuda="Fecha hasta la que es válido el certificado de inspección técnica vehicular. Se avisa 30 días antes de que venza."
+      />
+      <CampoTexto
+        etiqueta="Precio de compra (S/)"
+        valor={precioCompra}
+        onCambio={setPrecioCompra}
+        tipo="number"
+        paso="0.01"
+        opcional
+        ayuda="Lo que costó el vehículo, en soles. Sirve para estimar el costo del ciclo de vida en el reporte de sostenibilidad. Ejemplo: 90000."
+      />
+      <CampoTexto
+        etiqueta="Vida útil (años)"
+        valor={vidaUtil}
+        onCambio={(v) => setVidaUtil(v.slice(0, 2))}
+        atributos={{ min: 1, max: 40 }}
+        tipo="number"
+        paso="1"
+        opcional
+        ayuda="Años que se espera usar el vehículo. El reporte reparte el precio de compra entre estos años. Ejemplo: 10."
       />
       {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>

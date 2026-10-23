@@ -180,5 +180,33 @@ def test_fecha_de_documento_invalida_da_422(client):
     assert r.status_code == 422
 
 
+def test_registrar_vehiculo_con_precio_de_compra_y_vida_util(client):
+    placa = _placa_de_prueba("P")
+    r = client.post(
+        "/api/vehiculos",
+        headers=auth(estado["tok_admin"]),
+        json={
+            "placa": placa, "tipo": "CAMIONETA", "capacidad_kg": "900.00", "consumo_km_l": "9.00",
+            "factor_emision_co2": "0.2800", "anio_fabricacion": 2022, "precio_compra_soles": "90000.00", "vida_util_anios": 10,
+        },
+    )
+    assert r.status_code == 201
+    assert r.json()["precio_compra_soles"] == "90000.00" and r.json()["vida_util_anios"] == 10
+    actualizado = client.put(
+        f"/api/vehiculos/{r.json()['vehiculo_id']}", headers=auth(estado["tok_admin"]), json={"vida_util_anios": 8, "precio_compra_soles": "85000.50"}
+    )
+    assert actualizado.status_code == 200
+    assert actualizado.json()["vida_util_anios"] == 8 and actualizado.json()["precio_compra_soles"] == "85000.50"
+    admin_db("DELETE FROM vehiculos WHERE placa = %s", (placa,))
+
+
+def test_sin_precio_ni_vida_util_quedan_vacios_y_se_validan_los_rangos(client):
+    r = client.get("/api/vehiculos", headers=auth(estado["tok_admin"]))
+    propio = next(v for v in r.json() if v["vehiculo_id"] == estado["vehiculo_id"])
+    assert propio["precio_compra_soles"] is None and propio["vida_util_anios"] is None
+    for invalido in ({"vida_util_anios": 0}, {"vida_util_anios": 41}, {"precio_compra_soles": "0"}, {"precio_compra_soles": "-5"}):
+        assert client.put(f"/api/vehiculos/{estado['vehiculo_id']}", headers=auth(estado["tok_admin"]), json=invalido).status_code == 422
+
+
 def test_limpieza(client):
     admin_db("DELETE FROM vehiculos WHERE placa = %s", (estado["placa"],))

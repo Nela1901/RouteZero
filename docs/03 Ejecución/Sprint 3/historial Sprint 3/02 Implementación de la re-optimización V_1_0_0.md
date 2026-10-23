@@ -65,7 +65,7 @@ Como el punto de partida es el plan vigente, el resultado de la re-optimización
 | `GET /api/rutas/incidentes` | Administrador, Operador, Conductor | Lista las alertas activas. |
 | `DELETE /api/rutas/incidentes/{id}` | Administrador | Marca la alerta como resuelta. |
 
-Además, `DELETE /api/pedidos/{id}` ahora también cancela un pedido `ASIGNADO` (antes respondía 409). Sus datos de base de datos están en [`11. Base de datos V_1_9_0`](../../../01%20Inicio/11.%20Base%20de%20datos%20V_1_9_0.md) y la migración en `backend/scripts/migracion_reoptimizacion.sql`.
+Además, `DELETE /api/pedidos/{id}` ahora también cancela un pedido `ASIGNADO` (antes respondía 409). Sus datos de base de datos están en [`11. Base de datos V_1_9_0`](../../../01%20Inicio/historial%20Inicio/11.%20Base%20de%20datos%20V_1_9_0.md) y la migración en `backend/scripts/migracion_reoptimizacion.sql`.
 
 ## 5. Decisiones
 

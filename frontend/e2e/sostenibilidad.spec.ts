@@ -53,6 +53,41 @@ test.describe("Dashboard de sostenibilidad (HU-015) y plan de compensación (HU-
     expect(api.noSimuladas).toEqual([]);
   });
 
+  test("«Descargar reporte PDF» descarga el reporte del periodo elegido (HU-016)", async ({ page }) => {
+    const api = await simularApi(page, { rol: "ADMINISTRADOR" });
+    await conSesion(page, "ADMINISTRADOR");
+    await page.goto("/app/sostenibilidad");
+    await expect(page.getByText("Distancia recorrida")).toBeVisible();
+    await page.getByRole("button", { name: "Hoy" }).click();
+    await expect.poll(() => api.peticiones.filter((p) => p.ruta.startsWith("/api/sostenibilidad/dashboard")).length).toBe(2);
+
+    const descarga = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Descargar reporte PDF" }).click();
+    expect((await descarga).suggestedFilename()).toMatch(/^reporte-sostenibilidad-\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\.pdf$/);
+    await expect(page.getByText("El reporte se descargó.")).toBeVisible();
+
+    const pedido = api.peticiones.find((p) => p.ruta.startsWith("/api/sostenibilidad/reporte"));
+    const [, desde, hasta] = /desde=(\d{4}-\d{2}-\d{2})&hasta=(\d{4}-\d{2}-\d{2})/.exec(pedido!.ruta)!;
+    expect(desde).toBe(hasta); // «Hoy»
+    expect(api.noSimuladas).toEqual([]);
+  });
+
+  test("sin datos en el periodo el reporte avisa que no hay datos y no descarga nada", async ({ page }) => {
+    const api = await simularApi(page, {
+      rol: "ADMINISTRADOR",
+      sostenibilidad: { dashboard: dashboardSostenibilidad(false), compensacion: compensacionSostenibilidad(false) },
+    });
+    await conSesion(page, "ADMINISTRADOR");
+    await page.goto("/app/sostenibilidad");
+
+    let descargo = false;
+    page.on("download", () => (descargo = true));
+    await page.getByRole("button", { name: "Descargar reporte PDF" }).click();
+    await expect(page.getByRole("alert").filter({ hasText: "Seleccione otro periodo" })).toBeVisible();
+    expect(descargo).toBe(false);
+    expect(api.noSimuladas).toEqual([]);
+  });
+
   test("el operador no ve Sostenibilidad en el menú", async ({ page }) => {
     const api = await simularApi(page, { rol: "OPERADOR" });
     await conSesion(page, "OPERADOR");

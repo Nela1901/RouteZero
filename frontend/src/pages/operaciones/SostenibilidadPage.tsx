@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, mensajeDeError } from "../../api/client";
-import { Ayuda, estiloAviso, estiloInput, FiltroChip } from "../../components/ui";
+import { Ayuda, estiloAviso, estiloBotonPrimario, estiloInput, FiltroChip } from "../../components/ui";
 
 interface Totales {
   rutas: number;
@@ -193,6 +193,8 @@ export function SostenibilidadPage() {
   const [plan, setPlan] = useState<Compensacion | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [cargando, setCargando] = useState(true);
+  const [generando, setGenerando] = useState(false);
+  const [estadoReporte, setEstadoReporte] = useState<{ tipo: "exito" | "error"; texto: string } | null>(null);
 
   const cargar = useCallback(async () => {
     setCargando(true);
@@ -217,6 +219,24 @@ export function SostenibilidadPage() {
   useEffect(() => {
     void cargar();
   }, [cargar]);
+
+  async function descargarReporte() {
+    setGenerando(true);
+    setEstadoReporte(null);
+    try {
+      const archivo = await api.descargar(`/api/sostenibilidad/reporte?desde=${desde}&hasta=${hasta}`);
+      const enlace = document.createElement("a");
+      enlace.href = URL.createObjectURL(archivo);
+      enlace.download = `reporte-sostenibilidad-${desde}-${hasta}.pdf`;
+      enlace.click();
+      URL.revokeObjectURL(enlace.href);
+      setEstadoReporte({ tipo: "exito", texto: "El reporte se descargó." });
+    } catch (err) {
+      setEstadoReporte({ tipo: "error", texto: mensajeDeError(err, "No se pudo generar el reporte") });
+    } finally {
+      setGenerando(false);
+    }
+  }
 
   function elegirAtajo(id: string) {
     const elegido = ATAJOS.find((a) => a.id === id);
@@ -254,6 +274,23 @@ export function SostenibilidadPage() {
             <input id="sost-hasta" type="date" value={hasta} min={desde} onChange={(e) => cambiarFecha("hasta", e.target.value)} style={estiloInput} />
           </div>
         </div>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <button type="button" onClick={() => void descargarReporte()} disabled={generando} style={estiloBotonPrimario}>
+          {generando ? "Generando reporte…" : "Descargar reporte PDF"}
+        </button>
+        <span style={{ fontSize: 12.5, color: "var(--rz-text-muted)" }}>
+          Incluye CO₂ por ruta, costo del ciclo de vida de la flota, ahorro de combustible y metas del periodo elegido.
+        </span>
+        {estadoReporte && (
+          <span
+            role={estadoReporte.tipo === "error" ? "alert" : "status"}
+            style={estadoReporte.tipo === "error" ? { ...estiloAviso, padding: "6px 10px" } : { fontSize: 12.5, color: "var(--rz-accent)" }}
+          >
+            {estadoReporte.texto}
+          </span>
+        )}
       </div>
 
       {error && (

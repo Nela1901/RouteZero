@@ -19,6 +19,8 @@ class ServicioVehiculos:
             datos.anio_fabricacion,
             datos.soat_vence,
             datos.revision_tecnica_vence,
+            datos.precio_compra_soles,
+            datos.vida_util_anios,
         )
         return self.repo.obtener(vehiculo_id)
 
