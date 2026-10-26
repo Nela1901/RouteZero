@@ -105,7 +105,7 @@ Desarrollar una plataforma web funcional que optimice las rutas de reparto de An
 - Desarrollar una interfaz web intuitiva con React.js que incluya visualización de rutas en mapa interactivo
 - Construir una API REST con FastAPI que gestione flota, pedidos, conductores y rutas
 - Generar reportes de sostenibilidad con métricas reales de CO₂ y costos operativos
-- Cumplir con los estándares W3C, ISO/IEC 25010, OWASP Top 10, WCAG 2.1 y Green Software
+- Cumplir con los estándares W3C, ISO/IEC 25010, OWASP Top 10 (2025), WCAG 2.2 y Green Software
 
 ---
 
@@ -168,8 +168,8 @@ Base de datos (PostgreSQL)
 |---|---|
 | **W3C** | Validación de HTML, CSS y JavaScript |
 | **ISO/IEC 25010** | Evaluación de calidad del software en 8 características |
-| **OWASP Top 10** | Mitigación de vulnerabilidades web críticas |
-| **WCAG 2.1 AA** | Accesibilidad web para todos los usuarios |
+| **OWASP Top 10 (2025)** | Mitigación de vulnerabilidades web críticas |
+| **WCAG 2.2 AA** | Accesibilidad web para todos los usuarios |
 | **Green Software** | Diseño energéticamente eficiente |
 | **ISO 14083** | Medición y reporte de huella de carbono logística |
 | **Ley N° 29733** | Protección de Datos Personales del Perú |
@@ -205,17 +205,17 @@ RouteZero/
 │   │   ├── 01. Selección del enfoque del proyecto V_1_2_0.md
 │   │   ├── 02. Acta de constitución V_1_0_0.md
 │   │   ├── 03. Declaración de la visión V_1_0_0.md
-│   │   ├── 04. Registro de supuestos y restricciones V_1_1_0.md
+│   │   ├── 04. Registro de supuestos y restricciones V_1_2_0.md
 │   │   ├── 05. Registro de interesados V_1_2_0.md
 │   │   ├── 06. Requisitos funcionales V_1_1_0.md
-│   │   ├── 07. Requisitos no funcionales V_1_1_0.md
+│   │   ├── 07. Requisitos no funcionales V_1_2_0.md
 │   │   ├── 08. Usuarios V_1_0_0.md
 │   │   ├── 09. Reglas de negocio V_1_1_0.md
 │   │   ├── 10. Stack tecnológico V_1_1_0.md
 │   │   ├── 11. Base de datos V_1_10_0.md
 │   │   ├── 12. Modelo C4 V_1_2_0.md
-│   │   ├── 13. Restricciones V_1_1_0.md
-│   │   └── historial Inicio/   (22 versiones anteriores)
+│   │   ├── 13. Restricciones V_1_2_0.md
+│   │   └── historial Inicio/   (25 versiones anteriores)
 │   ├── 02 Planificación/
 │   │   ├── 01 Transformando a ágil V_1_1_0.md
 │   │   ├── 02 Artefactos Jira V_1_1_0.md
@@ -255,8 +255,11 @@ RouteZero/
 │   │   │   │   ├── 01 Informe de estado del proyecto V_1_7_0.md
 │   │   │   │   ├── 02 Registro de Impedimentos V_1_1_0.md
 │   │   │   │   ├── 03 Revisión del Sprint V_1_3_0.md
-│   │   │   │   ├── 04 Retrospectiva del Sprint V_1_4_0.md
-│   │   │   │   └── historial Implementación/   (13 versiones anteriores)
+│   │   │   │   ├── 04 Retrospectiva del Sprint V_1_5_0.md
+│   │   │   │   ├── 05 Calidad de código V_1_0_0.md
+│   │   │   │   ├── 06 Evaluación de seguridad OWASP V_1_0_0.md
+│   │   │   │   ├── 07 Evaluación de accesibilidad WCAG V_1_0_0.md
+│   │   │   │   └── historial Implementación/   (14 versiones anteriores)
 │   │   │   └── historial Sprint 3/   (22 versiones anteriores)
 │   │   └── Sprint 4/
 │   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_3_0.md
@@ -305,16 +308,16 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Selección del enfoque del proyecto | [`docs/01 Inicio/01. Selección del enfoque del proyecto V_1_2_0.md`](docs/01%20Inicio/01.%20Selección%20del%20enfoque%20del%20proyecto%20V_1_2_0.md) |
 | Acta de constitución | [`docs/01 Inicio/02. Acta de constitución V_1_0_0.md`](docs/01%20Inicio/02.%20Acta%20de%20constitución%20V_1_0_0.md) |
 | Declaración de la visión | [`docs/01 Inicio/03. Declaración de la visión V_1_0_0.md`](docs/01%20Inicio/03.%20Declaración%20de%20la%20visión%20V_1_0_0.md) |
-| Registro de supuestos y restricciones | [`docs/01 Inicio/04. Registro de supuestos y restricciones V_1_1_0.md`](docs/01%20Inicio/04.%20Registro%20de%20supuestos%20y%20restricciones%20V_1_1_0.md) |
+| Registro de supuestos y restricciones | [`docs/01 Inicio/04. Registro de supuestos y restricciones V_1_2_0.md`](docs/01%20Inicio/04.%20Registro%20de%20supuestos%20y%20restricciones%20V_1_2_0.md) |
 | Registro de interesados | [`docs/01 Inicio/05. Registro de interesados V_1_2_0.md`](docs/01%20Inicio/05.%20Registro%20de%20interesados%20V_1_2_0.md) |
 | Requisitos funcionales | [`docs/01 Inicio/06. Requisitos funcionales V_1_1_0.md`](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_1_0.md) |
-| Requisitos no funcionales | [`docs/01 Inicio/07. Requisitos no funcionales V_1_1_0.md`](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_1_0.md) |
+| Requisitos no funcionales | [`docs/01 Inicio/07. Requisitos no funcionales V_1_2_0.md`](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md) |
 | Usuarios | [`docs/01 Inicio/08. Usuarios V_1_0_0.md`](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) |
 | Reglas de negocio | [`docs/01 Inicio/09. Reglas de negocio V_1_1_0.md`](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) |
 | Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_1_0.md`](docs/01%20Inicio/10.%20Stack%20tecnológico%20V_1_1_0.md) |
 | Base de datos | [`docs/01 Inicio/11. Base de datos V_1_10_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_10_0.md) |
 | Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_2_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_2_0.md) |
-| Restricciones | [`docs/01 Inicio/13. Restricciones V_1_1_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_1_0.md) |
+| Restricciones | [`docs/01 Inicio/13. Restricciones V_1_2_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_2_0.md) |
 
 ---
 
@@ -375,14 +378,17 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Implementación de la vista del conductor | [`docs/03 Ejecución/Sprint 3/05 Implementación de la vista del conductor V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/05%20Implementaci%C3%B3n%20de%20la%20vista%20del%20conductor%20V_1_2_0.md) |
 | Calidad de la interfaz y pruebas de extremo a extremo | [`docs/03 Ejecución/Sprint 3/06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md) |
 
-**Seguimiento del Sprint 3** (`docs/03 Ejecución/Sprint 3/Implementación/`; revisión y retrospectiva se completan al cierre):
+**Seguimiento del Sprint 3** (`docs/03 Ejecución/Sprint 3/Implementación/`; incluye las evaluaciones de calidad de código, seguridad y accesibilidad de la Inspección 03):
 
 | Documento | Ubicación |
 |---|---|
 | Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 3/Implementación/01 Informe de estado del proyecto V_1_7_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_7_0.md) |
 | Registro de Impedimentos | [`docs/03 Ejecución/Sprint 3/Implementación/02 Registro de Impedimentos V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
 | Revisión del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/03 Revisión del Sprint V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_3_0.md) |
-| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/04 Retrospectiva del Sprint V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_4_0.md) |
+| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/04 Retrospectiva del Sprint V_1_5_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_5_0.md) |
+| Evaluación de calidad de código (SonarQube) | [`docs/03 Ejecución/Sprint 3/Implementación/05 Calidad de código V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_0_0.md) |
+| Evaluación de seguridad (OWASP Top 10 2025) | [`docs/03 Ejecución/Sprint 3/Implementación/06 Evaluación de seguridad OWASP V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_0_0.md) |
+| Evaluación de accesibilidad (WCAG 2.2) | [`docs/03 Ejecución/Sprint 3/Implementación/07 Evaluación de accesibilidad WCAG V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md) |
 
 #### Sprint 4 — Sostenibilidad y Cierre (en curso)
 
