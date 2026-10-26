@@ -359,12 +359,12 @@ function FormularioConfirmacion({
 
       <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
         {inscripcion.qr_code && (
-          <div
-            role="img"
-            aria-label="Código QR para inscribir la verificación en dos pasos"
+          // Como imagen y no como HTML: un SVG dentro de <img> no puede ejecutar scripts, aunque el contenido llegara alterado
+          <img
+            alt="Código QR para inscribir la verificación en dos pasos"
             className="rz-codigo-qr"
+            src={`data:image/svg+xml;utf8,${encodeURIComponent(inscripcion.qr_code)}`}
             style={{ width: 168, height: 168, borderRadius: 12, background: "#fff", padding: 8, flexShrink: 0 }}
-            dangerouslySetInnerHTML={{ __html: inscripcion.qr_code }}
           />
         )}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, flexGrow: 1, minWidth: 200 }}>

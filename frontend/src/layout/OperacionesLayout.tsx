@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useConfirm } from "../context/ConfirmContext";
 import { BotonTema } from "../components/BotonTema";
@@ -42,8 +42,18 @@ export function OperacionesLayout() {
     });
   }
 
+  // 2.4.2: cada pantalla tiene su propio título, que también anuncian los lectores de pantalla al cambiar de sección
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const actual = ITEMS_NAV.find((i) => pathname.startsWith(i.a));
+    document.title = actual ? `${actual.etiqueta} · RouteZero` : "RouteZero";
+  }, [pathname]);
+
   return (
     <div style={{ display: "flex", height: "100vh", background: "var(--rz-bg)", color: "var(--rz-text)" }}>
+      <a href="#contenido" className="rz-saltar">
+        Saltar al contenido
+      </a>
       <nav
         aria-label="Navegación principal"
         style={{
@@ -272,7 +282,7 @@ export function OperacionesLayout() {
          </div>
         </header>
 
-        <main style={{ flexGrow: 1, minHeight: 0, overflow: "auto" }}>
+        <main id="contenido" tabIndex={-1} style={{ flexGrow: 1, minHeight: 0, overflow: "auto" }}>
           <Outlet />
         </main>
       </div>
