@@ -76,6 +76,10 @@ function ahoraLocal(): string {
 }
 
 export function ConductorPage() {
+  useEffect(() => {
+    document.title = "Mi ruta · RouteZero";
+  }, []);
+
   const { usuario, cerrarSesion } = useAuth();
   const { notificar } = useToast();
   const { confirmar } = useConfirm();

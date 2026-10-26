@@ -4,6 +4,10 @@ import { ErrorApi } from "../../api/client";
 import { BotonTema } from "../../components/BotonTema";
 
 export function LoginPage() {
+  useEffect(() => {
+    document.title = "Iniciar sesión · RouteZero";
+  }, []);
+
   const { iniciarSesion, mfaPendiente, confirmarMfa, cancelarMfa } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -77,6 +81,7 @@ export function LoginPage() {
                 valor={codigo}
                 onCambio={setCodigo}
                 autoFocus
+                autoComplete="one-time-code"
                 inputMode="numeric"
                 maxLength={6}
                 monoespaciado
@@ -115,6 +120,7 @@ export function LoginPage() {
                 valor={email}
                 onCambio={setEmail}
                 autoFocus
+                autoComplete="username"
                 icono={<IconoCorreo />}
                 placeholder="tú@andinareparto.pe"
               />
@@ -123,6 +129,7 @@ export function LoginPage() {
                 tipo="password"
                 valor={password}
                 onCambio={setPassword}
+                autoComplete="current-password"
                 icono={<IconoCandado />}
                 placeholder="••••••••"
               />
@@ -285,6 +292,7 @@ function Campo(props: Readonly<{
   valor: string;
   onCambio: (valor: string) => void;
   autoFocus?: boolean;
+  autoComplete?: string;
   inputMode?: "numeric";
   maxLength?: number;
   monoespaciado?: boolean;
@@ -325,6 +333,7 @@ function Campo(props: Readonly<{
           onChange={(evento) => props.onCambio(evento.target.value)}
           required
           ref={entrada}
+          autoComplete={props.autoComplete}
           inputMode={props.inputMode}
           maxLength={props.maxLength}
           placeholder={props.placeholder}
