@@ -116,7 +116,7 @@ export function ConductoresPage() {
         />
       )}
 
-      {error && <div style={estiloAviso}>{error}</div>}
+      {error && <div role="alert" style={estiloAviso}>{error}</div>}
 
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         <FiltroChip etiqueta="Todos" activo={filtro === "todos"} onClick={() => setFiltro("todos")} />
@@ -389,7 +389,7 @@ function FormularioConductor({ inicial, onGuardado }: Readonly<{ inicial?: Condu
         </label>
       )}
 
-      {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
+      {error && <div role="alert" style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
           {textoGuardar(enviando, Boolean(inicial), "Guardar conductor")}

@@ -100,7 +100,7 @@ export function ClientesPage() {
         />
       )}
 
-      {error && <div style={estiloAviso}>{error}</div>}
+      {error && <div role="alert" style={estiloAviso}>{error}</div>}
 
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         <FiltroChip etiqueta="Todos" activo={filtro === ""} onClick={() => setFiltro("")} />
@@ -288,7 +288,7 @@ function FormularioCliente({ inicial, onGuardado }: Readonly<{ inicial?: Cliente
           setLongitud(lon);
         }}
       />
-      {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
+      {error && <div role="alert" style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1" }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
           {textoGuardar(enviando, Boolean(inicial), "Guardar cliente")}

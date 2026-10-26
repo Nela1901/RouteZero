@@ -275,7 +275,7 @@ export function RutasPage() {
           Calculando las rutas óptimas por calles reales. Puede tardar hasta 40 segundos; no cierre esta página.
         </output>
       )}
-      {error && <div style={estiloAviso}>{error}</div>}
+      {error && <div role="alert" style={estiloAviso}>{error}</div>}
 
       {borradores.length > 0 && (
         <div role="status"
@@ -345,7 +345,7 @@ function ResumenGeneracion({ resultado }: Readonly<{ resultado: ResultadoGenerac
   const fuente = descripcionDeFuente(resultado);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {resultado.imposible && <div style={estiloAviso}>{resultado.mensaje}</div>}
+      {resultado.imposible && <div role="alert" style={estiloAviso}>{resultado.mensaje}</div>}
       {!resultado.imposible && (
         <div style={{ fontSize: 13, color: "var(--rz-text-muted)", lineHeight: 1.6 }}>
           Calculado en {numero(resultado.tiempo_ejecucion_s)} s con {fuente}.

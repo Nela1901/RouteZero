@@ -137,7 +137,7 @@ export function PedidosPage() {
         />
       )}
 
-      {error && <div style={estiloAviso}>{error}</div>}
+      {error && <div role="alert" style={estiloAviso}>{error}</div>}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {pedidos.map((p) => (
@@ -437,7 +437,7 @@ function FormularioPedido({
             tipo="time"
             ayuda="Hora límite de entrega. Debe ser posterior a la hora de inicio; una entrega fuera de la ventana se penaliza en la ruta."
           />
-          {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
+          {error && <div role="alert" style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
           <div style={{ gridColumn: "1 / -1" }}>
             <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
               {textoGuardar(enviando, Boolean(inicial), "Guardar pedido")}
@@ -498,7 +498,7 @@ function FormularioClienteRapido({
           setLongitud(lon);
         }}
       />
-      {error && <div style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
+      {error && <div role="alert" style={{ ...estiloAviso, gridColumn: "1 / -1" }}>{error}</div>}
       <div style={{ gridColumn: "1 / -1", display: "flex", gap: 10 }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>
           {enviando ? "Guardando…" : "Guardar cliente"}

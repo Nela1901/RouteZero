@@ -18,6 +18,8 @@ for (const pantalla of PANTALLAS) {
       try {
         const contexto = await navegador.newContext();
         const page = await contexto.newPage();
+        // TEMA=claro audita el tema claro (por defecto, el oscuro): el contraste de color se mide en cada tema
+        if (process.env.TEMA === "claro") await page.addInitScript(() => window.localStorage.setItem("routezero:tema", "claro"));
         await abrir(page, pantalla);
 
         const resultado = await lighthouse(

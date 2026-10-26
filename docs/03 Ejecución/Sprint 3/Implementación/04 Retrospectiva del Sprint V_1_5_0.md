@@ -10,7 +10,7 @@
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Sprint** | Sprint 3 — Rutas y Visualización (17-10-2026 – 30-10-2026) |
 | **Fecha de la retrospectiva** | Por confirmar (contenido al 22-10-2026) |
-| **Versión** | 1.2.0 |
+| **Versión** | 1.5.0 |
 
 [← Volver al README Principal](../../../../README.md)
 
@@ -36,12 +36,26 @@
 
 ## ¿Qué podemos hacer mejor?
 
-- **Personas:** el trabajo sigue concentrándose en pocas personas (IMP-005, abierto). Conviene que cada integrante lleve evidencia de su aporte en el repositorio y en la documentación.
-- **Relaciones:** la aprobación de los Pull Request por un compañero en GitHub quedó registrada solo desde el #60 (criterio 3 del Definition of Done); los #54 a #59 se fusionaron sin ella.
-- **Procesos:** pensar el costo en Render desde el diseño, y no al final; llevar pytest a la integración continua (fase 2) y escribir el checklist de RLS.
-- **Herramientas:** el plan gratuito de Render (CPU limitada y ~2 s por petición) condiciona el rendimiento. Reutilizar matrices entre peticiones o contar con más CPU liberaría tiempo para el ACO.
+### Personas
 
-### Acciones heredadas del Sprint 2: estado al 22-10-2026
+el trabajo sigue concentrándose en pocas personas (IMP-005, abierto). Conviene que cada integrante lleve evidencia de su aporte en el repositorio y en la documentación.
+
+### Relaciones
+
+la aprobación de los Pull Request por un compañero en GitHub quedó registrada solo desde el #60 (criterio 3 del Definition of Done); los #54 a #59 se fusionaron sin ella.
+
+### Procesos
+
+pensar el costo en Render desde el diseño, y no al final; llevar pytest a la integración continua (fase 2) y escribir el checklist de RLS.
+
+### Herramientas
+
+el plan gratuito de Render (CPU limitada y ~2 s por petición) condiciona el rendimiento. Reutilizar matrices entre peticiones o contar con más CPU liberaría tiempo para el ACO.
+
+
+### Acciones a realizar
+
+#### Acciones heredadas del Sprint 2: estado al 22-10-2026
 
 | # | Acción | Responsable propuesto | Estado |
 |---|---|---|---|
@@ -54,7 +68,7 @@
 | 7 | GitHub Actions con pruebas y análisis estático en cada Pull Request | Guerra Lozano Keen | **Hecho (fase 1):** en verde en el Pull Request #59 y en `main`; pytest (fase 2) se pospone |
 | 8 | Checklist formal de políticas RLS para toda tabla nueva | Guerra Lozano Keen | Aplicado en la práctica a `incidentes_trafico` (política permisiva y `GRANT`); falta dejarlo escrito como checklist |
 
-### Acciones propuestas para el Sprint 4
+#### Acciones propuestas para el Sprint 4
 
 | # | Acción | Responsable propuesto |
 |---|---|---|
@@ -91,3 +105,4 @@ La columna «Asignación en Jira» es el dato objetivo del tablero. La columna �
 | V_1_2_0 | 2026-10-22 | Se completan lo aprendido, lo que va bien, lo que se puede mejorar, el estado de las acciones del Sprint 2 y las acciones propuestas para el Sprint 4 | Inciso Aguilar Elizabeth Antonela |
 | V_1_3_0 | 2026-10-22 | Se completa el aporte por integrante con lo declarado por la líder | Inciso Aguilar Elizabeth Antonela |
 | V_1_4_0 | 2026-10-23 | Se actualiza la acción 5 con la aprobación del Pull Request #60 | Inciso Aguilar Elizabeth Antonela |
+| V_1_5_0 | 2026-10-26 | Se ajusta la estructura a la plantilla oficial de la retrospectiva: las cuatro dimensiones (Personas, Relaciones, Procesos, Herramientas) y «Acciones a realizar» pasan a ser secciones; el contenido no cambia | Inciso Aguilar Elizabeth Antonela |

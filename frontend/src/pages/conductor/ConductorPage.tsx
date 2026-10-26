@@ -171,7 +171,7 @@ export function ConductorPage() {
       </header>
 
       <main style={{ flexGrow: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column" }}>
-        {error && <div style={{ ...estiloAviso, margin: 14 }}>{error}</div>}
+        {error && <div role="alert" style={{ ...estiloAviso, margin: 14 }}>{error}</div>}
 
         {datos && !ruta && (
           <div role="status" style={{ ...estiloTarjeta, margin: 14 }}>

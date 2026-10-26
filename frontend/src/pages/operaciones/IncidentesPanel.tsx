@@ -71,7 +71,7 @@ export function IncidentesPanel({ esAdministrador }: Readonly<{ esAdministrador:
         Incidentes de tráfico
         <Ayuda texto="Una vía congestionada hace más lento el tiempo de viaje por ella. Al re-optimizar, las rutas en curso la rodean si conviene. Solo se pueden reportar Av. Ferrocarril, Av. Giráldez y Calle Real." />
       </h2>
-      {error && <div style={estiloAviso}>{error}</div>}
+      {error && <div role="alert" style={estiloAviso}>{error}</div>}
 
       {esAdministrador && (
         <div style={{ display: "flex", alignItems: "flex-end", gap: 10, flexWrap: "wrap" }}>
