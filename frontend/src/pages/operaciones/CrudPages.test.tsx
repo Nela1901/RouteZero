@@ -256,6 +256,17 @@ describe("Flota: detalle, edición y eliminación", () => {
 
     expect(await screen.findByText("El vehículo tiene rutas registradas y no se puede eliminar")).toBeInTheDocument();
   });
+
+  it("un error del formulario se anuncia como alerta para los lectores de pantalla (WCAG 4.1.3)", async () => {
+    const usuario = userEvent.setup();
+    renderizar(<FlotaPage />);
+
+    await usuario.click(await screen.findByRole("button", { name: "Editar ABC-123" }));
+    const dialogo = await screen.findByRole("dialog");
+    await usuario.click(within(dialogo).getByRole("button", { name: "Guardar cambios" })); // sin cambiar nada
+
+    expect(await within(dialogo).findByRole("alert")).toHaveTextContent("No hay cambios para guardar");
+  });
 });
 
 describe("Conductores: detalle, edición y eliminación", () => {

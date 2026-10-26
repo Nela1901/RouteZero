@@ -212,7 +212,7 @@ function SeccionSesiones() {
         )}
       </div>
 
-      {error && <div style={estiloAviso}>{error}</div>}
+      {error && <div role="alert" style={estiloAviso}>{error}</div>}
 
       {mensajeDeSesiones ? (
         <p style={{ margin: 0, fontSize: 13, color: "var(--rz-text-muted)" }}>{mensajeDeSesiones}</p>
@@ -319,7 +319,7 @@ function EstadoInicial({
       {exito && (
         <div style={estiloExito}>Verificación en dos pasos activada correctamente.</div>
       )}
-      {error && <div style={estiloAviso}>{error}</div>}
+      {error && <div role="alert" style={estiloAviso}>{error}</div>}
       <button type="button" onClick={onIniciar} disabled={enviando} style={estiloBotonPrimario}>
         {enviando ? "Generando código QR…" : "Activar verificación en dos pasos"}
       </button>
@@ -415,7 +415,7 @@ function FormularioConfirmacion({
         </div>
       </div>
 
-      {error && <div style={estiloAviso}>{error}</div>}
+      {error && <div role="alert" style={estiloAviso}>{error}</div>}
 
       <div style={{ display: "flex", gap: 10 }}>
         <button type="submit" disabled={enviando} style={estiloBotonPrimario}>

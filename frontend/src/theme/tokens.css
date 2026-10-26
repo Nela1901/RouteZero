@@ -166,3 +166,16 @@ a {
 .rz-saltar:focus {
   top: 8px;
 }
+
+/* Texto solo para lectores de pantalla (por ejemplo, el título de una pantalla que ya se entiende por su contenido). */
+.rz-solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

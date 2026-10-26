@@ -170,6 +170,7 @@ export function MapaPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
+      <h1 className="rz-solo-lectores">Mapa de rutas</h1>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 12, flexWrap: "wrap", padding: "12px 16px", borderBottom: "1px solid var(--rz-panel-border)" }}>
         <Campo id="mapa-fecha" etiqueta="Fecha de la jornada">
           <input id="mapa-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} style={estiloInput} />
@@ -196,7 +197,7 @@ export function MapaPage() {
           {textoDeCarga(cargando, mapa === null, actualizado)}
         </output>
       </div>
-      {error && <div style={{ ...estiloAviso, margin: "8px 16px 0" }}>{error}</div>}
+      {error && <div role="alert" style={{ ...estiloAviso, margin: "8px 16px 0" }}>{error}</div>}
 
       <section aria-label="Mapa de rutas de Huancayo" style={{ position: "relative", flex: 1, minHeight: 320 }}>
         <MapContainer center={CENTRO_HUANCAYO} zoom={14} style={{ height: "100%", width: "100%" }}>
