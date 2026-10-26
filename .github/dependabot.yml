@@ -1,0 +1,27 @@
+# Revisión semanal de dependencias (OWASP A03, cadena de suministro): Dependabot abre un Pull Request cuando hay una versión
+# nueva o un aviso de seguridad. Cada Pull Request pasa por el CI y por la aprobación de un compañero antes de fusionarse.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "ci"
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(frontend)"
+
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(backend)"
