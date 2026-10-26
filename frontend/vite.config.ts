@@ -12,5 +12,10 @@ export default defineConfig({
     css: true,
     // Las pruebas de extremo a extremo (Playwright) tienen su propio ejecutor
     exclude: [...configDefaults.exclude, 'e2e/**'],
+    // Cobertura sobre todo `src/` (no solo los archivos que las pruebas cargan), sin contar las propias pruebas
+    coverage: {
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/tests/**', 'src/main.tsx', 'src/vite-env.d.ts'],
+    },
   },
 })
