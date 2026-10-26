@@ -77,7 +77,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: python -m pip install --only-binary :all: bandit==1.9.4 pip-audit==2.10.1
+      - run: "python -m pip install --only-binary :all: bandit==1.9.4 pip-audit==2.10.1"
       - name: Bandit (sin hallazgos de severidad alta)
         run: python -m bandit -r backend/src -lll
       - name: pip-audit (dependencias del backend)
