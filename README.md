@@ -256,10 +256,10 @@ RouteZero/
 │   │   │   │   ├── 02 Registro de Impedimentos V_1_1_0.md
 │   │   │   │   ├── 03 Revisión del Sprint V_1_3_0.md
 │   │   │   │   ├── 04 Retrospectiva del Sprint V_1_5_0.md
-│   │   │   │   ├── 05 Calidad de código V_1_1_0.md
-│   │   │   │   ├── 06 Evaluación de seguridad OWASP V_1_1_0.md
+│   │   │   │   ├── 05 Calidad de código V_1_2_0.md
+│   │   │   │   ├── 06 Evaluación de seguridad OWASP V_1_2_0.md
 │   │   │   │   ├── 07 Evaluación de accesibilidad WCAG V_1_0_0.md
-│   │   │   │   └── historial Implementación/   (18 versiones anteriores)
+│   │   │   │   └── historial Implementación/   (20 versiones anteriores)
 │   │   │   └── historial Sprint 3/   (22 versiones anteriores)
 │   │   └── Sprint 4/
 │   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_4_0.md
@@ -387,8 +387,8 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Registro de Impedimentos | [`docs/03 Ejecución/Sprint 3/Implementación/02 Registro de Impedimentos V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
 | Revisión del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/03 Revisión del Sprint V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_3_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/04 Retrospectiva del Sprint V_1_5_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_5_0.md) |
-| Evaluación de calidad de código (SonarQube) | [`docs/03 Ejecución/Sprint 3/Implementación/05 Calidad de código V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_1_0.md) |
-| Evaluación de seguridad (OWASP Top 10 2025) | [`docs/03 Ejecución/Sprint 3/Implementación/06 Evaluación de seguridad OWASP V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_1_0.md) |
+| Evaluación de calidad de código (SonarQube) | [`docs/03 Ejecución/Sprint 3/Implementación/05 Calidad de código V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) |
+| Evaluación de seguridad (OWASP Top 10 2025) | [`docs/03 Ejecución/Sprint 3/Implementación/06 Evaluación de seguridad OWASP V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
 | Evaluación de accesibilidad (WCAG 2.2) | [`docs/03 Ejecución/Sprint 3/Implementación/07 Evaluación de accesibilidad WCAG V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md) |
 
 #### Sprint 4 — Sostenibilidad y Cierre (completado)

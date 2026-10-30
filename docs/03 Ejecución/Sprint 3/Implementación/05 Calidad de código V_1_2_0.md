@@ -9,16 +9,16 @@
 | **Líder del Proyecto** | Inciso Aguilar Elizabeth Antonela |
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Sprint** | Sprint 3 — Rutas y Visualización (Inspección 03) |
-| **Fecha de análisis** | 2026-10-30 (reanálisis con cobertura, sobre el commit `7233c04` de la rama `sprint4` más los cambios de esta versión). Primer análisis: 2026-10-23 |
+| **Fecha de análisis** | 2026-10-30 (análisis final con cobertura, sobre el commit `5845b7b` de `main` más las pruebas nuevas de esta versión). Primer análisis: 2026-10-23 |
 | **Herramienta** | SonarQube Cloud, proyecto `Nela1901_RouteZero`, ejecutado con SonarScanner y con los reportes de cobertura de pytest y Vitest |
-| **Versión del análisis** | V_1_1_0 |
-| **Versión** | 1.1.0 |
+| **Versión del análisis** | V_1_2_0 |
+| **Versión** | 1.2.0 |
 
 [← Volver al README Principal](../../../../README.md)
 
 ---
 
-> **Estado del documento.** Esta versión reemplaza las estimaciones de la V_1_0_0 por una **medición real**: el reanálisis del 30-10-2026, ya con la cobertura de pruebas. Muestra el resultado del Quality Gate tal como lo calculó SonarQube. **El reanálisis ejecutado antes de corregir la cobertura falló en una condición (72.5 % de cobertura del código nuevo)**; la causa y su corrección están en la sección 3, y el análisis final **aprobó el Quality Gate**.
+> **Estado del documento.** Esta versión reemplaza las estimaciones de la V_1_0_0 por una **medición real**: el reanálisis del 30-10-2026, ya con la cobertura de pruebas. Muestra el resultado del Quality Gate tal como lo calculó SonarQube. **El reanálisis ejecutado antes de corregir la cobertura falló en una condición (72.5 % de cobertura del código nuevo)**; la causa y su corrección están en la sección 3, y el análisis final **aprobó el Quality Gate**. La V_1_2_0 incorpora el análisis posterior a la ampliación de las pruebas del frontend (sección 3): cobertura total de 89.4 % y del código nuevo de 94.3 %.
 
 ## 1. Resumen Ejecutivo de Quality Gate
 
@@ -32,15 +32,15 @@
 | Calificación de mantenibilidad | A | A | Cumple |
 | Duplicación | 0.0 % | ≤ 3 % | Cumple |
 | Security Hotspots revisados | 100 % | 100 % | Cumple |
-| **Cobertura** | **83.7 %** | **≥ 80 %** | Cumple |
+| **Cobertura** | **94.3 %** | **≥ 80 %** | Cumple |
 
 - **Calificaciones sobre todo el código:** Seguridad **A** (era E), Fiabilidad **A** (era E) y Mantenibilidad **A**.
-- **Porcentaje de cobertura de pruebas (Coverage):** **85.2 %** del proyecto según SonarQube (89.6 % de las líneas: 4 287 de 4 783 cubiertas). La cobertura del código nuevo es **83.7 %**, con la meta en 80 %.
+- **Porcentaje de cobertura de pruebas (Coverage):** **89.4 %** del proyecto según SonarQube (92.5 % de las líneas: 4 422 de 4 783 cubiertas). La cobertura del código nuevo es **94.3 %**, con la meta en 80 %.
 
 | Parte | Cobertura de líneas según SonarQube | Líneas por cubrir | Sin cubrir | Medición propia de la herramienta del lenguaje |
 |---|---|---|---|---|
 | Backend (Python, `backend/src`) | **96.9 %** | 3 245 | 99 | pytest-cov: 98 % de los módulos medidos, con 363 pruebas contra la base real |
-| Frontend (TypeScript, `frontend/src`) | **74.2 %** | 1 538 | 397 | Vitest con V8: 70.4 % de líneas, con 108 pruebas de componentes (y 33 de extremo a extremo con Playwright, que no entran en la cobertura) |
+| Frontend (TypeScript, `frontend/src`) | **83.0 %** | 1 538 | 262 | Vitest con V8: 80.2 % de líneas, con 147 pruebas de componentes (y 33 de extremo a extremo con Playwright, que no entran en la cobertura) |
 
   El backend marca 96.9 % en SonarQube y 98 % en pytest-cov porque SonarQube cuenta además archivos que `pytest.ini` no mide, como la configuración y los esquemas.
 - **Duplicación de código:** **0.6 %** (76 líneas en 4 bloques).
@@ -66,7 +66,7 @@ La complejidad cognitiva total del proyecto bajó de 1 634 a 1 179.
 | Deuda técnica | 1 736 min (28 h 56 min) | **282 min (4 h 42 min)** | −84 % |
 | Calificación de seguridad | E | A | |
 | Calificación de fiabilidad | E | A | |
-| Cobertura | sin dato | 85.2 % | |
+| Cobertura | sin dato | 89.4 % | |
 | Duplicación | 0.5 % | 0.6 % | |
 
 De las 316 incidencias del primer análisis: **282** se corrigieron en el código (incluidas las 3 de `generar_grafo.py`, que se resolvieron quitando las rutas por línea de comandos) y **16** salieron del análisis al excluir `datos_demo.sql`; quedan **18** abiertas. Ninguna se resolvió como falso positivo.
@@ -123,7 +123,7 @@ SonarQube señaló *path traversal* en los dos scripts de uso local del reposito
 | `!important` en `tokens.css` (`css:S9423`) | 6 | Necesario para que las reglas de las consultas de contenedor sobrescriban los estilos en línea de React |
 | Roles ARIA sin etiqueta nativa equivalente (`typescript:S6819`) | 8 | Los diálogos modales y el fondo que los cierra (`<dialog>` cambiaría el manejo del foco y de Escape), la barra de progreso y las tarjetas con bloques (`<output>` solo admite contenido en línea) |
 
-### Quality Gate: cómo se pasó de 72.5 % a 83.7 % de cobertura del código nuevo
+### Quality Gate: cómo se pasó de 72.5 % a 94.3 % de cobertura del código nuevo
 
 El primer reanálisis del 30-10-2026 **falló en una sola condición**: la cobertura del código nuevo era **72.5 %** frente al 80 % que exige el Quality Gate «Sonar way». SonarQube calcula esa cobertura sobre líneas y ramas (`if`) de lo que cambió desde el primer análisis: 175 líneas y 113 ramas, de las cuales 78 estaban sin cubrir. Para llegar al 80 % podían quedar como máximo 56.
 
@@ -133,18 +133,19 @@ El primer reanálisis del 30-10-2026 **falló en una sola condición**: la cober
 | El título de cada pantalla (`OperacionesLayout`, WCAG 2.4.2) no tenía pruebas | 6 | 3 pruebas nuevas: sección conocida, otra sección y ruta sin sección |
 | El aviso de vencimiento de documentos (`EstadoVencimiento`, en `ui.tsx`) no tenía pruebas | 6 | 5 pruebas nuevas: vencida, vence en 12 días, sin aviso, sin fecha y cálculo de días |
 
-**Resultado del análisis final: cobertura del código nuevo 83.7 % (≥ 80 %), con 47 elementos sin cubrir de 288 y el Quality Gate en PASSED.** No se cambió el umbral ni se excluyó código para lograrlo; las 8 pruebas del frontend son nuevas (108 en total) y el backend sigue en 363.
+**Resultado tras esta corrección: cobertura del código nuevo 83.7 % (≥ 80 %), con 47 elementos sin cubrir de 288 y el Quality Gate en PASSED.** No se cambió el umbral ni se excluyó código para lograrlo; las 8 pruebas del frontend son nuevas (108 en total) y el backend sigue en 363.
 
-**Mejora pendiente (no bloquea el Quality Gate):** las pantallas con menor cobertura siguen siendo las de formularios.
+**Ampliación posterior de las pruebas de los formularios.** Aunque el Quality Gate ya pasaba, las pantallas con menor cobertura eran las de formularios (Pedidos 54 %, Conductores 64 %, Flota 67 % y Seguridad 67 % de líneas en Vitest). Se escribieron **39 pruebas de componentes nuevas** (147 en total) para registro, edición, filtros, cambios de estado, renovación de documentos, errores de la API, cliente rápido, sesiones activas y verificación en dos pasos, más las de `mensajeDeError`. Solo se agregaron pruebas: no se modificó el código de las pantallas.
 
-| Pantalla (frontend) | Cobertura de líneas (Vitest) |
-|---|---|
-| `PedidosPage.tsx` | 54 % |
-| `ConductoresPage.tsx` | 64 % |
-| `FlotaPage.tsx` | 67 % |
-| `SeguridadPage.tsx` | 67 % |
+| Pantalla (frontend) | Antes (Vitest, líneas) | Después |
+|---|---|---|
+| `PedidosPage.tsx` | 54 % | 91 % |
+| `ConductoresPage.tsx` | 64 % | 95 % |
+| `FlotaPage.tsx` | 67 % | 94 % |
+| `SeguridadPage.tsx` | 67 % | 98 % |
+| Frontend completo | 70.4 % | 80.2 % |
 
-Se escribirán pruebas de componentes para sus formularios y acciones en una iteración posterior.
+**Resultado del análisis final (commit `5845b7b` de `main` más las pruebas nuevas): cobertura del código nuevo 94.3 % (17 elementos sin cubrir de 300), cobertura total 89.4 % y Quality Gate en PASSED.** El resto de las medidas no cambia: 0 bugs, 0 vulnerabilidades, 18 incidencias de mantenibilidad justificadas y 282 minutos de deuda técnica.
 
 ## 4. Cómo se repite el análisis
 
@@ -165,3 +166,4 @@ El análisis automático de SonarQube Cloud no recibe la cobertura de las prueba
 |---|---|---|---|
 | V_1_0_0 | 2026-10-26 | Versión inicial: primer análisis de SonarQube (23-10-2026), métricas, correcciones aplicadas, hallazgos aceptados y plan de reanálisis con cobertura | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-30 | Reanálisis con cobertura: Quality Gate aprobado (el primer reanálisis falló por la cobertura del código nuevo, 72.5 %; se corrigió con `src.main` en `pytest.ini` y 8 pruebas nuevas hasta 83.7 %), cobertura por parte, evolución de 316 a 18 incidencias y vulnerabilidades y bugs en 0, sin falsos positivos (el script del grafo se corrigió y el de apoyo para la cobertura se excluyó del análisis) | Inciso Aguilar Elizabeth Antonela |
+| V_1_2_0 | 2026-10-30 | Análisis final con las pruebas nuevas de los formularios: cobertura total 89.4 % (frontend 83.0 %) y del código nuevo 94.3 %, con 147 pruebas de Vitest (39 nuevas); el resto de las medidas no cambia y el Quality Gate sigue aprobado | Inciso Aguilar Elizabeth Antonela |
