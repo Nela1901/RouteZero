@@ -11,7 +11,7 @@
 | **Sprint** | Sprint 3 — Rutas y Visualización (Inspección 03) |
 | **Fecha de la evaluación** | 2026-10-26 (reanálisis de SonarQube: 2026-10-30) |
 | **Herramienta de escaneo** | SonarQube Cloud (primer análisis del 23-10-2026 y reanálisis del 30-10-2026), Bandit, pip-audit, npm audit y revisión manual del código |
-| **Versión** | 1.1.0 |
+| **Versión** | 1.2.0 |
 
 [← Volver al README Principal](../../../../README.md)
 
@@ -182,7 +182,7 @@ En el primer análisis SonarQube Cloud muestra **0 Security Hotspots** como pest
 | `pip-audit` | Sin vulnerabilidades |
 | `npm audit` (severidad alta) | 0 vulnerabilidades |
 | Integración continua | Bandit, pip-audit y npm audit en cada Pull Request |
-| SonarQube Cloud (reanálisis del 30-10-2026) | 0 vulnerabilidades, 0 bugs, 0 Security Hotspots, seguridad A y fiabilidad A; Quality Gate aprobado, con la cobertura del código nuevo en 83.7 % (ver `05 Calidad de código`) |
+| SonarQube Cloud (reanálisis del 30-10-2026) | 0 vulnerabilidades, 0 bugs, 0 Security Hotspots, seguridad A y fiabilidad A; Quality Gate aprobado, con la cobertura del código nuevo en 94.3 % y la total en 89.4 % (ver `05 Calidad de código`) |
 
 ## 5. Plan de acciones pendientes
 
@@ -206,3 +206,4 @@ En el primer análisis SonarQube Cloud muestra **0 Security Hotspots** como pest
 |---|---|---|---|
 | V_1_0_0 | 2026-10-26 | Versión inicial: evaluación de OWASP Top 10 2025 con la matriz de 10 categorías, los hallazgos de SonarQube y de la revisión propia, las correcciones aplicadas y el plan de acciones | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-30 | Se incorpora el reanálisis de SonarQube (30-10-2026): 0 vulnerabilidades abiertas, 0 Security Hotspots y seguridad A; 18 vulnerabilidades registradas, todas cerradas (17 corregidas y 1 por excluir un script de apoyo), sin falsos positivos | Inciso Aguilar Elizabeth Antonela |
+| V_1_2_0 | 2026-10-30 | Se actualizan las cifras de cobertura del análisis final de SonarQube (código nuevo 94.3 %, total 89.4 %); el resultado de seguridad no cambia | Inciso Aguilar Elizabeth Antonela |
