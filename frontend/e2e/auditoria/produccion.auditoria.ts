@@ -35,7 +35,7 @@ async function tokens(rol: keyof typeof CUENTAS): Promise<{ access: string; refr
 }
 
 test.beforeAll(() => {
-  test.skip(!CLAVE, "Falta CLAVE_PRUEBA");
+  expect(CLAVE, "Falta la variable de entorno CLAVE_PRUEBA (ver el encabezado del archivo)").toBeTruthy();
 });
 
 for (const pantalla of PANTALLAS) {

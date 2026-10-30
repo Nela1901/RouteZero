@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { api, mensajeDeError } from "../../api/client";
 import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
@@ -288,7 +288,7 @@ function FormularioVehiculo({ inicial, onGuardado }: Readonly<{ inicial?: Vehicu
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
-  async function enviar(evento: FormEvent) {
+  async function enviar(evento: SubmitEvent) {
     evento.preventDefault();
     setError(null);
     setEnviando(true);

@@ -10,7 +10,7 @@
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Sprint** | Sprint 4 — Sostenibilidad y Cierre (22-10-2026 – 13-11-2026) |
 | **Fecha de la revisión** | Por confirmar (contenido al 23-10-2026) |
-| **Versión** | 1.0.0 |
+| **Versión** | 1.1.0 |
 
 [← Volver al README Principal](../../../../README.md)
 
@@ -20,7 +20,7 @@
 
 ## Historias de Usuario completadas en este Sprint
 
-Compromiso del sprint: 5 ítems y 18 Story Points. Detalle y evidencias en [`01 Sprint 4 Plan de ejecución y estado`](../01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_3_0.md) y en [`02 Implementación de la sostenibilidad`](../02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_2_0.md).
+Compromiso del sprint: 5 ítems y 18 Story Points. Detalle y evidencias en [`01 Sprint 4 Plan de ejecución y estado`](../01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md) y en [`02 Implementación de la sostenibilidad`](../02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md).
 
 | ID | Historia | Épica | SP | Estado |
 |---|---|---|---|---|
@@ -76,7 +76,7 @@ Entre otros: el script repetible de auditoría de consultas (`scripts/auditar_co
 
 ## Pendientes
 
-- **Actividad de cierre del proyecto** (material del docente «Revisión de código, OWASP, WCAG y usabilidad»), al terminar todos los sprints: SonarQube Cloud sobre backend y frontend, mapeo a OWASP Top 10 2025, revisión de WCAG 2.2 y evaluación de usabilidad con la escala SUS en positivo y las heurísticas de Nielsen.
+- **Actividad de cierre del proyecto** (material del docente «Revisión de código, OWASP, WCAG y usabilidad»): SonarQube Cloud, OWASP Top 10 2025 y WCAG 2.2 están **hechos y documentados el 30-10-2026** en `docs/03 Ejecución/Sprint 3/Implementación/` (documentos 05, 06 y 07), con el Quality Gate de SonarQube aprobado; la escala SUS y las heurísticas de Nielsen siguen pendientes (semana 14 del cronograma del curso).
 - **Datos de la flota real**: cargar el precio de compra y la vida útil de los vehículos y validar los tres supuestos con la empresa.
 - **Lighthouse en producción** de la pantalla Sostenibilidad.
 - **Pruebas de aceptación, documentación técnica y sustentación final**, parte de la meta del sprint en Jira.
@@ -107,3 +107,4 @@ La columna «Asignación en Jira» es el dato objetivo del tablero. La columna �
 | Versión | Fecha | Cambio realizado | Responsable |
 |---|---|---|---|
 | V_1_0_0 | 2026-10-23 | Versión inicial: resultado (18 de 18 SP), demostración de 10 minutos, resultados medidos, trabajo adicional y pendientes; el aporte por integrante con lo declarado por la líder | Inciso Aguilar Elizabeth Antonela |
+| V_1_1_0 | 2026-10-30 | Se actualizan los pendientes (SonarQube, OWASP y WCAG 2.2 hechos el 30-10-2026; SUS y Nielsen pendientes) y el enlace al plan | Inciso Aguilar Elizabeth Antonela |

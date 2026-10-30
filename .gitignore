@@ -237,3 +237,6 @@ backend/tests_manual/
 
 # Cobertura de pruebas generada por Vitest (se normaliza con scripts/preparar_cobertura.py para SonarQube)
 frontend/coverage/
+
+# Archivos temporales de SonarScanner
+.scannerwork/

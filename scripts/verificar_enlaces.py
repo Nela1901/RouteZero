@@ -50,7 +50,9 @@ def identificador(titulo: str) -> str:
 def anclas(ruta: str) -> set[str]:
     vistos: dict[str, int] = {}
     resultado = set()
-    for encabezado in re.findall(r"^#{1,6}[ \t]+(\S.*?)[ \t]*#*[ \t]*$", leer(ruta), flags=re.M):
+    for linea in re.findall(r"^#{1,6}[ \t]+(\S.*)$", leer(ruta), flags=re.M):
+        # Quita los espacios finales y los # de cierre, sin una expresión que retroceda
+        encabezado = linea.rstrip().rstrip("#").rstrip()
         base = identificador(encabezado)
         n = vistos.get(base, 0)
         resultado.add(base if n == 0 else f"{base}-{n}")
@@ -78,7 +80,8 @@ for doc in documentos:
                 problemas.append(f"{doc}\n    sección inexistente: {unquote(destino)}")
 
     if doc.startswith("docs/"):
-        retornos = re.findall(r"\[[^\]]*README[^\]]*\]\(([^)\s]+)\)", leer(doc))
+        enlaces = re.findall(r"\[([^\]]*)\]\(([^)\s]+)\)", leer(doc))
+        retornos = [destino for texto, destino in enlaces if "README" in texto]
         if not any(posixpath.normpath(posixpath.join(posixpath.dirname(doc), unquote(r))) == "README.md" for r in retornos):
             problemas.append(f"{doc}\n    falta el enlace de retorno al README.md")
 

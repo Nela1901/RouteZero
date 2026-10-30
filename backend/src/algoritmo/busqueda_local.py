@@ -69,13 +69,14 @@ def mejorar(sol: Solucion, d: Datos, contextos: list, rng, limite_t: float | Non
 
     def dos_opt() -> bool:
         mejoro = False
-        for ri, (k, secuencia) in enumerate(rutas):
+        for ri, ruta in enumerate(rutas):
+            k, secuencia = ruta
             for i in range(len(secuencia) - 1):
                 for j in range(i + 1, len(secuencia)):
                     nueva = secuencia[:i] + secuencia[i : j + 1][::-1] + secuencia[j + 1 :]
                     costo, valida = evaluar(k, nueva)
                     if valida and costo < costos[ri] - TOLERANCIA:
-                        rutas[ri][1] = secuencia = nueva
+                        ruta[1] = secuencia = nueva
                         costos[ri] = costo
                         mejoro = True
                 if agotado():

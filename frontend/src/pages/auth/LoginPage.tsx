@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { ErrorApi } from "../../api/client";
 import { BotonTema } from "../../components/BotonTema";
@@ -15,7 +15,7 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
-  async function manejarLogin(evento: FormEvent) {
+  async function manejarLogin(evento: SubmitEvent) {
     evento.preventDefault();
     setError(null);
     setEnviando(true);
@@ -28,7 +28,7 @@ export function LoginPage() {
     }
   }
 
-  async function manejarMfa(evento: FormEvent) {
+  async function manejarMfa(evento: SubmitEvent) {
     evento.preventDefault();
     setError(null);
     setEnviando(true);
