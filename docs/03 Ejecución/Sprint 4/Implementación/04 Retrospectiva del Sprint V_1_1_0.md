@@ -10,7 +10,7 @@
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Sprint** | Sprint 4 — Sostenibilidad y Cierre (22-10-2026 – 13-11-2026) |
 | **Fecha de la retrospectiva** | Por confirmar (contenido al 23-10-2026) |
-| **Versión** | 1.0.0 |
+| **Versión** | 1.1.0 |
 
 [← Volver al README Principal](../../../../README.md)
 
@@ -57,9 +57,9 @@
 
 | # | Acción | Responsable propuesto |
 |---|---|---|
-| 1 | Ejecutar SonarQube Cloud sobre backend y frontend al terminar todos los sprints, corregir los hallazgos verificables y documentarlos | Equipo |
-| 2 | Mapear el sistema a cada categoría de OWASP Top 10 2025 y registrar las brechas | Equipo |
-| 3 | Revisar los criterios nuevos de WCAG 2.2 sobre las pantallas del sistema | Uscuvilca Ramos Abraham Luis |
+| 1 | Ejecutar SonarQube Cloud sobre backend y frontend al terminar todos los sprints, corregir los hallazgos verificables y documentarlos. **Hecha el 30-10-2026:** Quality Gate aprobado, 0 vulnerabilidades (`05 Calidad de código`, Sprint 3) | Equipo |
+| 2 | Mapear el sistema a cada categoría de OWASP Top 10 2025 y registrar las brechas. **Hecha el 30-10-2026** (`06 Evaluación de seguridad OWASP`, Sprint 3) | Equipo |
+| 3 | Revisar los criterios nuevos de WCAG 2.2 sobre las pantallas del sistema. **Hecha el 30-10-2026** (`07 Evaluación de accesibilidad WCAG`, Sprint 3) | Uscuvilca Ramos Abraham Luis |
 | 4 | Aplicar la escala SUS en positivo y evaluar las heurísticas de Nielsen con el equipo y usuarios de prueba | Equipo |
 | 5 | Cargar el precio de compra y la vida útil de los vehículos reales y validar los supuestos de sostenibilidad con la empresa | Inciso Aguilar Elizabeth Antonela |
 | 6 | Pedir la aprobación de un compañero en cada Pull Request antes del merge | Equipo |
@@ -87,3 +87,4 @@ La columna «Asignación en Jira» es el dato objetivo del tablero. La columna �
 | Versión | Fecha | Cambio realizado | Responsable |
 |---|---|---|---|
 | V_1_0_0 | 2026-10-23 | Versión inicial: lo aprendido, lo que va bien, lo que se puede mejorar, el estado de las acciones del Sprint 3, las acciones propuestas para el cierre del proyecto y el aporte por integrante | Inciso Aguilar Elizabeth Antonela |
+| V_1_1_0 | 2026-10-30 | Se registra el estado de las acciones de cierre: SonarQube, OWASP Top 10 2025 y WCAG 2.2 hechas el 30-10-2026; la escala SUS y las heurísticas de Nielsen siguen propuestas | Inciso Aguilar Elizabeth Antonela |

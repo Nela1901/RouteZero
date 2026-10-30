@@ -10,7 +10,7 @@
 | **Sprint** | Sprint 4 — Sostenibilidad y Cierre (22 oct – 13 nov 2026) |
 | **Historias cubiertas** | HU-015 (dashboard de indicadores), HU-017 (plan de compensación de carbono), HU-016 (reporte PDF), HT-12 (pruebas del reporte) y HT-11 (optimización de consultas) |
 | **Fecha de corte** | 2026-10-23 |
-| **Versión** | 1.2.0 |
+| **Versión** | 1.3.0 |
 
 [← Volver al README Principal](../../../README.md)
 
@@ -18,7 +18,7 @@
 
 ## 1. Alcance
 
-Este documento describe lo implementado en la épica EP-07 (Sostenibilidad). El estado de cada ítem está en el [`01 Sprint 4 Plan de ejecución y estado`](01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_3_0.md).
+Este documento describe lo implementado en la épica EP-07 (Sostenibilidad). El estado de cada ítem está en el [`01 Sprint 4 Plan de ejecución y estado`](01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md).
 
 ## 2. Módulo `sostenibilidad` del backend
 
@@ -151,3 +151,4 @@ Medido el 23-10-2026 contra `https://routezero-7k7j.onrender.com` (plan gratuito
 | V_1_0_0 | 2026-10-23 | Versión inicial: módulo de sostenibilidad, supuestos configurables, pantalla y resultados de pruebas de HU-015 y HU-017 | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-10-23 | Se agregan el reporte PDF y el costo del ciclo de vida de la flota (HU-016), sus pruebas (HT-12), la auditoría y optimización de consultas (HT-11) y se corrige el periodo del sprint | Inciso Aguilar Elizabeth Antonela |
 | V_1_2_0 | 2026-10-23 | Se agrega la medición en Render de los tres endpoints (dashboard, compensación y reporte PDF) y se actualizan las limitaciones | Inciso Aguilar Elizabeth Antonela |
+| V_1_3_0 | 2026-10-30 | Se actualiza el enlace al plan de ejecución a su versión V_1_4_0; el contenido no cambia | Inciso Aguilar Elizabeth Antonela |

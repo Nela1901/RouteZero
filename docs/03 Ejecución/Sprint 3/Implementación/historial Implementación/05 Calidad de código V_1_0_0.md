@@ -14,7 +14,7 @@
 | **Versión del análisis** | V_1_0_0 |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ---
 
@@ -108,7 +108,7 @@ Con ese reanálisis se completará la versión V_1_1_0 de este documento con el 
 
 ---
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ## Historial de Control de Cambios
 

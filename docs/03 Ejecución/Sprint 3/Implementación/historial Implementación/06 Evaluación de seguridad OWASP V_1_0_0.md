@@ -13,7 +13,7 @@
 | **Herramienta de escaneo** | SonarQube Cloud (análisis del 23-10-2026), Bandit, pip-audit, npm audit y revisión manual del código |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ---
 
@@ -195,7 +195,7 @@ En el primer análisis SonarQube Cloud muestra **0 Security Hotspots** como pest
 
 ---
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ## Historial de Control de Cambios
 

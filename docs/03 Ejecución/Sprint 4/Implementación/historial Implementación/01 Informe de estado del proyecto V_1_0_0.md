@@ -12,7 +12,7 @@
 | **Periodo del Informe** | 22-10-2026 – 13-11-2026 (Sprint 4 — Sostenibilidad y Cierre) |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ---
 
@@ -20,9 +20,9 @@
 
 | Variables de control | Descripción del estado |
 |---|---|
-| **Alcance** | **5/5 ítems completados al 23-10-2026 (18 de 18 Story Points)**: HU-015, HU-016, HU-017, HT-11 y HT-12. Detalle por ítem en [`01 Sprint 4 Plan de ejecución y estado`](../01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_3_0.md) y en [`02 Implementación de la sostenibilidad`](../02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_2_0.md). |
+| **Alcance** | **5/5 ítems completados al 23-10-2026 (18 de 18 Story Points)**: HU-015, HU-016, HU-017, HT-11 y HT-12. Detalle por ítem en [`01 Sprint 4 Plan de ejecución y estado`](../../historial%20Sprint%204/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_3_0.md) y en [`02 Implementación de la sostenibilidad`](../../historial%20Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_2_0.md). |
 | **Cronograma** | Sprint iniciado el 22-10-2026 en Jira, que lo cierra el 13-11-2026; la fecha de inspección aún no está confirmada. Al corte (23-10-2026) van 2 de 23 días y los 18 SP están completados: queda margen para las pruebas de aceptación, la documentación técnica y la preparación de la sustentación final, que son parte de la meta del sprint en Jira, y para la actividad de cierre del proyecto (SonarQube Cloud, OWASP Top 10 2025, WCAG 2.2 y usabilidad). |
-| **Costos** | Presupuesto estimado académico: **USD $10,304.00** (ver [`04 Presupuesto del proyecto V_1_1_0.md`](../../../02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_1_0.md)). Sin desviación al corte: la infraestructura (Render, Vercel, Supabase) sigue en planes gratuitos, OPEX ejecutado **USD $0.00**. Las dos bibliotecas nuevas (`fpdf2` y `pypdf`) son de código abierto. |
+| **Costos** | Presupuesto estimado académico: **USD $10,304.00** (ver [`04 Presupuesto del proyecto V_1_1_0.md`](../../../../02%20Planificaci%C3%B3n/04%20Presupuesto%20del%20proyecto%20V_1_1_0.md)). Sin desviación al corte: la infraestructura (Render, Vercel, Supabase) sigue en planes gratuitos, OPEX ejecutado **USD $0.00**. Las dos bibliotecas nuevas (`fpdf2` y `pypdf`) son de código abierto. |
 | **Calidad** | Backend: 359 pruebas, 98 % de cobertura total y 100 % en el módulo nuevo `sostenibilidad`; frontend: 99 pruebas de Vitest y 26 de Playwright. Integración continua de GitHub Actions en verde en `main`. Pantalla Sostenibilidad: Lighthouse con accesibilidad, buenas prácticas y SEO en 100 y rendimiento de 95 (móvil) a 99 (escritorio), y W3C sin errores. Las 17 consultas críticas de la base tardan 42 ms o menos en el servidor. `npm audit` y `pip-audit` sin vulnerabilidades y Bandit sin hallazgos. En Render: dashboard 2.4 s, plan de compensación 2.3 s y reporte PDF de 30 días 7.5 s. |
 
 ## Riesgos
@@ -51,7 +51,7 @@ El sistema sigue desplegado en Render (backend) y Vercel (frontend), con los tre
 
 ---
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ## Historial de Control de Cambios
 
