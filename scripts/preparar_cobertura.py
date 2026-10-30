@@ -28,8 +28,7 @@ def preparar_backend() -> int:
     arbol = ET.parse(XML_BACKEND)
     raiz = arbol.getroot()
     for fuentes in raiz.iter("sources"):
-        for fuente in list(fuentes):
-            fuentes.remove(fuente)
+        fuentes.clear()
         ET.SubElement(fuentes, "source").text = "."
     archivos = 0
     for clase in raiz.iter("class"):

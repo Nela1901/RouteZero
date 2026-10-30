@@ -23,13 +23,13 @@ class Datos:
         self.n = len(problema.pedidos)
         self.T = np.asarray(problema.tiempo_s, dtype=np.float64)
         self.D = np.asarray(problema.distancia_m, dtype=np.float64)
-        self.Tl = self.T.tolist()   # listas de Python: más rápidas que numpy para acceso escalar
+        self.tiempo_lista = self.T.tolist()   # listas de Python: más rápidas que numpy para acceso escalar
         # Tiempos por franja horaria (HU-012/HU-013, RF-003): un tramo usa la matriz de hora punta si sale en una franja
         self.franjas = tuple(self.p.franjas_punta)
         self.hay_punta = problema.tiempo_punta_s is not None and len(self.franjas) > 0
-        self.Tp = np.asarray(problema.tiempo_punta_s, dtype=np.float64) if self.hay_punta else self.T
-        self.Tpl = self.Tp.tolist() if self.hay_punta else self.Tl
-        self.Dl = self.D.tolist()
+        self.tiempo_punta = np.asarray(problema.tiempo_punta_s, dtype=np.float64) if self.hay_punta else self.T
+        self.tiempo_punta_lista = self.tiempo_punta.tolist() if self.hay_punta else self.tiempo_lista
+        self.distancia_lista = self.D.tolist()
         self.peso = np.array([x.peso_kg for x in problema.pedidos], dtype=np.float64)
         self.w_ini = np.array([x.ventana_inicio_s for x in problema.pedidos], dtype=np.float64)
         self.w_fin = np.array([x.ventana_fin_s for x in problema.pedidos], dtype=np.float64)
@@ -55,17 +55,17 @@ class Datos:
 
     def tl_en(self, t: float) -> list:
         """Tiempos (listas de Python) de los tramos que salen en el instante `t`."""
-        return self.Tpl if self.hay_punta and self.en_punta(t) else self.Tl
+        return self.tiempo_punta_lista if self.hay_punta and self.en_punta(t) else self.tiempo_lista
 
     def t_en(self, t: float) -> np.ndarray:
         """Tiempos (numpy) de los tramos que salen en el instante `t`."""
-        return self.Tp if self.hay_punta and self.en_punta(t) else self.T
+        return self.tiempo_punta if self.hay_punta and self.en_punta(t) else self.T
 
     def vuelta_en(self, t: np.ndarray, idx1: np.ndarray) -> np.ndarray:
         """Tiempo de volver al depósito desde cada candidato, según la hora a la que sale cada uno."""
         if not self.hay_punta:
             return self.T[idx1, 0]
-        return np.where(self.en_punta_arr(t), self.Tp[idx1, 0], self.T[idx1, 0])
+        return np.where(self.en_punta_arr(t), self.tiempo_punta[idx1, 0], self.T[idx1, 0])
 
 
 @dataclass
@@ -123,7 +123,7 @@ def simular_ruta(secuencia: list, ctx: ContextoPar, d: Datos) -> Itinerario:
             viaje = d.tl_en(t)[pos][c + 1]  # tras el descanso el tramo sale más tarde: puede cambiar de franja
         t += viaje
         trabajo += viaje
-        metros += d.Dl[pos][c + 1]
+        metros += d.distancia_lista[pos][c + 1]
         llegada = t
         inicio = max(llegada, d.w_ini_l[c])
         retraso = max(0.0, inicio - d.w_fin_l[c])
@@ -140,7 +140,7 @@ def simular_ruta(secuencia: list, ctx: ContextoPar, d: Datos) -> Itinerario:
         descansos += 1
         vuelta = d.tl_en(t)[pos][0]
     t += vuelta
-    metros += d.Dl[pos][0]
+    metros += d.distancia_lista[pos][0]
     if not secuencia:
         t, metros = ctx.salida_s, 0.0
 

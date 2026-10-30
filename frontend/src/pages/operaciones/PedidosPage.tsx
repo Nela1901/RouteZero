@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { api, mensajeDeError } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../context/ConfirmContext";
@@ -298,12 +298,12 @@ function FormularioPedido({
   inicial,
   onCreado,
   onClienteCreado,
-}: {
+}: Readonly<{
   clientes: Cliente[];
   inicial?: Pedido;
   onCreado: () => void;
   onClienteCreado: () => void;
-}) {
+}>) {
   const [valores] = useState(() => valoresIniciales(inicial, clientes));
   const [clienteId, setClienteId] = useState(valores.clienteId);
   const [descripcion, setDescripcion] = useState(valores.descripcion);
@@ -317,7 +317,7 @@ function FormularioPedido({
   const [enviando, setEnviando] = useState(false);
   const [mostrarClienteNuevo, setMostrarClienteNuevo] = useState(!inicial && clientes.length === 0);
 
-  async function enviar(evento: FormEvent) {
+  async function enviar(evento: SubmitEvent) {
     evento.preventDefault();
     setError(null);
     setEnviando(true);
@@ -462,7 +462,7 @@ function FormularioClienteRapido({
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
-  async function enviar(evento: FormEvent) {
+  async function enviar(evento: SubmitEvent) {
     evento.preventDefault();
     setError(null);
     setEnviando(true);

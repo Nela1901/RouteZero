@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type SubmitEvent, type ReactNode } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { api, ErrorApi } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
@@ -42,7 +42,7 @@ export function SeguridadPage() {
     }
   }
 
-  async function confirmarInscripcion(evento: FormEvent) {
+  async function confirmarInscripcion(evento: SubmitEvent) {
     evento.preventDefault();
     if (!inscripcion) return;
     setError(null);
@@ -339,7 +339,7 @@ function FormularioConfirmacion({
   inscripcion: InscripcionMfa;
   codigo: string;
   onCambioCodigo: (v: string) => void;
-  onEnviar: (e: FormEvent) => void;
+  onEnviar: (e: SubmitEvent) => void;
   onCancelar: () => void;
   error: string | null;
   enviando: boolean;
