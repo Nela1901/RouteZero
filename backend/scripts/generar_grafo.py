@@ -9,13 +9,12 @@ archivo y no llama a ningún servicio externo.
 
 Uso (desde `backend/`):
     python scripts/generar_grafo.py                       # descarga y genera el archivo
-    python scripts/generar_grafo.py --entrada osm.json    # reconstruye desde una descarga guardada
-    python scripts/generar_grafo.py --guardar-descarga osm.json
+
+El script no recibe rutas ni opciones por la línea de comandos: la ubicación del archivo de salida es fija.
 
 Datos © OpenStreetMap contributors (licencia ODbL).
 """
 
-import argparse
 import json
 import math
 import sys
@@ -48,22 +47,7 @@ VELOCIDAD_KMH = {
 SERVICIOS_EXCLUIDOS = {"driveway", "parking_aisle", "drive-through", "emergency_access"}
 
 RAIZ = Path(__file__).resolve().parents[1]
-SALIDA_POR_DEFECTO = RAIZ / "data" / "huancayo_grafo.npz"
-
-
-def _ruta_en_backend(sufijo: str):
-    """Valida una ruta recibida por la línea de comandos: debe quedar dentro de `backend/` (sin salirse con `..`
-    ni con rutas absolutas ajenas) y terminar en la extensión esperada. Devuelve la ruta ya resuelta."""
-
-    def validar(texto: str) -> Path:
-        ruta = (Path.cwd() / texto).resolve()
-        if not ruta.is_relative_to(RAIZ):
-            raise argparse.ArgumentTypeError(f"la ruta debe estar dentro de {RAIZ}")
-        if ruta.suffix.lower() != sufijo:
-            raise argparse.ArgumentTypeError(f"el archivo debe terminar en {sufijo}")
-        return ruta
-
-    return validar
+SALIDA = RAIZ / "data" / "huancayo_grafo.npz"
 
 
 def consulta_overpass() -> str:
@@ -175,34 +159,20 @@ def construir(datos: dict) -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--entrada", type=_ruta_en_backend(".json"), help="JSON de Overpass ya descargado (evita la descarga)")
-    parser.add_argument("--guardar-descarga", type=_ruta_en_backend(".json"), help="guarda aquí el JSON descargado")
-    parser.add_argument("--salida", type=_ruta_en_backend(".npz"), default=SALIDA_POR_DEFECTO)
-    args = parser.parse_args()
-
-    if args.entrada:
-        datos = json.loads(args.entrada.read_text(encoding="utf-8"))
-        print(f"Leído {args.entrada}")
-    else:
-        print("Descargando de Overpass (puede tardar unos segundos)…")
-        datos = descargar()
-        if args.guardar_descarga:
-            args.guardar_descarga.write_text(json.dumps(datos), encoding="utf-8")
-
-    grafo = construir(datos)
+    print("Descargando de Overpass (puede tardar unos segundos)…")
+    grafo = construir(descargar())
     meta = json.dumps(
         {"fuente": "OpenStreetMap contributors (ODbL)", "caja": CAJA, "generado": date.today().isoformat()},
         ensure_ascii=False,
     )
-    args.salida.parent.mkdir(parents=True, exist_ok=True)
+    SALIDA.parent.mkdir(parents=True, exist_ok=True)
     descartados = grafo.pop("descartados")
-    np.savez_compressed(args.salida, meta=np.array(meta), **grafo)
+    np.savez_compressed(SALIDA, meta=np.array(meta), **grafo)
 
     n, m = len(grafo["coords"]), len(grafo["u"])
     print(f"Grafo: {n} nodos y {m} tramos dirigidos ({descartados} nodos aislados descartados)")
     print(f"Calles con nombre: {len(grafo['nombres']) - 1}")
-    print(f"Guardado en {args.salida} ({args.salida.stat().st_size / 1e6:.2f} MB)")
+    print(f"Guardado en {SALIDA} ({SALIDA.stat().st_size / 1e6:.2f} MB)")
 
 
 if __name__ == "__main__":
