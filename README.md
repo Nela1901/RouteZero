@@ -351,14 +351,14 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Revisión del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
 
-#### Sprint 2 — Personas y Algoritmo ACO (en curso)
+#### Sprint 2 — Personas y Algoritmo ACO (completado)
 
 | Documento | Ubicación |
 |---|---|
 | Sprint 2: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 2/01 Sprint 2 Plan de ejecución y estado V_1_8_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_8_0.md) |
 | Implementación del motor de rutas | [`docs/03 Ejecución/Sprint 2/02 Implementación del motor de rutas V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/02%20Implementaci%C3%B3n%20del%20motor%20de%20rutas%20V_1_4_0.md) |
 
-**Seguimiento del Sprint 2** (`docs/03 Ejecución/Sprint 2/Implementación/`; revisión y retrospectiva se completan al cierre):
+**Seguimiento del Sprint 2** (`docs/03 Ejecución/Sprint 2/Implementación/`):
 
 | Documento | Ubicación |
 |---|---|
@@ -390,7 +390,7 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Evaluación de seguridad (OWASP Top 10 2025) | [`docs/03 Ejecución/Sprint 3/Implementación/06 Evaluación de seguridad OWASP V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_0_0.md) |
 | Evaluación de accesibilidad (WCAG 2.2) | [`docs/03 Ejecución/Sprint 3/Implementación/07 Evaluación de accesibilidad WCAG V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md) |
 
-#### Sprint 4 — Sostenibilidad y Cierre (en curso)
+#### Sprint 4 — Sostenibilidad y Cierre (completado)
 
 | Documento | Ubicación |
 |---|---|
