@@ -40,6 +40,9 @@ async def cabeceras_de_seguridad(request: Request, call_next):
     respuesta.headers.setdefault("Referrer-Policy", "no-referrer")
     if request.url.path.startswith("/api/"):
         respuesta.headers.setdefault("Cache-Control", "no-store")
+        # Deja que el navegador informe a nuestro frontend (y solo a él) el tamaño de las respuestas de la API; sin esta
+        # cabecera lo reporta como 0 por ser de otro dominio. Sirve para la huella digital de la sesión (SWDM v4).
+        respuesta.headers.setdefault("Timing-Allow-Origin", settings.frontend_origin)
     return respuesta
 
 
