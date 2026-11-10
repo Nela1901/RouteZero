@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useConfirm } from "../context/ConfirmContext";
 import { BotonTema } from "../components/BotonTema";
+import { PastillaCo2 } from "../components/PastillaCo2";
 
 // `roles` ausente = visible para todo rol de operaciones. Flota y Conductores son solo de ADMINISTRADOR (el API
 // responde 403 al OPERADOR), así que no se le muestra una sección vacía.
@@ -254,30 +255,7 @@ export function OperacionesLayout() {
 
           <div style={{ flexGrow: 1 }} />
 
-          <output
-            aria-label="CO2 evitado hoy"
-            className="rz-pastilla-co2"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              padding: "10px 18px",
-              borderRadius: 999,
-              background: "var(--rz-accent-soft-bg)",
-              border: "1px solid var(--rz-accent-soft-border)",
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rz-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 3 17 3s.5 3.5 2 6c1.6 2.7 1.5 6-1 8-1 1-2.5 1-3.5 1" />
-              <path d="M2 21c0-3.5 2.5-6 5-6" />
-            </svg>
-            <span style={{ fontFamily: "var(--rz-font-mono)", fontWeight: 600, fontSize: 15, color: "var(--rz-accent)" }}>
-              — kg CO₂
-            </span>
-            <span className="rz-pastilla-co2-texto" style={{ fontSize: 12.5, color: "var(--rz-text-muted)" }}>
-              evitados hoy
-            </span>
-          </output>
+          {usuario?.rolNombre === "ADMINISTRADOR" && <PastillaCo2 />}
 
           <BotonTema />
          </div>

@@ -23,6 +23,14 @@ def test_toda_respuesta_lleva_las_cabeceras_de_seguridad(client):
         assert r.headers["cache-control"] == "no-store"
 
 
+def test_la_api_deja_medir_el_tamano_de_sus_respuestas_solo_al_frontend(client):
+    """Timing-Allow-Origin con el origen exacto del frontend, nunca «*»: así el navegador informa cuántos bytes pesa cada
+    respuesta (huella digital de la sesión) sin exponer esa medición a otros sitios."""
+    r = client.get("/api/health")
+    assert r.headers["timing-allow-origin"] == settings.frontend_origin
+    assert r.headers["timing-allow-origin"] != "*"
+
+
 @pytest.mark.parametrize("metodo", ["GET", "POST", "PUT", "PATCH", "DELETE"])
 def test_cors_permite_los_metodos_que_usa_el_frontend(client, metodo):
     """Sin PATCH el navegador rechazaba el permiso previo de registrar una entrega (HU-014) y la acción fallaba en producción."""
