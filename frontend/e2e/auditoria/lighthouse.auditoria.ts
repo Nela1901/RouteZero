@@ -30,8 +30,17 @@ for (const pantalla of PANTALLAS) {
         const lhr = resultado!.lhr;
         const puntajes: Record<string, number> = {};
         for (const c of CATEGORIAS) puntajes[c] = Math.round((lhr.categories[c].score ?? 0) * 100);
+        // Métricas de rendimiento y peso (reducción del impacto ambiental, Green IT): comparan antes y después de una optimización
+        const ms = (id: string) => Math.round(lhr.audits[id].numericValue ?? 0);
+        puntajes.fcp_ms = ms("first-contentful-paint");
+        puntajes.lcp_ms = ms("largest-contentful-paint");
+        puntajes.tbt_ms = ms("total-blocking-time");
+        puntajes.cls = Number((lhr.audits["cumulative-layout-shift"].numericValue ?? 0).toFixed(3));
+        puntajes.si_ms = ms("speed-index");
+        puntajes.peso_kb = Math.round((lhr.audits["total-byte-weight"].numericValue ?? 0) / 1024);
+        puntajes.peticiones = (lhr.audits["network-requests"].details as { items?: unknown[] } | undefined)?.items?.length ?? 0;
         resultados[`${pantalla.nombre} (${factor})`] = puntajes;
-        console.log(`Lighthouse ${pantalla.nombre} (${factor}): rendimiento ${puntajes.performance}, accesibilidad ${puntajes.accessibility}, buenas prácticas ${puntajes["best-practices"]}, SEO ${puntajes.seo}`);
+        console.log(`Lighthouse ${pantalla.nombre} (${factor}): rendimiento ${puntajes.performance}, accesibilidad ${puntajes.accessibility}, buenas prácticas ${puntajes["best-practices"]}, SEO ${puntajes.seo} | FCP ${puntajes.fcp_ms} ms, LCP ${puntajes.lcp_ms} ms, TBT ${puntajes.tbt_ms} ms, CLS ${puntajes.cls}, SI ${puntajes.si_ms} ms, peso ${puntajes.peso_kb} KB, ${puntajes.peticiones} peticiones`);
 
         // Qué falló, para corregirlo
         for (const c of ["accessibility", "best-practices", "seo"] as const) {
