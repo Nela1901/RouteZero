@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { SostenibilidadPage, type Compensacion, type Dashboard } from "./SostenibilidadPage";
 
@@ -26,8 +26,8 @@ const conDatos: Dashboard = {
   },
   entregas: { entregadas: 8, pendientes: 3, fallidas: 1 },
   por_dia: [
-    { fecha: "2026-10-20", emision_co2_kg: 10.2, distancia_km: 40, combustible_ahorrado_l: 1 },
-    { fecha: "2026-10-21", emision_co2_kg: 18.2, distancia_km: 80.5, combustible_ahorrado_l: 1.5 },
+    { fecha: "2026-10-20", rutas: 1, emision_co2_kg: 10.2, distancia_km: 40, combustible_ahorrado_l: 1, entregadas: 3, fallidas: 0 },
+    { fecha: "2026-10-21", rutas: 2, emision_co2_kg: 18.2, distancia_km: 80.5, combustible_ahorrado_l: 1.5, entregadas: 5, fallidas: 1 },
   ],
   precio_combustible_soles_l: 4.5,
 };
@@ -80,14 +80,17 @@ describe("SostenibilidadPage", () => {
     render(<SostenibilidadPage />);
 
     expect(await screen.findByText("Distancia recorrida")).toBeInTheDocument();
-    expect(screen.getByText("120.5")).toBeInTheDocument();
-    expect(screen.getByText("28.4")).toBeInTheDocument();
-    expect(screen.getByText("2.5")).toBeInTheDocument();
+    // Los totales también aparecen en la última fila del historial: cada indicador se busca dentro de su tarjeta
+    const tarjeta = (etiqueta: string) => within(screen.getByText(etiqueta).parentElement as HTMLElement);
+    expect(tarjeta("Distancia recorrida").getByText("120.5")).toBeInTheDocument();
+    expect(tarjeta("Emisiones de CO₂").getByText("28.4")).toBeInTheDocument();
+    expect(tarjeta("Combustible ahorrado").getByText("2.5")).toBeInTheDocument();
     expect(screen.getByText("96.7")).toBeInTheDocument();
     expect(screen.getByText("S/ 11.25")).toBeInTheDocument();
     expect(screen.getByText("Rutas del periodo").nextElementSibling).toHaveTextContent("3");
     expect(screen.getByText("Entregas realizadas").nextElementSibling).toHaveTextContent("8");
-    expect(screen.getByText("10.2 kg")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Emisiones de CO₂ por día" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /2 días con jornadas, 28\.4 kg en total, promedio de 14\.2 kg por día y máximo de 18\.2 kg/ })).toBeInTheDocument();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(vi.mocked(api.get).mock.calls[0][0]).toMatch(/^\/api\/sostenibilidad\/dashboard\?desde=\d{4}-\d{2}-01&hasta=\d{4}-\d{2}-\d{2}$/);
   });
@@ -174,5 +177,84 @@ describe("SostenibilidadPage", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Error interno");
     expect(screen.queryByText("Distancia recorrida")).not.toBeInTheDocument();
+  });
+
+  describe("historial, proyección y comparación de periodos", () => {
+    const dia = (n: number, kg: number) => ({
+      fecha: `2026-11-${String(n).padStart(2, "0")}`, rutas: 4, emision_co2_kg: kg, distancia_km: 60, combustible_ahorrado_l: 2, entregadas: 30, fallidas: 2,
+    });
+    const delMes = (porDia: Dashboard["por_dia"], desde = "2026-11-01", hasta = "2026-11-10"): Dashboard => ({ ...conDatos, desde, hasta, por_dia: porDia });
+
+    it("el historial lista cada día, el más reciente primero, con sus rutas, su CO₂ y sus entregas, y el total", async () => {
+      responder(conDatos, plan);
+      render(<SostenibilidadPage />);
+
+      const tabla = await screen.findByRole("table");
+      const filas = within(tabla).getAllByRole("row");
+      // encabezado + 2 días + total
+      expect(filas).toHaveLength(4);
+      expect(within(filas[1]).getByText(/21 oct/)).toBeInTheDocument();
+      expect(within(filas[1]).getAllByRole("cell").map((c) => c.textContent)).toEqual(["2", "80.5", "18.2", "1.5", "5 / 1"]);
+      expect(within(filas[3]).getAllByRole("cell").map((c) => c.textContent)).toEqual(["3", "120.5", "28.4", "2.5", "8 / 1"]);
+    });
+
+    it("con más de 10 días muestra los últimos 10 y permite ver todos", async () => {
+      const doce = Array.from({ length: 12 }, (_, i) => dia(i + 1, 20));
+      responder(delMes(doce), plan);
+      render(<SostenibilidadPage />);
+
+      const tabla = await screen.findByRole("table");
+      expect(within(tabla).getAllByRole("row")).toHaveLength(1 + 10 + 1);
+      await userEvent.click(screen.getByRole("button", { name: "Ver los 12 días" }));
+      expect(within(tabla).getAllByRole("row")).toHaveLength(1 + 12 + 1);
+      expect(screen.getByRole("button", { name: "Mostrar solo los últimos 10" })).toBeInTheDocument();
+    });
+
+    it("proyecta el cierre del mes y avisa si superaría la meta", async () => {
+      // 10 días con 100 kg cada uno = 1000 kg; 1000 / 10 × 30 = 3000 kg contra una meta de 800
+      responder(delMes(Array.from({ length: 10 }, (_, i) => dia(i + 1, 100))), plan);
+      render(<SostenibilidadPage />);
+
+      const seccion = await screen.findByRole("region", { name: /Proyección de cierre del mes/ });
+      expect(within(seccion).getByText(/cerraría en unos 3,000 kg de CO₂, el 375 % de la meta de 800 kg/)).toBeInTheDocument();
+      expect(within(seccion).getByText("Supera la meta")).toBeInTheDocument();
+    });
+
+    it("si el ritmo queda por debajo de la meta lo dice", async () => {
+      responder(delMes([dia(3, 20), dia(4, 20)]), plan);
+      render(<SostenibilidadPage />);
+
+      const seccion = await screen.findByRole("region", { name: /Proyección de cierre del mes/ });
+      expect(within(seccion).getByText("Dentro de la meta")).toBeInTheDocument();
+    });
+
+    it("un mes completo no se proyecta: informa en cuánto cerró", async () => {
+      responder(delMes([dia(5, 600)], "2026-10-01", "2026-10-31"), plan);
+      render(<SostenibilidadPage />);
+
+      const seccion = await screen.findByRole("region", { name: /Proyección de cierre del mes/ });
+      expect(within(seccion).getByText(/El mes cerró en 600 kg de CO₂, el 75 % de la meta de 800 kg/)).toBeInTheDocument();
+    });
+
+    it("sin un mes desde el día 1 no hay proyección, pero sí el historial", async () => {
+      responder(delMes([dia(8, 50)], "2026-11-05", "2026-11-10"), plan);
+      render(<SostenibilidadPage />);
+
+      await screen.findByRole("table");
+      expect(screen.queryByRole("region", { name: /Proyección de cierre del mes/ })).not.toBeInTheDocument();
+    });
+
+    it("«Mes anterior» consulta el mes calendario anterior completo", async () => {
+      responder(conDatos, plan);
+      render(<SostenibilidadPage />);
+      await screen.findByText("Distancia recorrida");
+
+      await userEvent.click(screen.getByRole("button", { name: "Mes anterior" }));
+      await waitFor(() => expect(api.get).toHaveBeenCalledTimes(4));
+      const ultima = vi.mocked(api.get).mock.calls[2][0] as string;
+      expect(ultima).toMatch(/desde=\d{4}-\d{2}-01&hasta=\d{4}-\d{2}-(28|29|30|31)$/);
+      const [desde, hasta] = /desde=([\d-]+)&hasta=([\d-]+)/.exec(ultima)!.slice(1);
+      expect(desde.slice(0, 7)).toBe(hasta.slice(0, 7)); // el periodo es un solo mes
+    });
   });
 });

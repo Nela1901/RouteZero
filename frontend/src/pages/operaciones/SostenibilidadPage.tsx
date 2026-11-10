@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, mensajeDeError } from "../../api/client";
+import { GraficoEmisionesPorDia, GraficoProyeccionDelMes, HistorialPorDia, type DiaSostenibilidad } from "../../components/GraficosSostenibilidad";
+import { proyeccionDelMes } from "../../components/proyeccionMes";
 import { TarjetaHuellaDigital } from "../../components/TarjetaHuellaDigital";
 import { Ayuda, estiloAviso, estiloBotonPrimario, estiloInput, FiltroChip } from "../../components/ui";
 
@@ -11,13 +13,6 @@ interface Totales {
   combustible_ahorrado_l: number;
   ahorro_soles: number;
   cumplimiento_ventanas_pct: number;
-}
-
-interface DiaSostenibilidad {
-  fecha: string;
-  emision_co2_kg: number;
-  distancia_km: number;
-  combustible_ahorrado_l: number;
 }
 
 export interface Dashboard {
@@ -50,12 +45,10 @@ function aTexto(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function fechaLegible(texto: string): string {
-  return new Date(`${texto}T00:00:00`).toLocaleDateString("es-PE", { day: "2-digit", month: "short" });
-}
-
 const hoy = () => aTexto(new Date());
 const inicioDeMes = () => aTexto(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+const inicioDeMesAnterior = () => aTexto(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1));
+const finDeMesAnterior = () => aTexto(new Date(new Date().getFullYear(), new Date().getMonth(), 0));
 const haceDias = (n: number) => {
   const d = new Date();
   d.setDate(d.getDate() - n);
@@ -66,6 +59,7 @@ const ATAJOS = [
   { id: "hoy", etiqueta: "Hoy", rango: () => [hoy(), hoy()] },
   { id: "semana", etiqueta: "Últimos 7 días", rango: () => [haceDias(6), hoy()] },
   { id: "mes", etiqueta: "Este mes", rango: () => [inicioDeMes(), hoy()] },
+  { id: "mesAnterior", etiqueta: "Mes anterior", rango: () => [inicioDeMesAnterior(), finDeMesAnterior()] },
 ] as const;
 
 function Indicador({ etiqueta, valor, unidad, ayuda }: Readonly<{ etiqueta: string; valor: string; unidad: string; ayuda: string }>) {
@@ -91,33 +85,6 @@ function Indicador({ etiqueta, valor, unidad, ayuda }: Readonly<{ etiqueta: stri
         <span style={{ fontSize: 13, fontWeight: 500, color: "var(--rz-text-muted)", marginLeft: 6 }}>{unidad}</span>
       </span>
     </div>
-  );
-}
-
-function GraficoPorDia({ dias }: Readonly<{ dias: DiaSostenibilidad[] }>) {
-  const maximo = Math.max(...dias.map((d) => d.emision_co2_kg), 0.001);
-  return (
-    <section
-      aria-labelledby="sost-por-dia"
-      style={{ background: "var(--rz-panel-bg)", border: "1px solid var(--rz-panel-border)", borderRadius: 14, padding: "16px 18px" }}
-    >
-      <h2 id="sost-por-dia" style={{ fontFamily: "var(--rz-font-display)", fontSize: 15, margin: "0 0 12px" }}>
-        Emisiones de CO₂ por día
-      </h2>
-      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-        {dias.map((d) => (
-          <li key={d.fecha} style={{ display: "grid", gridTemplateColumns: "56px 1fr 72px", alignItems: "center", gap: 10, fontSize: 12.5 }}>
-            <span style={{ color: "var(--rz-text-muted)" }}>{fechaLegible(d.fecha)}</span>
-            <span aria-hidden="true" style={{ background: "var(--rz-bg)", borderRadius: 6, height: 12, overflow: "hidden" }}>
-              <span
-                style={{ display: "block", height: "100%", width: `${(d.emision_co2_kg / maximo) * 100}%`, background: "var(--rz-accent)", borderRadius: 6 }}
-              />
-            </span>
-            <span style={{ textAlign: "right", fontFamily: "var(--rz-font-mono)" }}>{numero(d.emision_co2_kg)} kg</span>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }
 
@@ -253,6 +220,8 @@ export function SostenibilidadPage() {
   }
 
   const t = datos?.totales;
+  // La proyección solo tiene sentido para «el mes desde el día 1 hasta hoy» (o un mes completo)
+  const proyeccion = datos && datos.por_dia.length > 0 ? proyeccionDelMes(datos.por_dia, datos.desde, datos.hasta) : null;
   return (
     <div style={{ padding: 28, display: "flex", flexDirection: "column", gap: 20, maxWidth: 1440 }}>
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
@@ -366,9 +335,11 @@ export function SostenibilidadPage() {
                 <dd style={{ margin: 0, fontFamily: "var(--rz-font-mono)" }}>{numero(t.combustible_l)} L</dd>
               </dl>
             </section>
-            {datos.por_dia.length > 0 && <GraficoPorDia dias={datos.por_dia} />}
+            {datos.por_dia.length > 0 && <GraficoEmisionesPorDia dias={datos.por_dia} desde={datos.desde} hasta={datos.hasta} />}
           </div>
+          {plan && proyeccion && <GraficoProyeccionDelMes proyeccion={proyeccion} metaKg={plan.mes_evaluado.meta_kg} />}
           {plan && <PlanCompensacion plan={plan} />}
+          {datos.por_dia.length > 0 && <HistorialPorDia dias={datos.por_dia} />}
         </>
       )}
       <TarjetaHuellaDigital />
