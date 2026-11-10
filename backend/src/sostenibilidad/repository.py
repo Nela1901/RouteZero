@@ -31,11 +31,18 @@ class RepositorioSostenibilidad:
         return dict(fila)
 
     def por_dia(self, desde: date, hasta: date) -> list[dict]:
+        """Una fila por jornada con sus totales y cuántas paradas se entregaron o fallaron (sin contar los pedidos
+        cancelados, igual que `entregas`). El historial del dashboard se arma con estas filas."""
         filas = self.session.execute(
             text(
-                "SELECT r.fecha_jornada AS fecha, SUM(m.emision_co2_kg) AS emision_co2_kg, "
-                "SUM(m.distancia_optimizada_km) AS distancia_km, SUM(m.combustible_ahorrado_l) AS combustible_ahorrado_l "
+                "SELECT r.fecha_jornada AS fecha, COUNT(*) AS rutas, SUM(m.emision_co2_kg) AS emision_co2_kg, "
+                "SUM(m.distancia_optimizada_km) AS distancia_km, SUM(m.combustible_ahorrado_l) AS combustible_ahorrado_l, "
+                "COALESCE(SUM(e.entregadas), 0) AS entregadas, COALESCE(SUM(e.fallidas), 0) AS fallidas "
                 "FROM rutas r JOIN metricas_sostenibilidad m ON m.ruta_id = r.ruta_id "
+                "JOIN LATERAL (SELECT COUNT(*) FILTER (WHERE rp.estado_entrega = 'ENTREGADO') AS entregadas, "
+                "COUNT(*) FILTER (WHERE rp.estado_entrega = 'FALLIDO') AS fallidas "
+                "FROM ruta_pedidos rp JOIN pedidos pe ON pe.pedido_id = rp.pedido_id "
+                "WHERE rp.ruta_id = r.ruta_id AND pe.estado <> 'CANCELADO') e ON TRUE "
                 "WHERE r.estado = ANY(:estados) AND r.fecha_jornada BETWEEN :desde AND :hasta "
                 "GROUP BY r.fecha_jornada ORDER BY r.fecha_jornada"
             ),

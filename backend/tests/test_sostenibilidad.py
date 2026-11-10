@@ -97,6 +97,9 @@ def test_el_dashboard_suma_las_metricas_de_las_rutas_confirmadas(client, token_a
     assert cuerpo["entregas"] == {"entregadas": 0, "pendientes": len(datos["pedidos"]) - len(lote["sin_cobertura"]), "fallidas": 0}
     assert [d["fecha"] for d in cuerpo["por_dia"]] == [FECHA.isoformat()]
     assert cuerpo["por_dia"][0]["emision_co2_kg"] == pytest.approx(t["emision_co2_kg"], abs=0.01)
+    # Historial por día: cuántas rutas hubo y cuántas paradas se entregaron o fallaron
+    assert cuerpo["por_dia"][0]["rutas"] == len(lote["rutas"])
+    assert (cuerpo["por_dia"][0]["entregadas"], cuerpo["por_dia"][0]["fallidas"]) == (0, 0)
 
 
 def test_las_entregas_registradas_y_los_pedidos_cancelados_se_reflejan(client, token_admin, datos):
@@ -110,8 +113,10 @@ def test_las_entregas_registradas_y_los_pedidos_cancelados_se_reflejan(client, t
     admin_db("UPDATE ruta_pedidos SET estado_entrega = 'ENTREGADO' WHERE ruta_pedido_id = %s", (entregado[0],))
     admin_db("UPDATE ruta_pedidos SET estado_entrega = 'FALLIDO' WHERE ruta_pedido_id = %s", (fallido[0],))
     admin_db("UPDATE pedidos SET estado = 'CANCELADO' WHERE pedido_id = %s", (cancelado[1],))
-    e = dashboard(client, token_admin, FECHA).json()["entregas"]
-    assert e == {"entregadas": 1, "fallidas": 1, "pendientes": len(paradas) - 3}
+    cuerpo = dashboard(client, token_admin, FECHA).json()
+    assert cuerpo["entregas"] == {"entregadas": 1, "fallidas": 1, "pendientes": len(paradas) - 3}
+    # El historial por día cuenta lo mismo: el pedido cancelado en ruta no suma ni como entregado ni como fallido
+    assert (cuerpo["por_dia"][0]["entregadas"], cuerpo["por_dia"][0]["fallidas"]) == (1, 1)
 
 
 def test_solo_el_administrador_ve_el_dashboard(client, token_admin):

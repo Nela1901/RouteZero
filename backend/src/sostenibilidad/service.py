@@ -76,8 +76,9 @@ class ServicioSostenibilidad:
                 "fallidas": entregas.get("FALLIDO", 0),
             },
             "por_dia": [
-                {"fecha": d["fecha"], "emision_co2_kg": float(d["emision_co2_kg"]), "distancia_km": float(d["distancia_km"]),
-                 "combustible_ahorrado_l": float(d["combustible_ahorrado_l"])}
+                {"fecha": d["fecha"], "rutas": int(d["rutas"]), "emision_co2_kg": float(d["emision_co2_kg"]),
+                 "distancia_km": float(d["distancia_km"]), "combustible_ahorrado_l": float(d["combustible_ahorrado_l"]),
+                 "entregadas": int(d["entregadas"]), "fallidas": int(d["fallidas"])}
                 for d in self.repo.por_dia(desde, hasta)
             ],
             "precio_combustible_soles_l": self.config.precio_combustible_soles_l,

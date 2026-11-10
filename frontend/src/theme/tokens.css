@@ -142,6 +142,16 @@ a {
   text-overflow: ellipsis;
 }
 
+/* Cáscara del index.html: igual que PantallaCargando de App.tsx, para que React la reemplace sin que nada se mueva */
+.rz-cascara {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rz-bg);
+  color: var(--rz-text-muted);
+}
+
 .rz-pastilla-co2 {
   flex-shrink: 0;
   white-space: nowrap;

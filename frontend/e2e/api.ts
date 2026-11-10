@@ -126,8 +126,8 @@ export function dashboardSostenibilidad(hayDatos = true, desde = "2026-10-01", h
     entregas: hayDatos ? { entregadas: 8, pendientes: 3, fallidas: 1 } : { entregadas: 0, pendientes: 0, fallidas: 0 },
     por_dia: hayDatos
       ? [
-          { fecha: "2026-10-20", emision_co2_kg: 10.2, distancia_km: 40, combustible_ahorrado_l: 1 },
-          { fecha: "2026-10-21", emision_co2_kg: 18.2, distancia_km: 80.5, combustible_ahorrado_l: 1.5 },
+          { fecha: "2026-10-20", rutas: 1, emision_co2_kg: 10.2, distancia_km: 40, combustible_ahorrado_l: 1, entregadas: 3, fallidas: 0 },
+          { fecha: "2026-10-21", rutas: 2, emision_co2_kg: 18.2, distancia_km: 80.5, combustible_ahorrado_l: 1.5, entregadas: 5, fallidas: 1 },
         ]
       : [],
     precio_combustible_soles_l: 4.5,

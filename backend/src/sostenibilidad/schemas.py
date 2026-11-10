@@ -21,9 +21,12 @@ class Entregas(BaseModel):
 
 class DiaSostenibilidad(BaseModel):
     fecha: date
+    rutas: int
     emision_co2_kg: float
     distancia_km: float
     combustible_ahorrado_l: float
+    entregadas: int
+    fallidas: int
 
 
 class DashboardOut(BaseModel):

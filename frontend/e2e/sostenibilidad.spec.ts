@@ -46,6 +46,28 @@ test.describe("Dashboard de sostenibilidad (HU-015) y plan de compensación (HU-
     expect(api.noSimuladas).toEqual([]);
   });
 
+  test("muestra el historial por día, la proyección de cierre del mes frente a la meta y el atajo «Mes anterior»", async ({ page }) => {
+    const api = await simularApi(page, { rol: "ADMINISTRADOR" });
+    await conSesion(page, "ADMINISTRADOR");
+    await page.goto("/app/sostenibilidad");
+
+    // El periodo de prueba es octubre desde el día 1: hay proyección y se compara con la meta de 800 kg
+    const proyeccion = page.getByRole("region", { name: /Proyección de cierre del mes/ });
+    await expect(proyeccion).toBeVisible();
+    await expect(proyeccion.getByText(/de la meta de 800 kg/)).toBeVisible();
+    await expect(proyeccion.getByText(/Dentro de la meta|Supera la meta/)).toBeVisible();
+    await expect(page.getByRole("img", { name: /Emisiones por día: 2 días con jornadas/ })).toBeVisible();
+
+    const historial = page.getByRole("region", { name: /Historial por día/ });
+    await expect(historial.getByRole("row")).toHaveCount(4); // encabezado, 2 días y el total
+    await expect(historial.getByRole("row").nth(1)).toContainText("5 / 1"); // 21-oct: 5 entregadas y 1 fallida
+
+    await page.getByRole("button", { name: "Mes anterior" }).click();
+    await expect.poll(() => consultasDelDashboard(api).length).toBe(3);
+    expect(consultasDelDashboard(api).at(-1)!.ruta).toMatch(/desde=\d{4}-\d{2}-01&hasta=\d{4}-\d{2}-(28|29|30|31)$/);
+    expect(api.noSimuladas).toEqual([]);
+  });
+
   test("elegir «Hoy» vuelve a consultar solo ese día", async ({ page }) => {
     const api = await simularApi(page, { rol: "ADMINISTRADOR" });
     await conSesion(page, "ADMINISTRADOR");
