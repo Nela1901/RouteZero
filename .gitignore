@@ -240,3 +240,6 @@ frontend/coverage/
 
 # Archivos temporales de SonarScanner
 .scannerwork/
+
+# SQL para el SQL Editor de Supabase que solo se usa en este equipo (datos de ejemplo, consultas sueltas): no se sube
+backend/scripts/sql_editor/
