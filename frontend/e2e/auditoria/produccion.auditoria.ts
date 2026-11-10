@@ -61,9 +61,18 @@ for (const pantalla of PANTALLAS) {
         const p: Record<string, number> = {};
         for (const c of CATEGORIAS) p[c] = Math.round((lhr.categories[c].score ?? 0) * 100);
         const ms = (id: string) => Math.round(lhr.audits[id].numericValue ?? 0);
-        const metricas = { fcp_ms: ms("first-contentful-paint"), lcp_ms: ms("largest-contentful-paint"), tbt_ms: ms("total-blocking-time"), cls: Number((lhr.audits["cumulative-layout-shift"].numericValue ?? 0).toFixed(3)) };
+        const peticiones = (lhr.audits["network-requests"].details as { items?: unknown[] } | undefined)?.items?.length ?? 0;
+        const metricas = {
+          fcp_ms: ms("first-contentful-paint"),
+          lcp_ms: ms("largest-contentful-paint"),
+          tbt_ms: ms("total-blocking-time"),
+          cls: Number((lhr.audits["cumulative-layout-shift"].numericValue ?? 0).toFixed(3)),
+          si_ms: ms("speed-index"),
+          peso_kb: Math.round((lhr.audits["total-byte-weight"].numericValue ?? 0) / 1024),
+          peticiones,
+        };
         resultados[`${pantalla.nombre} (${factor})`] = { ...p, ...metricas };
-        console.log(`Producción ${pantalla.nombre} (${factor}): rendimiento ${p.performance}, accesibilidad ${p.accessibility}, buenas prácticas ${p["best-practices"]}, SEO ${p.seo} | FCP ${metricas.fcp_ms} ms, LCP ${metricas.lcp_ms} ms, TBT ${metricas.tbt_ms} ms, CLS ${metricas.cls}`);
+        console.log(`Producción ${pantalla.nombre} (${factor}): rendimiento ${p.performance}, accesibilidad ${p.accessibility}, buenas prácticas ${p["best-practices"]}, SEO ${p.seo} | FCP ${metricas.fcp_ms} ms, LCP ${metricas.lcp_ms} ms, TBT ${metricas.tbt_ms} ms, CLS ${metricas.cls}, SI ${metricas.si_ms} ms, peso ${metricas.peso_kb} KB, ${metricas.peticiones} peticiones`);
         for (const c of ["performance", "accessibility", "best-practices", "seo"] as const) {
           for (const ref of lhr.categories[c].auditRefs) {
             const a = lhr.audits[ref.id];

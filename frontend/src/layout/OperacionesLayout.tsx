@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useConfirm } from "../context/ConfirmContext";
@@ -284,7 +284,10 @@ export function OperacionesLayout() {
         </header>
 
         <main id="contenido" tabIndex={-1} style={{ flexGrow: 1, minHeight: 0, overflow: "auto" }}>
-          <Outlet />
+          {/* El menú y el encabezado se quedan mientras se descarga el trozo de código de la pantalla (carga diferida en App.tsx) */}
+          <Suspense fallback={<p role="status" style={{ margin: 0, padding: 24, color: "var(--rz-text-muted)" }}>Cargando…</p>}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

@@ -1,0 +1,80 @@
+{
+  "Mapa (móvil)": {
+    "performance": 96,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100,
+    "fcp_ms": 2296,
+    "lcp_ms": 2296,
+    "tbt_ms": 6,
+    "cls": 0,
+    "si_ms": 2296,
+    "peso_kb": 218,
+    "peticiones": 7
+  },
+  "Mapa (escritorio)": {
+    "performance": 98,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100,
+    "fcp_ms": 713,
+    "lcp_ms": 1004,
+    "tbt_ms": 0,
+    "cls": 0.001,
+    "si_ms": 792,
+    "peso_kb": 248,
+    "peticiones": 8
+  },
+  "Rutas (móvil)": {
+    "performance": 96,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100,
+    "fcp_ms": 2237,
+    "lcp_ms": 2256,
+    "tbt_ms": 0,
+    "cls": 0,
+    "si_ms": 2255,
+    "peso_kb": 218,
+    "peticiones": 7
+  },
+  "Rutas (escritorio)": {
+    "performance": 99,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100,
+    "fcp_ms": 696,
+    "lcp_ms": 696,
+    "tbt_ms": 0,
+    "cls": 0.001,
+    "si_ms": 760,
+    "peso_kb": 248,
+    "peticiones": 8
+  },
+  "Conductor (móvil)": {
+    "performance": 96,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100,
+    "fcp_ms": 2304,
+    "lcp_ms": 2304,
+    "tbt_ms": 0,
+    "cls": 0,
+    "si_ms": 2304,
+    "peso_kb": 218,
+    "peticiones": 7
+  },
+  "Conductor (escritorio)": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100,
+    "fcp_ms": 682,
+    "lcp_ms": 682,
+    "tbt_ms": 0,
+    "cls": 0.001,
+    "si_ms": 726,
+    "peso_kb": 248,
+    "peticiones": 8
+  }
+}

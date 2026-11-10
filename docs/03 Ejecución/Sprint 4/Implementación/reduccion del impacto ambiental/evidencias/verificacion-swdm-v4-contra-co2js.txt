@@ -1,0 +1,8 @@
+Carga de 140 KB: calculado 0.021246 g, CO2.js 0.021246 g -> coincide
+Carga de 171 KB: calculado 0.025950 g, CO2.js 0.025950 g -> coincide
+Carga de 213 KB: calculado 0.032324 g, CO2.js 0.032324 g -> coincide
+Carga de 244 KB: calculado 0.037029 g, CO2.js 0.037029 g -> coincide
+Visita ANTES (220.75 KB): calculado 0.025293 g, CO2.js 0.025293 g -> coincide
+Visita DESPUÉS (147.75 KB): calculado 0.016929 g, CO2.js 0.016929 g -> coincide
+Visita ANTES, dispositivo en Perú: calculado 0.022143 g, CO2.js 0.022143 g -> coincide
+Visita DESPUÉS, dispositivo en Perú: calculado 0.014820 g, CO2.js 0.014820 g -> coincide

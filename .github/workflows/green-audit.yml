@@ -1,0 +1,76 @@
+# Auditoría Green IT: presupuesto de rendimiento y peso con Lighthouse CI (LHCI).
+# Mide la pantalla pública de la aplicación compilada (el login; el resto exige sesión y se audita con
+# `npm run auditar:produccion`) y falla el Pull Request si se supera el presupuesto, de modo que una regresión de peso
+# o de rendimiento no llegue a `main`. Los umbrales de escritorio son los de la rúbrica de reducción del impacto ambiental
+# y están en `frontend/lighthouserc.json`; los de móvil (`lighthouserc.movil.json`) solo avisan en FCP y LCP.
+# Los informes se guardan como artefacto del workflow; no se publican en ningún servicio externo.
+name: Green IT (auditoría de rendimiento)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/green-audit.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: green-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: Lighthouse CI (presupuesto de rendimiento)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - name: Peso de la aplicación compilada
+        run: |
+          {
+            echo "### Peso de la aplicación compilada"
+            echo
+            echo "| Archivo | Tamaño (KB) |"
+            echo "|---|---|"
+            find dist -type f -printf '%s %P\n' | sort -rn | awk '{ printf "| %s | %.1f |\n", $2, $1 / 1024 }'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: LHCI en escritorio (falla si se supera el presupuesto)
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.json
+      - name: LHCI en móvil (FCP y LCP solo avisan)
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.movil.json
+      - name: Resumen de las métricas
+        if: always()
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const filas = [];
+            for (const perfil of ["escritorio", "movil"]) {
+              const dir = `.lighthouseci/${perfil}`;
+              if (!fs.existsSync(dir)) continue;
+              for (const f of fs.readdirSync(dir).filter((n) => /\.report\.json$/.test(n))) {
+                const { categories: c, audits: a } = JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8"));
+                filas.push(`| ${perfil} | ${Math.round(c.performance.score * 100)} | ${Math.round(a["first-contentful-paint"].numericValue)} | ${Math.round(a["largest-contentful-paint"].numericValue)} | ${Math.round(a["total-blocking-time"].numericValue)} | ${a["cumulative-layout-shift"].numericValue.toFixed(3)} | ${Math.round(a["total-byte-weight"].numericValue / 1024)} |`);
+              }
+            }
+            const md = ["### Lighthouse CI (cada ejecución)", "", "| Perfil | Rendimiento | FCP (ms) | LCP (ms) | TBT (ms) | CLS | Peso (KB) |", "|---|---|---|---|---|---|---|", ...filas].join("\n");
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + "\n");
+          '
+      - name: Informes de Lighthouse CI
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: informes-lighthouse-ci
+          path: frontend/.lighthouseci
+          retention-days: 14
