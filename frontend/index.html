@@ -9,9 +9,21 @@
       content="RouteZero: plataforma de optimización de rutas sostenibles de reparto para Andina Reparto S.A.C. en Huancayo."
     />
     <title>RouteZero</title>
+    <script>
+      // Tema guardado antes del primer dibujo: sin este paso, quien eligió el tema claro vería un destello oscuro (el resto lo maneja ThemeContext)
+      try {
+        if (window.localStorage.getItem("routezero:tema") === "claro") document.documentElement.dataset.theme = "light";
+      } catch {
+        /* sin almacenamiento: queda el tema oscuro */
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Cáscara de la aplicación: se dibuja con el propio HTML y el CSS en línea, sin esperar al JavaScript; React la reemplaza al arrancar.
+           Es idéntica a la pantalla «Cargando…» de App.tsx para que el cambio no mueva nada. -->
+      <main class="rz-cascara">Cargando…</main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
