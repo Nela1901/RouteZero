@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, mensajeDeError } from "../../api/client";
+import { TarjetaHuellaDigital } from "../../components/TarjetaHuellaDigital";
 import { Ayuda, estiloAviso, estiloBotonPrimario, estiloInput, FiltroChip } from "../../components/ui";
 
 interface Totales {
@@ -370,6 +371,7 @@ export function SostenibilidadPage() {
           {plan && <PlanCompensacion plan={plan} />}
         </>
       )}
+      <TarjetaHuellaDigital />
     </div>
   );
 }

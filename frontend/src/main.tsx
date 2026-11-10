@@ -7,6 +7,10 @@ import { ThemeProvider } from "./theme/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
 import { ConfirmProvider } from "./context/ConfirmContext";
+import { iniciarMedicionDeTransferencia } from "./components/huellaDigital";
+
+// Suma los bytes que descarga el navegador, para la tarjeta de huella digital de Sostenibilidad
+iniciarMedicionDeTransferencia();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

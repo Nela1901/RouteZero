@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { compensacionSostenibilidad, conSesion, dashboardSostenibilidad, simularApi } from "./api";
 
+/** Consultas al dashboard: el encabezado hace una (solo hoy) al abrir el panel y la pantalla hace otra por cada periodo que elige. */
+const consultasDelDashboard = (api: { peticiones: { ruta: string }[] }) =>
+  api.peticiones.filter((p) => p.ruta.startsWith("/api/sostenibilidad/dashboard"));
+
 test.describe("Dashboard de sostenibilidad (HU-015) y plan de compensación (HU-017)", () => {
   test("el administrador ve los indicadores del mes, el plan de compensación y la alerta de la meta", async ({ page }) => {
     const api = await simularApi(page, { rol: "ADMINISTRADOR" });
@@ -19,9 +23,26 @@ test.describe("Dashboard de sostenibilidad (HU-015) y plan de compensación (HU-
     await expect(plan.getByRole("alert")).toContainText("superan la meta");
     await expect(plan.getByText(/Gobierno Regional de Junín y SERFOR/)).toBeVisible();
 
-    // Sin fechas elegidas, la pantalla pide el mes en curso hasta hoy
-    const pedido = api.peticiones.find((p) => p.ruta.startsWith("/api/sostenibilidad/dashboard"));
-    expect(pedido?.ruta).toMatch(/desde=\d{4}-\d{2}-01&hasta=\d{4}-\d{2}-\d{2}$/);
+    // Sin fechas elegidas, la pantalla pide el mes en curso hasta hoy (y el encabezado, solo hoy)
+    const pedidos = consultasDelDashboard(api).map((p) => p.ruta);
+    expect(pedidos).toHaveLength(2);
+    expect(pedidos.some((ruta) => /desde=\d{4}-\d{2}-01&hasta=\d{4}-\d{2}-\d{2}$/.test(ruta))).toBe(true);
+    expect(api.noSimuladas).toEqual([]);
+  });
+
+  test("el encabezado muestra los kg de CO₂ emitidos hoy y la tarjeta, la huella digital de la sesión (SWDM v4)", async ({ page }) => {
+    const api = await simularApi(page, { rol: "ADMINISTRADOR" });
+    await conSesion(page, "ADMINISTRADOR");
+    await page.goto("/app/sostenibilidad");
+
+    await expect(page.getByLabel(/^CO2 emitido hoy: 28\.4 kilogramos$/)).toBeVisible();
+    await expect(page.getByText("28.4 kg CO₂")).toBeVisible();
+
+    const tarjeta = page.getByRole("region", { name: /Huella digital de esta sesión/ });
+    await expect(tarjeta).toBeVisible();
+    // La tarjeta se actualiza cada 5 s: pasa de 0 a los KB que realmente descargó el navegador
+    await expect(tarjeta.getByText(/^[1-9]\d*\.\d KB$/)).toBeVisible({ timeout: 12_000 });
+    await expect(tarjeta.getByText(/^\d+\.\d mg CO₂e$/).first()).toBeVisible();
     expect(api.noSimuladas).toEqual([]);
   });
 
@@ -32,9 +53,10 @@ test.describe("Dashboard de sostenibilidad (HU-015) y plan de compensación (HU-
     await expect(page.getByText("Distancia recorrida")).toBeVisible();
 
     await page.getByRole("button", { name: "Hoy" }).click();
-    await expect.poll(() => api.peticiones.filter((p) => p.ruta.startsWith("/api/sostenibilidad/dashboard")).length).toBe(2);
-    const [, , hoy] = /desde=(\d{4}-\d{2}-\d{2})&hasta=(\d{4}-\d{2}-\d{2})/.exec(api.peticiones.filter((p) => p.ruta.startsWith("/api/sostenibilidad/dashboard"))[1].ruta)!;
-    expect(api.peticiones.filter((p) => p.ruta.startsWith("/api/sostenibilidad/dashboard"))[1].ruta).toContain(`desde=${hoy}&hasta=${hoy}`);
+    // Encabezado, mes en curso y «Hoy»
+    await expect.poll(() => consultasDelDashboard(api).length).toBe(3);
+    const [, desde, hasta] = /desde=(\d{4}-\d{2}-\d{2})&hasta=(\d{4}-\d{2}-\d{2})/.exec(consultasDelDashboard(api).at(-1)!.ruta)!;
+    expect(desde).toBe(hasta);
     expect(api.noSimuladas).toEqual([]);
   });
 
@@ -59,7 +81,7 @@ test.describe("Dashboard de sostenibilidad (HU-015) y plan de compensación (HU-
     await page.goto("/app/sostenibilidad");
     await expect(page.getByText("Distancia recorrida")).toBeVisible();
     await page.getByRole("button", { name: "Hoy" }).click();
-    await expect.poll(() => api.peticiones.filter((p) => p.ruta.startsWith("/api/sostenibilidad/dashboard")).length).toBe(2);
+    await expect.poll(() => consultasDelDashboard(api).length).toBe(3);
 
     const descarga = page.waitForEvent("download");
     await page.getByRole("button", { name: "Descargar reporte PDF" }).click();
@@ -95,6 +117,9 @@ test.describe("Dashboard de sostenibilidad (HU-015) y plan de compensación (HU-
 
     await expect(page.getByRole("navigation", { name: "Navegación principal" })).toBeVisible();
     await expect(page.getByRole("link", { name: /Sostenibilidad/ })).toHaveCount(0);
+    // La pastilla de CO₂ del encabezado es solo del administrador: el operador no la ve ni consulta el dashboard
+    await expect(page.getByLabel(/CO2 emitido hoy/)).toHaveCount(0);
+    expect(consultasDelDashboard(api)).toHaveLength(0);
     await page.goto("/app/sostenibilidad");
     await expect(page).toHaveURL(/\/app\/mapa$/);
     expect(api.noSimuladas).toEqual([]);
