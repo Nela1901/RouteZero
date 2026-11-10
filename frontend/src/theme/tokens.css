@@ -171,6 +171,27 @@ a {
   }
 }
 
+/* 3.º en pantallas de 320 px el encabezado dejaba 0 de ancho al título y la fila se pasaba del ancho de la ventana (WCAG 1.4.10):
+   se quita el ícono de la pastilla y se reduce el relleno y la separación para que quepa con cifras de hasta cuatro dígitos */
+@container encabezado (max-width: 300px) {
+  .rz-encabezado-interior {
+    padding: 0 12px !important;
+    gap: 6px !important;
+  }
+
+  .rz-pastilla-co2 {
+    padding: 8px 10px !important;
+  }
+
+  .rz-pastilla-co2 svg {
+    display: none;
+  }
+
+  .rz-pastilla-co2 > span:first-of-type {
+    font-size: 14px !important;
+  }
+}
+
 @media (max-width: 899px) {
   .rz-login-visual { display: none !important; }
   .rz-login-marca-movil { display: flex !important; }
