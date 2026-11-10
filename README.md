@@ -269,6 +269,10 @@ RouteZero/
 │   │       │   ├── 02 Registro de Impedimentos V_1_0_0.md
 │   │       │   ├── 03 Revisión del Sprint V_1_1_0.md
 │   │       │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
+│   │       │   ├── reduccion del impacto ambiental/   (Inspección 04: Green Software y estándares)
+│   │       │   │   ├── 01 Informe de reduccion del impacto ambiental V_1_0_0.md
+│   │       │   │   ├── 02 Estandares Ingenieria de software V_1_0_0.md
+│   │       │   │   └── evidencias/   (reportes de Lighthouse y del cálculo SWDM v4)
 │   │       │   └── historial Implementación/   (3 versiones anteriores)
 │   │       └── historial Sprint 4/   (7 versiones anteriores)
 │   ├── 04 Seguimiento_Control/   (pendiente)
@@ -280,13 +284,17 @@ RouteZero/
 │   ├── data/
 │   └── requirements.txt
 ├── frontend/
-│   ├── src/   (api, components, context, layout, pages, theme)
+│   ├── src/   (api, assets, components, context, layout, pages, theme)
+│   ├── e2e/   (pruebas de extremo a extremo y auditorías de calidad)
+│   ├── lighthouserc.json   (presupuesto de rendimiento de Lighthouse CI)
 │   └── public/
+├── .github/workflows/   (ci.yml: integración continua; green-audit.yml: auditoría Green IT)
 ├── openspec/
 │   ├── specs/
 │   └── changes/archive/
 ├── scripts/
-│   └── verificar_enlaces.py
+│   ├── verificar_enlaces.py
+│   └── calcular_huella_swdm.py
 ├── render.yaml
 ├── .env.example
 ├── .gitignore
@@ -406,6 +414,14 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Registro de Impedimentos | [`docs/03 Ejecución/Sprint 4/Implementación/02 Registro de Impedimentos V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_0_0.md) |
 | Revisión del Sprint | [`docs/03 Ejecución/Sprint 4/Implementación/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 4/Implementación/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
+
+**Reducción del impacto ambiental y estándares de ingeniería de software** (Inspección 04, `docs/03 Ejecución/Sprint 4/Implementación/reduccion del impacto ambiental/`):
+
+| Documento | Ubicación |
+|---|---|
+| Informe de reducción del impacto ambiental (8 optimizaciones, mediciones antes y después y cálculo SWDM v4) | [`docs/03 Ejecución/Sprint 4/Implementación/reduccion del impacto ambiental/01 Informe de reduccion del impacto ambiental V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_0_0.md) |
+| Estándares de ingeniería de software y guía de desarrollo verde (ISO/IEC 25010, GSF, W3C WSG y matriz de mapeo) | [`docs/03 Ejecución/Sprint 4/Implementación/reduccion del impacto ambiental/02 Estandares Ingenieria de software V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/02%20Estandares%20Ingenieria%20de%20software%20V_1_0_0.md) |
+| Reportes consolidados de auditoría (Lighthouse y cálculo SWDM v4) | [`docs/03 Ejecución/Sprint 4/Implementación/reduccion del impacto ambiental/evidencias/`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/) |
 
 *El Sprint 4 es el último del plan; el cierre del proyecto se documentará en `docs/04 Seguimiento_Control/` y `docs/05 Cierre/`.*
 
