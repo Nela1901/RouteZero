@@ -1,6 +1,6 @@
 # Costo de usar `moment` y `lodash` frente a las APIs nativas (medición)
 
-Medido el 2026-11-12 en una carpeta temporal, sin tocar el proyecto. Sirve como «costo evitado» del área 5 del [informe 01](../01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_4_0.md): RouteZero no usa esas librerías, así que no existe un ANTES; esta medición muestra cuánto habría costado usarlas.
+Medido el 2026-11-12 en una carpeta temporal, sin tocar el proyecto. Sirve como «costo evitado» del área 5 del [informe 01](../01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md): RouteZero no usa esas librerías, así que no existe un ANTES; esta medición muestra cuánto habría costado usarlas.
 
 [← Volver al README Principal](../../../../../../README.md)
 

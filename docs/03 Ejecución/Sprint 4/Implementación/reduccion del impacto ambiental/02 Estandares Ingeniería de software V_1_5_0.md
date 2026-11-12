@@ -11,8 +11,8 @@
 | **Actividad** | Inspección 04 — Green Software y verificación de estándares (actividad de cierre del Sprint 4) |
 | **Fecha** | 2026-11-10 |
 | **Estándares aplicados** | ISO/IEC 25010, principios de la Green Software Foundation, W3C Web Sustainability Guidelines, Clean Code, SOLID, DRY y YAGNI |
-| **Documento hermano** | [01 Informe de Reducción del Impacto Ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_4_0.md) |
-| **Versión** | 1.4.0 |
+| **Documento hermano** | [01 Informe de Reducción del Impacto Ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md) |
+| **Versión** | 1.5.0 |
 
 [← Volver al README Principal](../../../../../README.md)
 
@@ -20,7 +20,7 @@
 
 ## 1. Propósito y alcance
 
-Este documento fundamenta en estándares las mejoras del [informe de reducción del impacto ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_4_0.md), define las reglas de desarrollo verde que sigue el equipo para el backend y el frontend, y cruza cada una de las 8 áreas de optimización con los estándares en una matriz (sección 6).
+Este documento fundamenta en estándares las mejoras del [informe de reducción del impacto ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md), define las reglas de desarrollo verde que sigue el equipo para el backend y el frontend, y cruza cada una de las 8 áreas de optimización con los estándares en una matriz (sección 6).
 
 **Nota sobre la numeración de W3C.** Las *Web Sustainability Guidelines* (WSG, Pautas de Sostenibilidad Web) de W3C están publicadas como **Group Note Draft del 16 de octubre de 2026** (borrador del Grupo de Interés en Web Sostenible; el documento no se rotula «1.0»). Su numeración oficial es: **2.x** Diseño de experiencia de usuario, **3.x** Desarrollo web, **4.x** Hosting, infraestructura y sistemas, y **5.x** Estrategia de negocio y gestión de producto; la sección 1 es solo introducción. Este documento cita siempre **la numeración oficial**. Los materiales de la actividad hablan de «pautas 1.2, 2.4 y 3.1» con tres temas (optimización de medios, arquitectura y caché, transferencia de red); esos temas se corresponden con las pautas oficiales **2.9, 4.2 y 4.3** (y 3.1), como se explica en la sección 4.
 
@@ -30,9 +30,9 @@ La rúbrica de la inspección habla de las pautas «1.2», «2.4» y «3.1». En
 
 | Rúbrica | Tema que describe | Pauta oficial (16-10-2026) | Evidencia de RouteZero |
 |---|---|---|---|
-| 1.2 | Optimización de medios | **2.9** Optimizar los medios para reducir el uso de recursos | `favicon.svg` ya minimizado (−0.2 %) y sin imágenes rasterizadas ([informe 01, 5.3](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_4_0.md)) |
+| 1.2 | Optimización de medios | **2.9** Optimizar los medios para reducir el uso de recursos | `favicon.svg` ya minimizado (−0.2 %) y sin imágenes rasterizadas ([informe 01, 5.3](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md)) |
 | 2.4 | Arquitectura y caché | **4.2** Optimizar la caché y 3.7 Diferir recursos no críticos | `Cache-Control: immutable` en `/assets/*` y carga diferida con `React.lazy` (5.7 y 5.4) |
-| 3.1 | Transferencia de red | **4.3** Reducir la transferencia de datos con compresión | gzip en la API (−72 % a −83 %) y Brotli en los archivos estáticos (5.8) |
+| 3.1 | Transferencia de red | **4.3** Reducir la transferencia de datos con compresión | compresión de la API por Render (Brotli o gzip, −75 % a −80 %) y Brotli en los archivos estáticos (5.8) |
 
 En el documento oficial, la 2.4 es «Diseñar recorridos de usuario eficientes» y la 3.1 es «Fijar metas según el impacto en rendimiento y energía»; ambas también se cubren (sección 4).
 
@@ -94,7 +94,7 @@ La GSF también publica otros marcos (por ejemplo, un conjunto de ocho principio
 
 ## 4. W3C Web Sustainability Guidelines (WSG)
 
-Las **WSG** son pautas del W3C para que los sitios y aplicaciones web sean más sostenibles. Cada pauta tiene criterios de éxito verificables. La tabla relaciona las pautas oficiales (numeración y títulos de la publicación del 16-10-2026) con la evidencia del proyecto. Los números entre paréntesis remiten a las secciones del [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_4_0.md).
+Las **WSG** son pautas del W3C para que los sitios y aplicaciones web sean más sostenibles. Cada pauta tiene criterios de éxito verificables. La tabla relaciona las pautas oficiales (numeración y títulos de la publicación del 16-10-2026) con la evidencia del proyecto. Los números entre paréntesis remiten a las secciones del [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md).
 
 | Pauta | Título (traducción) | Evidencia en RouteZero |
 |---|---|---|
@@ -111,7 +111,7 @@ Las **WSG** son pautas del W3C para que los sitios y aplicaciones web sean más 
 | **3.16** | Reducir el número y la complejidad de las consultas a la base de datos | Auditoría de 17 consultas, índice nuevo y conteo solo del periodo con `JOIN LATERAL` (5.1) |
 | **4.1** | Usar hosting sostenible | **Brecha declarada:** Vercel y Render no figuran como hosting verde (7.4) |
 | **4.2** | Optimizar la caché | `Cache-Control: public, max-age=31536000, immutable` para `/assets/*`; `no-store` en la API por seguridad (5.7). *Corresponde al tema de «arquitectura y caché» de los materiales* |
-| **4.3** | Reducir la transferencia de datos con compresión | La API responde con gzip (−72 % a −83 %) y los archivos estáticos con Brotli, ambos a cargo de la plataforma (5.8). *Corresponde al tema de «transferencia de red»* |
+| **4.3** | Reducir la transferencia de datos con compresión | La API responde comprimida (Brotli o gzip, −75 % a −80 %) y los archivos estáticos con Brotli, ambos a cargo de la plataforma (5.8). *Corresponde al tema de «transferencia de red»* |
 | **5.5** | Calcular el impacto ambiental | Cálculo con SWDM v4 verificado contra CO2.js (7) y mostrado dentro del sistema en la tarjeta «Huella digital de esta sesión» (7.5); el dashboard muestra la evolución y la proyección de las emisiones frente a la meta (7.6) |
 | **5.24** | Definir presupuestos de rendimiento, ambientales y humanos | Los umbrales de `lighthouserc.json` son un presupuesto de rendimiento y peso (8) |
 
@@ -167,7 +167,7 @@ Reglas que sigue el equipo, ordenadas por el principio de ingeniería que las so
 | 5 | Dependencias y APIs nativas (5.5) | Mantenibilidad: analizabilidad | Eficiencia de carbono | 3.2 y 3.12 | Por diseño: APIs nativas y 5 dependencias; costo evitado medido (46.4 KB comprimidos) |
 | 6 | Peticiones HTTP, terceros y SVG en línea (5.6) | Eficiencia de desempeño: comportamiento temporal | Eficiencia de carbono | 3.5 y 2.11 | Con ANTES y DESPUÉS (fuentes y CSS: de 4 peticiones de terceros a 0) y por diseño (iconos SVG en línea) |
 | 7 | Caché (5.7) | Eficiencia de desempeño: comportamiento temporal | Eficiencia energética | 4.2 (la «2.4» de la rúbrica) | Con ANTES y DESPUÉS (`immutable`, verificado en producción) y por diseño (`no-store` en la API) |
-| 8 | Compresión de la API (5.8) | Eficiencia de desempeño: capacidad | Eficiencia de carbono | 4.3 (la «3.1» de la rúbrica) | Por la plataforma (gzip en Render y Brotli en Vercel), con medición |
+| 8 | Compresión de la API (5.8) | Eficiencia de desempeño: capacidad | Eficiencia de carbono | 4.3 (la «3.1» de la rúbrica) | Por la plataforma (Render comprime la API con Brotli o gzip; Vercel, los archivos con Brotli), con medición |
 | — | Presupuesto en CI (8) | Mantenibilidad: capacidad de ser probado | Eficiencia de carbono (medición) | 3.1, 5.24 y 2.15 | Implementado |
 | — | Cáscara de la aplicación y CSS en línea (5.9) | Eficiencia de desempeño: comportamiento temporal | Eficiencia energética y de hardware (menos espera en el celular) | 3.7 y 3.2 | Implementada y medida en producción |
 | — | Cálculo SWDM v4 (7) | Analizabilidad | Eficiencia de carbono (medición) | 5.5 | Implementado y verificado |
@@ -186,7 +186,7 @@ El README declara ocho estándares de referencia. Este es su estado, con la evid
 | OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
 | WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
 | ISO/IEC 25010 | **Cubierto: las ocho características** | Secciones 2.1 a 2.3 de este documento, cada una con su evidencia y su límite |
-| Green Software | Cubierto | Este documento y el [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_4_0.md) |
+| Green Software | Cubierto | Este documento y el [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md) |
 | Ley N° 29733 (datos personales) | **Parcial: controles técnicos y procedimientos definidos; faltan operarlos, anonimizar e inscribir el banco de datos** | Sección 7.2 |
 | DS 033-2001-MTC | Cubierto | Velocidades por tipo de vía; se corrigió que el decreto «2012» citado inicialmente no existe |
 | ISO 14083 | **Parcial: método por distancia coherente, sin cumplir la norma completa; plan de cierre definido** | Sección 7.1 |
@@ -301,3 +301,4 @@ La inscripción del banco de datos ante la Autoridad Nacional de Protección de 
 | V_1_2_0 | 2026-11-10 | Se agrega el historial y la proyección de emisiones del dashboard a la matriz (WSG 5.5 y 5.24) y se actualiza el número de pruebas (360, 178 y 35) y los enlaces al informe 1.2.0 | Inciso Aguilar Elizabeth Antonela |
 | V_1_3_0 | 2026-11-10 | Se agrega la equivalencia entre la numeración de la rúbrica y la oficial de W3C (1.1), las ocho características de ISO/IEC 25010 con su evidencia y su límite (2.3), la verificación de ISO 14083 con su plan de cierre y de la Ley N° 29733 con sus procedimientos definidos y sus brechas (7.1 y 7.2), la regla F10 y la fila de la cáscara en la matriz | Inciso Aguilar Elizabeth Antonela |
 | V_1_4_0 | 2026-11-12 | Versión final: se actualizan los enlaces al informe 1.4.0, la paginación de pedidos pasa a 12 en la matriz y se ajusta la redacción de la regla B6 sobre `no-store` | Inciso Aguilar Elizabeth Antonela |
+| V_1_5_0 | 2026-11-12 | Se corrige la descripción de la compresión de la API (Brotli o gzip, −75 % a −80 %) en las secciones 1.1 y 4 y en la matriz, y se actualizan los enlaces al informe 1.5.0 | Inciso Aguilar Elizabeth Antonela |
