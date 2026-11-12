@@ -157,9 +157,9 @@ def test_el_listado_es_una_pagina_con_el_total(client):
     r = client.get("/api/pedidos", headers=auth(estado["tok_admin"]))
     cuerpo = r.json()
     assert set(cuerpo) == {"items", "total", "limite", "desplazamiento"}
-    assert cuerpo["limite"] == 50
+    assert cuerpo["limite"] == 12
     assert cuerpo["desplazamiento"] == 0
-    assert len(cuerpo["items"]) <= 50
+    assert len(cuerpo["items"]) <= 12
     assert cuerpo["total"] >= len(cuerpo["items"])
 
 

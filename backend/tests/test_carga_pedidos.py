@@ -82,7 +82,7 @@ def test_percentil_95_de_consulta_registro_y_cancelacion_con_mil_pedidos(client,
         r = client.get("/api/pedidos", headers=auth(token), params={"estado": "PENDIENTE"})
         consultas.append(time.perf_counter() - inicio)
         assert r.status_code == 200
-        assert len(r.json()["items"]) == 50
+        assert len(r.json()["items"]) == 12
 
     for _ in range(15):
         inicio = time.perf_counter()

@@ -57,7 +57,7 @@ export function PedidosPage() {
   const [pedidoEnEdicion, setPedidoEnEdicion] = useState<Pedido | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // La API entrega los pedidos por páginas (50 por defecto): se carga la primera y el resto con "Cargar más".
+  // La API entrega los pedidos por páginas (12 por defecto): se carga la primera y el resto con "Cargar más".
   async function cargar() {
     const [pagina, listaClientes] = await Promise.all([
       api.get<PaginaPedidos>("/api/pedidos"),

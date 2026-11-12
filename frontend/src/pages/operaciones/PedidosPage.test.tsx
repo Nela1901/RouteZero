@@ -32,7 +32,7 @@ function pedido(i: number) {
 const pagina = (desde: number, cantidad: number, total: number) => ({
   items: Array.from({ length: cantidad }, (_, k) => pedido(desde + k)),
   total,
-  limite: 50,
+  limite: 12,
   desplazamiento: desde,
 });
 
@@ -51,28 +51,28 @@ describe("PedidosPage — paginación", () => {
     vi.mocked(api.get).mockReset();
   });
 
-  it("con más de 50 pedidos muestra la primera página y el botón para cargar el resto", async () => {
+  it("con más de 12 pedidos muestra la primera página y el botón para cargar el resto", async () => {
     vi.mocked(api.get).mockImplementation(async (url: string) => {
-      if (url === "/api/pedidos") return pagina(0, 50, 60);
+      if (url === "/api/pedidos") return pagina(0, 12, 20);
       if (url === "/api/clientes") return [{ cliente_id: "cliente-1", nombre: "Calzados Puno", referencia: null }];
-      return pagina(50, 10, 60);
+      return pagina(12, 8, 20);
     });
     const usuario = userEvent.setup();
     renderPagina();
 
     expect(await screen.findByText("Pedido número 0")).toBeInTheDocument();
-    expect(screen.getByText("Mostrando 50 de 60 pedidos")).toBeInTheDocument();
-    expect(screen.queryByText("Pedido número 55")).not.toBeInTheDocument();
+    expect(screen.getByText("Mostrando 12 de 20 pedidos")).toBeInTheDocument();
+    expect(screen.queryByText("Pedido número 15")).not.toBeInTheDocument();
 
-    await usuario.click(screen.getByRole("button", { name: "Cargar más (10 restantes)" }));
+    await usuario.click(screen.getByRole("button", { name: "Cargar más (8 restantes)" }));
 
-    await waitFor(() => expect(api.get).toHaveBeenCalledWith("/api/pedidos?desplazamiento=50"));
-    expect(await screen.findByText("Pedido número 55")).toBeInTheDocument();
-    expect(screen.getByText("Mostrando 60 de 60 pedidos")).toBeInTheDocument();
+    await waitFor(() => expect(api.get).toHaveBeenCalledWith("/api/pedidos?desplazamiento=12"));
+    expect(await screen.findByText("Pedido número 15")).toBeInTheDocument();
+    expect(screen.getByText("Mostrando 20 de 20 pedidos")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /cargar más/i })).not.toBeInTheDocument();
   });
 
-  it("con 50 pedidos o menos no muestra el botón de cargar más", async () => {
+  it("con 12 pedidos o menos no muestra el botón de cargar más", async () => {
     vi.mocked(api.get).mockImplementation(async (url: string) => {
       if (url === "/api/pedidos") return pagina(0, 3, 3);
       return [];
