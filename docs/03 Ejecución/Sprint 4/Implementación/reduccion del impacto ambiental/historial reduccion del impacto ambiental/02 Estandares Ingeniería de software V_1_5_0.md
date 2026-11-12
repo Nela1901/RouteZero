@@ -14,7 +14,7 @@
 | **Documento hermano** | [01 Informe de Reducción del Impacto Ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md) |
 | **Versión** | 1.5.0 |
 
-[← Volver al README Principal](../../../../../README.md)
+[← Volver al README Principal](../../../../../../README.md)
 
 ---
 
@@ -40,7 +40,7 @@ En el documento oficial, la 2.4 es «Diseñar recorridos de usuario eficientes»
 
 ## 2. ISO/IEC 25010: las ocho características de calidad
 
-**ISO/IEC 25010** es el modelo internacional de calidad del producto de software: define características de calidad y las subdivide en subcaracterísticas medibles. La actividad se apoya en dos: la **eficiencia de desempeño** (qué tan bien rinde el software con los recursos que usa) y la **mantenibilidad** (qué tan fácil es cambiarlo). El requisito no funcional que las motiva es **RNF-011, Eficiencia energética** (ver [`07. Requisitos no funcionales`](../../../../01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md)).
+**ISO/IEC 25010** es el modelo internacional de calidad del producto de software: define características de calidad y las subdivide en subcaracterísticas medibles. La actividad se apoya en dos: la **eficiencia de desempeño** (qué tan bien rinde el software con los recursos que usa) y la **mantenibilidad** (qué tan fácil es cambiarlo). El requisito no funcional que las motiva es **RNF-011, Eficiencia energética** (ver [`07. Requisitos no funcionales`](../../../../../01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md)).
 
 ### 2.1 Eficiencia de desempeño
 
@@ -54,9 +54,9 @@ En el documento oficial, la 2.4 es «Diseñar recorridos de usuario eficientes»
 
 | Subcaracterística | Qué mide | Cómo se aplicó en RouteZero | Evidencia |
 |---|---|---|---|
-| **Modularidad** | Cambiar una parte sin afectar al resto | Backend organizado por características; ningún módulo de negocio importa a otro. Frontend dividido en un trozo de código por pantalla | [`test_arquitectura.py`](../../../../../backend/tests/test_arquitectura.py) vigila la independencia; trozos de la sección 5.4 del informe 01 |
+| **Modularidad** | Cambiar una parte sin afectar al resto | Backend organizado por características; ningún módulo de negocio importa a otro. Frontend dividido en un trozo de código por pantalla | [`test_arquitectura.py`](../../../../../../backend/tests/test_arquitectura.py) vigila la independencia; trozos de la sección 5.4 del informe 01 |
 | **Reusabilidad** | Reutilizar componentes en varios lugares | Componentes y utilidades compartidas en lugar de copias | `utilesCrud.ts` lo usan 4 pantallas y `ui.tsx`; `ui.tsx` y `acciones.tsx` los usan 9 archivos |
-| **Analizabilidad** | Entender y diagnosticar el sistema | Comentarios que explican el porqué, documentación por sprint, auditorías con script | [Calidad de código](../../../Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) (SonarQube); `auditar_consultas.py` |
+| **Analizabilidad** | Entender y diagnosticar el sistema | Comentarios que explican el porqué, documentación por sprint, auditorías con script | [Calidad de código](../../../../Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) (SonarQube); `auditar_consultas.py` |
 | **Modificabilidad** | Cambiar sin introducir defectos | Parámetros que se ajustan sin tocar la lógica (precio del combustible, meta mensual, factores de congestión) | `backend/src/core/config.py`, `backend/src/rutas/congestion.py` |
 | **Capacidad de ser probado** (*testability*) | Facilidad de verificar | Pruebas automáticas en las tres capas | 360 de backend (cobertura de 98 %), 178 de Vitest y 35 de extremo a extremo |
 
@@ -69,9 +69,9 @@ Se usa la edición de ISO/IEC 25010 de ocho características (la que citan los d
 | **Adecuación funcional** | Que haga lo que debe, completo y correcto | Todos los ítems de los Sprints 3 y 4 completados (26 y 18 Story Points); las reglas de negocio RN-001 a RN-003 y RN-005 a RN-015 de los módulos entregados están implementadas y con pruebas automáticas | RN-004 (restricción por placa) está **desactivada a propósito**: el decreto citado inicialmente no existe |
 | **Eficiencia de desempeño** | Tiempos, recursos y capacidad | Sección 2.1 | Latencia de Render gratuito (IMP-016) |
 | **Compatibilidad** | Convivir e intercambiar información con otros sistemas | API REST/JSON documentada con Swagger (`/docs`); integra OpenStreetMap, Supabase Auth y PostgreSQL | Probado en Chrome y Chromium (Playwright y Lighthouse); Firefox y Safari **no** se probaron |
-| **Usabilidad** | Facilidad de uso y accesibilidad | Lighthouse de accesibilidad en 100 (24 mediciones); WCAG 2.2 AA con 36 de 40 criterios cumplidos ([evaluación](../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)); ayudas «i» en los indicadores; todas las pantallas se ven en ancho móvil | La escala SUS y la evaluación con las 10 heurísticas de Nielsen **están pendientes** (Inspección 05) |
+| **Usabilidad** | Facilidad de uso y accesibilidad | Lighthouse de accesibilidad en 100 (24 mediciones); WCAG 2.2 AA con 36 de 40 criterios cumplidos ([evaluación](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)); ayudas «i» en los indicadores; todas las pantallas se ven en ancho móvil | La escala SUS y la evaluación con las 10 heurísticas de Nielsen **están pendientes** (Inspección 05) |
 | **Fiabilidad** | Funcionar sin fallar y recuperarse | Respuestas 503 claras si Supabase o la base no responden (OWASP A10); la re-optimización cumple RN-012 (22.2 s en Render, límite de 30 s) y la generación RN-015 | Render gratuito tiene arranque en frío de unos 52 s y Supabase gratuito se pausa por inactividad (ocurrió el 09-11-2026) |
-| **Seguridad** | Proteger datos y accesos | Verificación en dos pasos (TOTP), sesiones con detección de robo, RLS en la base, roles por endpoint (RN-014), CORS con el origen exacto y OWASP Top 10 evaluado ([documento](../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md)); Bandit, `pip-audit` y `npm audit` en el CI | El DNI del conductor está en texto plano en la base y los tokens se guardan en `localStorage` (brechas declaradas) |
+| **Seguridad** | Proteger datos y accesos | Verificación en dos pasos (TOTP), sesiones con detección de robo, RLS en la base, roles por endpoint (RN-014), CORS con el origen exacto y OWASP Top 10 evaluado ([documento](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md)); Bandit, `pip-audit` y `npm audit` en el CI | El DNI del conductor está en texto plano en la base y los tokens se guardan en `localStorage` (brechas declaradas) |
 | **Mantenibilidad** | Facilidad para cambiar | Sección 2.2 | — |
 | **Portabilidad** | Instalarlo y moverlo a otro entorno | Todo se configura con variables de entorno (`.env.example`) y se despliega con `render.yaml` y Vercel; sin contenedores | Depende de Supabase (autenticación y base de datos): reemplazarlo exigiría reescribir esa capa |
 
@@ -182,9 +182,9 @@ El README declara ocho estándares de referencia. Este es su estado, con la evid
 
 | Estándar | Estado | Evidencia |
 |---|---|---|
-| W3C (HTML válido) | Cubierto | 0 errores y 0 avisos en las 6 pantallas ([accesibilidad WCAG](../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)) |
-| OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
-| WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
+| W3C (HTML válido) | Cubierto | 0 errores y 0 avisos en las 6 pantallas ([accesibilidad WCAG](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)) |
+| OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
+| WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
 | ISO/IEC 25010 | **Cubierto: las ocho características** | Secciones 2.1 a 2.3 de este documento, cada una con su evidencia y su límite |
 | Green Software | Cubierto | Este documento y el [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md) |
 | Ley N° 29733 (datos personales) | **Parcial: controles técnicos y procedimientos definidos; faltan operarlos, anonimizar e inscribir el banco de datos** | Sección 7.2 |
@@ -195,7 +195,7 @@ El README declara ocho estándares de referencia. Este es su estado, con la evid
 
 **ISO 14083** es la norma internacional para cuantificar e informar las emisiones de gases de efecto invernadero de las operaciones de transporte (las del marco GLEC la usan). **Alcance de esta verificación:** se hizo a partir del resumen público de la norma y del código del sistema; la norma completa es de pago y no se consultó, así que esto **no sustituye una auditoría**.
 
-El motor calcula las emisiones de cada ruta como `distancia (km) × factor de emisión del vehículo (kg de CO₂ por km)` (regla RN-009; [`evaluacion.py`](../../../../../backend/src/algoritmo/evaluacion.py)), y el dashboard y el reporte PDF las suman.
+El motor calcula las emisiones de cada ruta como `distancia (km) × factor de emisión del vehículo (kg de CO₂ por km)` (regla RN-009; [`evaluacion.py`](../../../../../../backend/src/algoritmo/evaluacion.py)), y el dashboard y el reporte PDF las suman.
 
 | Aspecto | Qué pide la norma (en términos generales) | RouteZero | Evaluación |
 |---|---|---|---|
@@ -230,7 +230,7 @@ La **Ley N° 29733** regula el tratamiento de datos personales; su reglamento es
 |---|---|---|---|
 | Consentimiento | Consentimiento previo, libre e informado | `consentimiento_datos` y `consentimiento_en` obligatorios, con una restricción `CHECK` en la base (RN-013): sin consentimiento no se registra al conductor | No hay un flujo documentado para retirar el consentimiento |
 | Finalidad y proporcionalidad | Pedir solo los datos necesarios para la finalidad | Solo los datos necesarios para asignar rutas y comprobar la licencia y el horario; el DNI **nunca** se escribe en la auditoría | No hay una política de retención de datos |
-| Seguridad | Medidas técnicas y organizativas | Las fichas de conductores solo las gestiona el administrador (RN-014), RLS, verificación en dos pasos y sesiones seguras; HTTPS en Vercel y Render | El DNI está en texto plano en la base (sin cifrado a nivel de columna), declarado en el [documento de OWASP](../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
+| Seguridad | Medidas técnicas y organizativas | Las fichas de conductores solo las gestiona el administrador (RN-014), RLS, verificación en dos pasos y sesiones seguras; HTTPS en Vercel y Render | El DNI está en texto plano en la base (sin cifrado a nivel de columna), declarado en el [documento de OWASP](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
 | Derechos de acceso, rectificación, cancelación y oposición | Atender las solicitudes de la persona titular | El administrador puede **consultar** la ficha de un conductor, **editarla** (rectificación) y **eliminarla** (cancelación); cada acción queda en la auditoría (`conductor_registrado`, `conductor_editado` y `conductor_eliminado`) **sin escribir el DNI** | Si el conductor ya tiene rutas, la ficha no se puede eliminar (solo marcarse como no disponible) y sus datos personales permanecen: **no hay anonimización**. Falta un procedimiento escrito (7.2.1) |
 | Registro del banco de datos | Inscribir el banco de datos ante la Autoridad Nacional de Protección de Datos Personales | — | No realizado: es un proyecto académico con datos ficticios; en una operación real habría que inscribirlo |
 
@@ -290,7 +290,7 @@ La inscripción del banco de datos ante la Autoridad Nacional de Protección de 
 
 ---
 
-[← Volver al README Principal](../../../../../README.md)
+[← Volver al README Principal](../../../../../../README.md)
 
 ## Historial de Control de Cambios
 
