@@ -1,6 +1,6 @@
 # Cálculo SWDM v4 con los pesos medidos en producción (salida del script)
 
-Generado el 2026-11-10 con `python scripts/calcular_huella_swdm.py --antes-movil-kb 218 --antes-escritorio-kb 248 --despues-movil-kb 142 --despues-escritorio-kb 173` (pesos de Lighthouse en producción, ANTES del 2026-11-09 y DESPUÉS del 2026-11-10; mismo escenario de 10 400 visitas al año y 75 % desde celular). Método y verificación contra CO2.js en el [informe 01](../01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md), sección 7.
+Generado el 2026-11-10 con `python scripts/calcular_huella_swdm.py --antes-movil-kb 218 --antes-escritorio-kb 248 --despues-movil-kb 142 --despues-escritorio-kb 173` (pesos de Lighthouse en producción, ANTES del 2026-11-09 y DESPUÉS del 2026-11-10; mismo escenario de 10 400 visitas al año y 75 % desde celular). Método y verificación contra CO2.js en el [informe 01](../01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_4_0.md), sección 7.
 
 [← Volver al README Principal](../../../../../../README.md)
 

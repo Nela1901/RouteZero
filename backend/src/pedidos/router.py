@@ -58,7 +58,7 @@ def cancelar_pedido(
 def listar_pedidos(
     estado: Literal["PENDIENTE", "ASIGNADO", "EN_CAMINO", "ENTREGADO", "CANCELADO"] | None = None,
     prioridad: Literal["EXPRESS", "ESTANDAR", "ECONOMICO"] | None = None,
-    limite: int = Query(50, ge=1, le=200, description="Pedidos por página (máximo 200)"),
+    limite: int = Query(12, ge=1, le=200, description="Pedidos por página (12 por defecto, máximo 200)"),
     desplazamiento: int = Query(0, ge=0, description="Pedidos que se omiten al inicio"),
     _usuario: UsuarioActual = Depends(requiere_rol("OPERADOR", "ADMINISTRADOR")),
     db: Session = Depends(get_db_con_rls),

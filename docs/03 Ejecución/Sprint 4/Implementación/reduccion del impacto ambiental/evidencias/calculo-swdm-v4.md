@@ -1,6 +1,6 @@
 # Cálculo de la huella de carbono con SWDM v4 (salida del script)
 
-Generado el 2026-11-09 con `python scripts/calcular_huella_swdm.py` (valores por defecto: 20 usuarios × 260 días × 2 sesiones = 10 400 visitas/año, 75 % desde celular). El script y su verificación contra CO2.js están descritos en el [informe 01](../01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md), sección 7.
+Generado el 2026-11-09 con `python scripts/calcular_huella_swdm.py` (valores por defecto: 20 usuarios × 260 días × 2 sesiones = 10 400 visitas/año, 75 % desde celular). El script y su verificación contra CO2.js están descritos en el [informe 01](../01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_4_0.md), sección 7.
 
 [← Volver al README Principal](../../../../../../README.md)
 
