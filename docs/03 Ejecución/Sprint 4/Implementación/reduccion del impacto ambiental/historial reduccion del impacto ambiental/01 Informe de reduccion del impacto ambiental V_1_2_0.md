@@ -12,7 +12,7 @@
 | **Fecha de las mediciones** | 2026-11-09 (ANTES) y 2026-11-10 (DESPUÉS en producción, tras el Pull Request #91) |
 | **Stack evaluado** | React 19 + Vite (Vercel), FastAPI (Render), PostgreSQL (Supabase) |
 | **Herramientas** | Lighthouse 13 y Lighthouse CI 0.15.1, Playwright, modelo SWDM v4 verificado contra CO2.js 0.16.9, `svgo`, `curl` |
-| **Documento hermano** | [02 Estándares de Ingeniería de Software](02%20Estandares%20Ingenieria%20de%20software%20V_1_2_0.md) |
+| **Documento hermano** | [02 Estándares de Ingeniería de Software](02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_2_0.md) |
 | **Versión** | 1.2.0 |
 
 [← Volver al README Principal](../../../../../../README.md)
