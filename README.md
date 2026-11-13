@@ -261,21 +261,21 @@ RouteZero/
 │   │   │   │   ├── 07 Evaluación de accesibilidad WCAG V_1_0_0.md
 │   │   │   │   └── historial Implementación/   (20 versiones anteriores)
 │   │   │   └── historial Sprint 3/   (22 versiones anteriores)
-│   │   └── Sprint 4/
-│   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_4_0.md
-│   │       ├── 02 Implementación de la sostenibilidad V_1_3_0.md
-│   │       ├── Implementación/
-│   │       │   ├── 01 Informe de estado del proyecto V_1_1_0.md
-│   │       │   ├── 02 Registro de Impedimentos V_1_0_0.md
-│   │       │   ├── 03 Revisión del Sprint V_1_1_0.md
-│   │       │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
-│   │       │   ├── reduccion del impacto ambiental/   (Inspección 04: Green Software y estándares)
-│   │       │   │   ├── 01 Informe de reduccion del impacto ambiental V_1_6_0.md
-│   │       │   │   ├── 02 Estandares Ingeniería de software V_1_6_0.md
-│   │       │   │   ├── evidencias/   (reportes de Lighthouse, cálculo SWDM v4 y capturas)
-│   │       │   │   └── historial reduccion del impacto ambiental/   (12 versiones anteriores)
-│   │       │   └── historial Implementación/   (3 versiones anteriores)
-│   │       └── historial Sprint 4/   (7 versiones anteriores)
+│   │   ├── Sprint 4/
+│   │   │   ├── 01 Sprint 4 Plan de ejecución y estado V_1_4_0.md
+│   │   │   ├── 02 Implementación de la sostenibilidad V_1_3_0.md
+│   │   │   ├── Implementación/
+│   │   │   │   ├── 01 Informe de estado del proyecto V_1_1_0.md
+│   │   │   │   ├── 02 Registro de Impedimentos V_1_0_0.md
+│   │   │   │   ├── 03 Revisión del Sprint V_1_1_0.md
+│   │   │   │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
+│   │   │   │   └── historial Implementación/   (3 versiones anteriores)
+│   │   │   └── historial Sprint 4/   (7 versiones anteriores)
+│   │   └── reduccion del impacto ambiental/   (Inspección 04: Green Software y estándares)
+│   │       ├── 01 Informe de reduccion del impacto ambiental V_1_6_0.md
+│   │       ├── 02 Estandares Ingeniería de software V_1_6_0.md
+│   │       ├── evidencias/   (reportes de Lighthouse, cálculo SWDM v4 y capturas)
+│   │       └── historial reduccion del impacto ambiental/   (12 versiones anteriores)
 │   ├── 04 Seguimiento_Control/   (pendiente)
 │   └── 05 Cierre/   (pendiente)
 ├── backend/
@@ -416,13 +416,13 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Revisión del Sprint | [`docs/03 Ejecución/Sprint 4/Implementación/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 4/Implementación/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
 
-**Reducción del impacto ambiental y estándares de ingeniería de software** (Inspección 04, `docs/03 Ejecución/Sprint 4/Implementación/reduccion del impacto ambiental/`):
+**Reducción del impacto ambiental y estándares de ingeniería de software** (Inspección 04, `docs/03 Ejecución/reduccion del impacto ambiental/`):
 
 | Documento | Ubicación |
 |---|---|
-| Informe de reducción del impacto ambiental (8 optimizaciones, mediciones antes y después y cálculo SWDM v4) | [`docs/03 Ejecución/Sprint 4/Implementación/reduccion del impacto ambiental/01 Informe de reduccion del impacto ambiental V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_6_0.md) |
-| Estándares de ingeniería de software y guía de desarrollo verde (ISO/IEC 25010, GSF, W3C WSG y matriz de mapeo) | [`docs/03 Ejecución/Sprint 4/Implementación/reduccion del impacto ambiental/02 Estandares Ingeniería de software V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_6_0.md) |
-| Reportes consolidados de auditoría (Lighthouse en producción y local antes y después, cálculo SWDM v4 y capturas) | [`docs/03 Ejecución/Sprint 4/Implementación/reduccion del impacto ambiental/evidencias/`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/) |
+| Informe de reducción del impacto ambiental (8 optimizaciones, mediciones antes y después y cálculo SWDM v4) | [`docs/03 Ejecución/reduccion del impacto ambiental/01 Informe de reduccion del impacto ambiental V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_6_0.md) |
+| Estándares de ingeniería de software y guía de desarrollo verde (ISO/IEC 25010, GSF, W3C WSG y matriz de mapeo) | [`docs/03 Ejecución/reduccion del impacto ambiental/02 Estandares Ingeniería de software V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/reduccion%20del%20impacto%20ambiental/02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_6_0.md) |
+| Reportes consolidados de auditoría (Lighthouse en producción y local antes y después, cálculo SWDM v4 y capturas) | [`docs/03 Ejecución/reduccion del impacto ambiental/evidencias/`](docs/03%20Ejecuci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/) |
 
 *El Sprint 4 es el último del plan; el cierre del proyecto se documentará en `docs/04 Seguimiento_Control/` y `docs/05 Cierre/`.*
 

@@ -14,7 +14,7 @@
 | **Documento hermano** | [01 Informe de Reducción del Impacto Ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_0_0.md) |
 | **Versión** | 1.0.0 |
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
@@ -28,7 +28,7 @@ Este documento fundamenta en estándares las mejoras del [informe de reducción 
 
 ## 2. ISO/IEC 25010: eficiencia de desempeño y mantenibilidad
 
-**ISO/IEC 25010** es el modelo internacional de calidad del producto de software: define características de calidad y las subdivide en subcaracterísticas medibles. La actividad se apoya en dos: la **eficiencia de desempeño** (qué tan bien rinde el software con los recursos que usa) y la **mantenibilidad** (qué tan fácil es cambiarlo). El requisito no funcional que las motiva es **RNF-011, Eficiencia energética** (ver [`07. Requisitos no funcionales`](../../../../../01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md)).
+**ISO/IEC 25010** es el modelo internacional de calidad del producto de software: define características de calidad y las subdivide en subcaracterísticas medibles. La actividad se apoya en dos: la **eficiencia de desempeño** (qué tan bien rinde el software con los recursos que usa) y la **mantenibilidad** (qué tan fácil es cambiarlo). El requisito no funcional que las motiva es **RNF-011, Eficiencia energética** (ver [`07. Requisitos no funcionales`](../../../01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md)).
 
 ### 2.1 Eficiencia de desempeño
 
@@ -42,9 +42,9 @@ Este documento fundamenta en estándares las mejoras del [informe de reducción 
 
 | Subcaracterística | Qué mide | Cómo se aplicó en RouteZero | Evidencia |
 |---|---|---|---|
-| **Modularidad** | Cambiar una parte sin afectar al resto | Backend organizado por características; ningún módulo de negocio importa a otro. Frontend dividido en un trozo de código por pantalla | [`test_arquitectura.py`](../../../../../../backend/tests/test_arquitectura.py) vigila la independencia; trozos de la sección 5.4 del informe 01 |
+| **Modularidad** | Cambiar una parte sin afectar al resto | Backend organizado por características; ningún módulo de negocio importa a otro. Frontend dividido en un trozo de código por pantalla | [`test_arquitectura.py`](../../../../backend/tests/test_arquitectura.py) vigila la independencia; trozos de la sección 5.4 del informe 01 |
 | **Reusabilidad** | Reutilizar componentes en varios lugares | Componentes y utilidades compartidas en lugar de copias | `utilesCrud.ts` lo usan 4 pantallas y `ui.tsx`; `ui.tsx` y `acciones.tsx` los usan 9 archivos |
-| **Analizabilidad** | Entender y diagnosticar el sistema | Comentarios que explican el porqué, documentación por sprint, auditorías con script | [Calidad de código](../../../../Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) (SonarQube); `auditar_consultas.py` |
+| **Analizabilidad** | Entender y diagnosticar el sistema | Comentarios que explican el porqué, documentación por sprint, auditorías con script | [Calidad de código](../../Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) (SonarQube); `auditar_consultas.py` |
 | **Modificabilidad** | Cambiar sin introducir defectos | Parámetros que se ajustan sin tocar la lógica (precio del combustible, meta mensual, factores de congestión) | `backend/src/core/config.py`, `backend/src/rutas/congestion.py` |
 | **Capacidad de ser probado** (*testability*) | Facilidad de verificar | Pruebas automáticas en las tres capas | 359 de backend (cobertura de 98 %), 147 de Vitest y 33 de extremo a extremo |
 
@@ -149,9 +149,9 @@ El README declara ocho estándares de referencia. Este es su estado, con la evid
 
 | Estándar | Estado | Evidencia |
 |---|---|---|
-| W3C (HTML válido) | Cubierto | 0 errores y 0 avisos en las 6 pantallas ([accesibilidad WCAG](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)) |
-| OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
-| WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
+| W3C (HTML válido) | Cubierto | 0 errores y 0 avisos en las 6 pantallas ([accesibilidad WCAG](../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)) |
+| OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
+| WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
 | ISO/IEC 25010 | Cubierto en dos características | Sección 2 de este documento (eficiencia de desempeño y mantenibilidad) |
 | Green Software | Cubierto | Este documento y el [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_0_0.md) |
 | Ley N° 29733 (datos personales) | Parcial | Consentimiento del conductor y DNI fuera de la auditoría; la brecha del DNI en texto plano está declarada en el documento de OWASP |
@@ -191,7 +191,7 @@ El README declara ocho estándares de referencia. Este es su estado, con la evid
 
 ---
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 

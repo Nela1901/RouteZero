@@ -11,36 +11,24 @@
 | **Actividad** | Inspección 04 — Green Software y verificación de estándares (actividad de cierre del Sprint 4) |
 | **Fecha** | 2026-11-10 |
 | **Estándares aplicados** | ISO/IEC 25010, principios de la Green Software Foundation, W3C Web Sustainability Guidelines, Clean Code, SOLID, DRY y YAGNI |
-| **Documento hermano** | [01 Informe de Reducción del Impacto Ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md) |
-| **Versión** | 1.3.0 |
+| **Documento hermano** | [01 Informe de Reducción del Impacto Ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_2_0.md) |
+| **Versión** | 1.2.0 |
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
 ## 1. Propósito y alcance
 
-Este documento fundamenta en estándares las mejoras del [informe de reducción del impacto ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md), define las reglas de desarrollo verde que sigue el equipo para el backend y el frontend, y cruza cada una de las 8 áreas de optimización con los estándares en una matriz (sección 6).
+Este documento fundamenta en estándares las mejoras del [informe de reducción del impacto ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_2_0.md), define las reglas de desarrollo verde que sigue el equipo para el backend y el frontend, y cruza cada una de las 8 áreas de optimización con los estándares en una matriz (sección 6).
 
 **Nota sobre la numeración de W3C.** Las *Web Sustainability Guidelines* (WSG, Pautas de Sostenibilidad Web) de W3C están publicadas como **Group Note Draft del 16 de octubre de 2026** (borrador del Grupo de Interés en Web Sostenible; el documento no se rotula «1.0»). Su numeración oficial es: **2.x** Diseño de experiencia de usuario, **3.x** Desarrollo web, **4.x** Hosting, infraestructura y sistemas, y **5.x** Estrategia de negocio y gestión de producto; la sección 1 es solo introducción. Este documento cita siempre **la numeración oficial**. Los materiales de la actividad hablan de «pautas 1.2, 2.4 y 3.1» con tres temas (optimización de medios, arquitectura y caché, transferencia de red); esos temas se corresponden con las pautas oficiales **2.9, 4.2 y 4.3** (y 3.1), como se explica en la sección 4.
 
-### 1.1 La numeración de la rúbrica frente a la oficial
-
-La rúbrica de la inspección habla de las pautas «1.2», «2.4» y «3.1». En el documento oficial vigente **la sección 1 es solo introducción y no contiene pautas**, y los números 2.4 y 3.1 corresponden a otros temas. Por eso cada tema de la rúbrica se asocia con su pauta oficial equivalente:
-
-| Rúbrica | Tema que describe | Pauta oficial (16-10-2026) | Evidencia de RouteZero |
-|---|---|---|---|
-| 1.2 | Optimización de medios | **2.9** Optimizar los medios para reducir el uso de recursos | `favicon.svg` ya minimizado (−0.2 %) y sin imágenes rasterizadas ([informe 01, 5.3](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md)) |
-| 2.4 | Arquitectura y caché | **4.2** Optimizar la caché y 3.7 Diferir recursos no críticos | `Cache-Control: immutable` en `/assets/*` y carga diferida con `React.lazy` (5.7 y 5.4) |
-| 3.1 | Transferencia de red | **4.3** Reducir la transferencia de datos con compresión | gzip en la API (−72 % a −83 %) y Brotli en los archivos estáticos (5.8) |
-
-En el documento oficial, la 2.4 es «Diseñar recorridos de usuario eficientes» y la 3.1 es «Fijar metas según el impacto en rendimiento y energía»; ambas también se cubren (sección 4).
-
 ---
 
-## 2. ISO/IEC 25010: las ocho características de calidad
+## 2. ISO/IEC 25010: eficiencia de desempeño y mantenibilidad
 
-**ISO/IEC 25010** es el modelo internacional de calidad del producto de software: define características de calidad y las subdivide en subcaracterísticas medibles. La actividad se apoya en dos: la **eficiencia de desempeño** (qué tan bien rinde el software con los recursos que usa) y la **mantenibilidad** (qué tan fácil es cambiarlo). El requisito no funcional que las motiva es **RNF-011, Eficiencia energética** (ver [`07. Requisitos no funcionales`](../../../../../01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md)).
+**ISO/IEC 25010** es el modelo internacional de calidad del producto de software: define características de calidad y las subdivide en subcaracterísticas medibles. La actividad se apoya en dos: la **eficiencia de desempeño** (qué tan bien rinde el software con los recursos que usa) y la **mantenibilidad** (qué tan fácil es cambiarlo). El requisito no funcional que las motiva es **RNF-011, Eficiencia energética** (ver [`07. Requisitos no funcionales`](../../../01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md)).
 
 ### 2.1 Eficiencia de desempeño
 
@@ -54,26 +42,11 @@ En el documento oficial, la 2.4 es «Diseñar recorridos de usuario eficientes»
 
 | Subcaracterística | Qué mide | Cómo se aplicó en RouteZero | Evidencia |
 |---|---|---|---|
-| **Modularidad** | Cambiar una parte sin afectar al resto | Backend organizado por características; ningún módulo de negocio importa a otro. Frontend dividido en un trozo de código por pantalla | [`test_arquitectura.py`](../../../../../../backend/tests/test_arquitectura.py) vigila la independencia; trozos de la sección 5.4 del informe 01 |
+| **Modularidad** | Cambiar una parte sin afectar al resto | Backend organizado por características; ningún módulo de negocio importa a otro. Frontend dividido en un trozo de código por pantalla | [`test_arquitectura.py`](../../../../backend/tests/test_arquitectura.py) vigila la independencia; trozos de la sección 5.4 del informe 01 |
 | **Reusabilidad** | Reutilizar componentes en varios lugares | Componentes y utilidades compartidas en lugar de copias | `utilesCrud.ts` lo usan 4 pantallas y `ui.tsx`; `ui.tsx` y `acciones.tsx` los usan 9 archivos |
-| **Analizabilidad** | Entender y diagnosticar el sistema | Comentarios que explican el porqué, documentación por sprint, auditorías con script | [Calidad de código](../../../../Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) (SonarQube); `auditar_consultas.py` |
+| **Analizabilidad** | Entender y diagnosticar el sistema | Comentarios que explican el porqué, documentación por sprint, auditorías con script | [Calidad de código](../../Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) (SonarQube); `auditar_consultas.py` |
 | **Modificabilidad** | Cambiar sin introducir defectos | Parámetros que se ajustan sin tocar la lógica (precio del combustible, meta mensual, factores de congestión) | `backend/src/core/config.py`, `backend/src/rutas/congestion.py` |
 | **Capacidad de ser probado** (*testability*) | Facilidad de verificar | Pruebas automáticas en las tres capas | 360 de backend (cobertura de 98 %), 178 de Vitest y 35 de extremo a extremo |
-
-### 2.3 Las ocho características de un vistazo
-
-Se usa la edición de ISO/IEC 25010 de ocho características (la que citan los documentos del proyecto). Las dos primeras de la lista de arriba, eficiencia de desempeño y mantenibilidad, se desarrollan en 2.1 y 2.2; las demás se resumen aquí con su evidencia y su límite.
-
-| Característica | Qué mide | Evidencia en RouteZero | Límite declarado |
-|---|---|---|---|
-| **Adecuación funcional** | Que haga lo que debe, completo y correcto | Todos los ítems de los Sprints 3 y 4 completados (26 y 18 Story Points); las reglas de negocio RN-001 a RN-003 y RN-005 a RN-015 de los módulos entregados están implementadas y con pruebas automáticas | RN-004 (restricción por placa) está **desactivada a propósito**: el decreto citado inicialmente no existe |
-| **Eficiencia de desempeño** | Tiempos, recursos y capacidad | Sección 2.1 | Latencia de Render gratuito (IMP-016) |
-| **Compatibilidad** | Convivir e intercambiar información con otros sistemas | API REST/JSON documentada con Swagger (`/docs`); integra OpenStreetMap, Supabase Auth y PostgreSQL | Probado en Chrome y Chromium (Playwright y Lighthouse); Firefox y Safari **no** se probaron |
-| **Usabilidad** | Facilidad de uso y accesibilidad | Lighthouse de accesibilidad en 100 (24 mediciones); WCAG 2.2 AA con 36 de 40 criterios cumplidos ([evaluación](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)); ayudas «i» en los indicadores; todas las pantallas se ven en ancho móvil | La escala SUS y la evaluación con las 10 heurísticas de Nielsen **están pendientes** (Inspección 05) |
-| **Fiabilidad** | Funcionar sin fallar y recuperarse | Respuestas 503 claras si Supabase o la base no responden (OWASP A10); la re-optimización cumple RN-012 (22.2 s en Render, límite de 30 s) y la generación RN-015 | Render gratuito tiene arranque en frío de unos 52 s y Supabase gratuito se pausa por inactividad (ocurrió el 09-11-2026) |
-| **Seguridad** | Proteger datos y accesos | Verificación en dos pasos (TOTP), sesiones con detección de robo, RLS en la base, roles por endpoint (RN-014), CORS con el origen exacto y OWASP Top 10 evaluado ([documento](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md)); Bandit, `pip-audit` y `npm audit` en el CI | El DNI del conductor está en texto plano en la base y los tokens se guardan en `localStorage` (brechas declaradas) |
-| **Mantenibilidad** | Facilidad para cambiar | Sección 2.2 | — |
-| **Portabilidad** | Instalarlo y moverlo a otro entorno | Todo se configura con variables de entorno (`.env.example`) y se despliega con `render.yaml` y Vercel; sin contenedores | Depende de Supabase (autenticación y base de datos): reemplazarlo exigiría reescribir esa capa |
 
 ---
 
@@ -94,7 +67,7 @@ La GSF también publica otros marcos (por ejemplo, un conjunto de ocho principio
 
 ## 4. W3C Web Sustainability Guidelines (WSG)
 
-Las **WSG** son pautas del W3C para que los sitios y aplicaciones web sean más sostenibles. Cada pauta tiene criterios de éxito verificables. La tabla relaciona las pautas oficiales (numeración y títulos de la publicación del 16-10-2026) con la evidencia del proyecto. Los números entre paréntesis remiten a las secciones del [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md).
+Las **WSG** son pautas del W3C para que los sitios y aplicaciones web sean más sostenibles. Cada pauta tiene criterios de éxito verificables. La tabla relaciona las pautas oficiales (numeración y títulos de la publicación del 16-10-2026) con la evidencia del proyecto. Los números entre paréntesis remiten a las secciones del [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_2_0.md).
 
 | Pauta | Título (traducción) | Evidencia en RouteZero |
 |---|---|---|
@@ -152,7 +125,6 @@ Reglas que sigue el equipo, ordenadas por el principio de ingeniería que las so
 | F7 | Toda pantalla se ve bien en ancho móvil, sin desplazamiento horizontal, y mantiene 100 en accesibilidad | Clean Code, inclusión | Pruebas de Playwright en escritorio y celular; Lighthouse en 100 |
 | F8 | Si en el futuro se agregan imágenes rasterizadas: WebP o AVIF con `<picture>`, `width` y `height` declarados y `loading="lazy"` salvo en la imagen principal (que lleva `fetchpriority="high"`) | Green, WSG 2.9 | Regla preventiva; hoy no hay imágenes de ese tipo |
 | F9 | Una fórmula de huella de carbono se prueba contra una referencia externa | DRY (con una excepción declarada) | La fórmula SWDM v4 existe en Python (`scripts/calcular_huella_swdm.py`, para el informe) y en TypeScript (`huellaDigital.ts`, para el sistema): son dos implementaciones por ser dos lenguajes, y ambas se comprueban con los mismos valores de CO2.js |
-| F10 | La pantalla inicial se dibuja con el HTML, sin esperar al JavaScript, y se mide el primer dibujo con la red limitada de verdad además del modo simulado | Green, WSG 3.7 | `index.html` con la cáscara y el CSS en línea; el informe 01 (5.9) compara los dos modos de medición |
 
 ---
 
@@ -169,84 +141,26 @@ Reglas que sigue el equipo, ordenadas por el principio de ingeniería que las so
 | 7 | Caché (5.7) | Eficiencia de desempeño: comportamiento temporal | Eficiencia energética | 4.2 | Implementada (verificación en producción pendiente del despliegue) |
 | 8 | Compresión de la API (5.8) | Eficiencia de desempeño: capacidad | Eficiencia de carbono | 4.3 | Cubierta por la plataforma, con medición |
 | — | Presupuesto en CI (8) | Mantenibilidad: capacidad de ser probado | Eficiencia de carbono (medición) | 3.1, 5.24 y 2.15 | Implementado |
-| — | Cáscara de la aplicación y CSS en línea (5.9) | Eficiencia de desempeño: comportamiento temporal | Eficiencia energética y de hardware (menos espera en el celular) | 3.7 y 3.2 | Implementada; efecto en producción por medir |
 | — | Cálculo SWDM v4 (7) | Analizabilidad | Eficiencia de carbono (medición) | 5.5 | Implementado y verificado |
 | — | Huella digital dentro del sistema (7.5) | Analizabilidad | Eficiencia de carbono (medición) | 5.5 | Implementada, probada y verificada en producción |
 | — | Historial y proyección de emisiones en el dashboard (7.6) | Analizabilidad | Eficiencia de carbono (medición y seguimiento de la meta) | 5.5 y 5.24 | Implementada y probada |
 
 ---
 
-## 7. Verificación de los ocho estándares del proyecto
+## 7. Estado de los demás estándares del proyecto
 
-El README declara ocho estándares de referencia. Este es su estado, con la evidencia y las brechas:
+El README declara ocho estándares de referencia. Este es su estado, con la evidencia donde ya existe:
 
 | Estándar | Estado | Evidencia |
 |---|---|---|
-| W3C (HTML válido) | Cubierto | 0 errores y 0 avisos en las 6 pantallas ([accesibilidad WCAG](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)) |
-| OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
-| WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
-| ISO/IEC 25010 | **Cubierto: las ocho características** | Secciones 2.1 a 2.3 de este documento, cada una con su evidencia y su límite |
-| Green Software | Cubierto | Este documento y el [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md) |
-| Ley N° 29733 (datos personales) | **Parcial: controles técnicos y procedimientos definidos; faltan operarlos, anonimizar e inscribir el banco de datos** | Sección 7.2 |
+| W3C (HTML válido) | Cubierto | 0 errores y 0 avisos en las 6 pantallas ([accesibilidad WCAG](../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)) |
+| OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
+| WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
+| ISO/IEC 25010 | Cubierto en dos características | Sección 2 de este documento (eficiencia de desempeño y mantenibilidad) |
+| Green Software | Cubierto | Este documento y el [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_2_0.md) |
+| Ley N° 29733 (datos personales) | Parcial | Consentimiento del conductor y DNI fuera de la auditoría; la brecha del DNI en texto plano está declarada en el documento de OWASP |
 | DS 033-2001-MTC | Cubierto | Velocidades por tipo de vía; se corrigió que el decreto «2012» citado inicialmente no existe |
-| ISO 14083 | **Parcial: método por distancia coherente, sin cumplir la norma completa; plan de cierre definido** | Sección 7.1 |
-
-### 7.1 ISO 14083 (emisiones de gases de efecto invernadero del transporte)
-
-**ISO 14083** es la norma internacional para cuantificar e informar las emisiones de gases de efecto invernadero de las operaciones de transporte (las del marco GLEC la usan). **Alcance de esta verificación:** se hizo a partir del resumen público de la norma y del código del sistema; la norma completa es de pago y no se consultó, así que esto **no sustituye una auditoría**.
-
-El motor calcula las emisiones de cada ruta como `distancia (km) × factor de emisión del vehículo (kg de CO₂ por km)` (regla RN-009; [`evaluacion.py`](../../../../../../backend/src/algoritmo/evaluacion.py)), y el dashboard y el reporte PDF las suman.
-
-| Aspecto | Qué pide la norma (en términos generales) | RouteZero | Evaluación |
-|---|---|---|---|
-| Alcance | Emisiones de las operaciones de transporte de una flota | Emisiones por ruta, por jornada y por periodo, con su reporte | Coherente |
-| Datos de actividad | Datos primarios por vehículo cuando existen | La distancia sale de la ruta calculada y el factor es **propio de cada vehículo**, registrado por el administrador | Coherente; el factor no lleva fuente documentada |
-| Gases | CO₂ equivalente (CO₂, CH₄ y N₂O) | Solo CO₂ | **Brecha** |
-| Alcance de la energía | Ciclo completo del combustible (*well-to-wheel*: producción más combustión) | El sistema no distingue si el factor registrado es solo de combustión (*tank-to-wheel*) o del ciclo completo | **Brecha** |
-| Intensidad | Emisiones por tonelada-kilómetro transportada | No se calcula; solo kg totales y kg por ruta | **Brecha** |
-| Asignación | Reparto de las emisiones entre los envíos transportados | No se reparte entre pedidos | **Brecha** |
-| Transparencia | Declarar método, supuestos e incertidumbre | El reporte PDF incluye «supuestos y notas»; no se informa incertidumbre | Parcial |
-| Verificabilidad | Cálculo reproducible | Pruebas automáticas de la fórmula contra la base (`test_sostenibilidad.py`) | Coherente |
-
-**Conclusión.** El cálculo es coherente con un método **basado en distancia con factor por vehículo**, que es una aproximación razonable para el alcance académico del proyecto, pero **no cumple ISO 14083 completa**. Para cumplirla faltaría informar CO₂e, definir si el factor es del ciclo completo, calcular la intensidad por tonelada-kilómetro y repartir las emisiones entre envíos. La conversión de los factores de ejemplo de kg/L a kg/km (informe 01, sección 7.6) es parte de mantener coherente este cálculo.
-
-#### 7.1.1 Plan para cerrar las brechas
-
-Estas mejoras **no se implementaron en esta actividad**: exigen cambios del esquema de la base, del cálculo del reporte y de la interfaz, y no forman parte de la rúbrica de la Inspección 04. Quedan definidas para que el cierre sea concreto:
-
-| Brecha | Qué se cambiaría en el sistema | Dónde |
-|---|---|---|
-| Solo CO₂ (falta CO₂e) | Agregar a cada vehículo un factor en CO₂e (CO₂ más metano y óxido nitroso) y mostrarlo en el dashboard y en el PDF | Migración de `vehiculos`, `service.py` y `reporte.py` de sostenibilidad, pantalla Sostenibilidad |
-| Combustión o ciclo completo | Registrar el tipo de combustible y usar factores del ciclo completo (producción más combustión) de una fuente publicada, citándola en «supuestos y notas» | Migración de `vehiculos`, reporte PDF |
-| Sin intensidad por tonelada-kilómetro | Calcular por cada tramo la carga a bordo × la distancia del tramo (los tramos ya existen para el mapa) y mostrar kg de CO₂e por tonelada-kilómetro por ruta y por periodo | `rutas/trazado.py`, repositorio de sostenibilidad, dashboard |
-| Sin reparto entre envíos | Repartir las emisiones de cada ruta entre sus pedidos en proporción a su peso × la distancia recorrida hasta su entrega | Servicio de sostenibilidad y reporte |
-| Sin fuente ni incertidumbre | Guardar la fuente de cada factor y declarar un rango de incertidumbre en el reporte | Campo nuevo en `vehiculos` y reporte PDF |
-
-### 7.2 Ley N° 29733 (protección de datos personales del Perú)
-
-La **Ley N° 29733** regula el tratamiento de datos personales; su reglamento es el D. S. N° 003-2013-JUS. El único dato personal que trata RouteZero es el de los **conductores** (nombre, DNI, teléfono, correo opcional y licencia); los clientes son negocios.
-
-| Principio o requisito | Qué exige (en términos generales) | Evidencia | Brecha |
-|---|---|---|---|
-| Consentimiento | Consentimiento previo, libre e informado | `consentimiento_datos` y `consentimiento_en` obligatorios, con una restricción `CHECK` en la base (RN-013): sin consentimiento no se registra al conductor | No hay un flujo documentado para retirar el consentimiento |
-| Finalidad y proporcionalidad | Pedir solo los datos necesarios para la finalidad | Solo los datos necesarios para asignar rutas y comprobar la licencia y el horario; el DNI **nunca** se escribe en la auditoría | No hay una política de retención de datos |
-| Seguridad | Medidas técnicas y organizativas | Las fichas de conductores solo las gestiona el administrador (RN-014), RLS, verificación en dos pasos y sesiones seguras; HTTPS en Vercel y Render | El DNI está en texto plano en la base (sin cifrado a nivel de columna), declarado en el [documento de OWASP](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
-| Derechos de acceso, rectificación, cancelación y oposición | Atender las solicitudes de la persona titular | El administrador puede **consultar** la ficha de un conductor, **editarla** (rectificación) y **eliminarla** (cancelación); cada acción queda en la auditoría (`conductor_registrado`, `conductor_editado` y `conductor_eliminado`) **sin escribir el DNI** | Si el conductor ya tiene rutas, la ficha no se puede eliminar (solo marcarse como no disponible) y sus datos personales permanecen: **no hay anonimización**. Falta un procedimiento escrito (7.2.1) |
-| Registro del banco de datos | Inscribir el banco de datos ante la Autoridad Nacional de Protección de Datos Personales | — | No realizado: es un proyecto académico con datos ficticios; en una operación real habría que inscribirlo |
-
-**Conclusión.** Hay controles técnicos reales (consentimiento verificado por la base, acceso restringido, exclusión del DNI de la auditoría y funciones de consulta, edición y eliminación de fichas). Los procedimientos organizativos se definen en 7.2.1, pero **todavía no se operan**, y faltan la anonimización de fichas con rutas y la inscripción del banco de datos. El estado se mantiene como **parcial**.
-
-#### 7.2.1 Procedimientos definidos por el equipo
-
-Son una **propuesta del equipo** para este proyecto académico y no constituyen asesoría legal; los plazos y requisitos exactos deben tomarse de la ley y de su reglamento (D. S. N° 003-2013-JUS) al aplicarlos en una operación real. Los ejecuta el **administrador** de Andina Reparto.
-
-| Procedimiento | Pasos |
-|---|---|
-| **A. Retiro del consentimiento o solicitud de cancelación** | 1) El conductor lo pide por escrito al administrador. 2) El administrador verifica su identidad. 3) Desde la pantalla Conductores marca la ficha como **no disponible**, para que no reciba más rutas. 4) Si la ficha **no tiene rutas**, la elimina; la auditoría registra `conductor_eliminado` sin el DNI. 5) Si **tiene rutas**, conserva solo lo necesario para el historial de las jornadas y, hasta que exista la anonimización (7.1.1 y 7.2), deja constancia del motivo. 6) Responde por escrito al conductor |
-| **B. Atención de solicitudes de acceso, rectificación u oposición** | 1) Recibe la solicitud por escrito y la registra con su fecha. 2) **Acceso:** entrega al conductor los datos de su ficha. 3) **Rectificación:** edita la ficha (`conductor_editado` queda en la auditoría). 4) **Oposición:** si el uso de los datos no es necesario para asignar rutas, deja la ficha como no disponible. 5) Responde por escrito dentro del plazo legal |
-| **C. Retención de datos** | Los datos del conductor se conservan **mientras mantenga relación con la empresa y se le asignen rutas**. Al terminar la relación se aplica el procedimiento A. Las sesiones expiradas se limpian con el job de mantenimiento (`python -m src.auth.mantenimiento`) |
-
-La inscripción del banco de datos ante la Autoridad Nacional de Protección de Datos Personales no se hace en este proyecto académico (datos ficticios).
+| ISO 14083 | **Sin verificar** | Solo está listada; no se comprobó que el cálculo de emisiones de rutas la respete. Queda fuera de esta actividad |
 
 ---
 
@@ -278,19 +192,10 @@ La inscripción del banco de datos ante la Autoridad Nacional de Protección de 
 | **OWASP Top 10** | Lista de los diez riesgos de seguridad más comunes en aplicaciones web |
 | **WCAG** | *Web Content Accessibility Guidelines*: pautas de accesibilidad web (nivel AA) |
 | **`Profiler` de React** | Herramienta que mide qué componentes se vuelven a dibujar y cuánto cuesta |
-| **ISO 14083** | Norma internacional para cuantificar e informar las emisiones de gases de efecto invernadero del transporte |
-| **CO₂e (dióxido de carbono equivalente)** | Unidad que expresa todos los gases de efecto invernadero (CO₂, metano, óxido nitroso) en su equivalente en CO₂ |
-| ***Well-to-wheel* / *tank-to-wheel*** | Emisiones del ciclo completo del combustible (de la producción a la rueda) / solo las de su combustión en el vehículo |
-| **Tonelada-kilómetro (t·km)** | Unidad de trabajo de transporte: una tonelada llevada un kilómetro; con ella se mide la intensidad de emisiones |
-| **Ley N° 29733** | Ley peruana de protección de datos personales |
-| **Anonimización** | Quitar o alterar los datos personales de un registro para que ya no identifique a una persona, conservando el resto para fines estadísticos |
-| **ANPD** | Autoridad Nacional de Protección de Datos Personales del Perú |
-| **Derechos ARCO** | Derechos de acceso, rectificación, cancelación y oposición de la persona sobre sus datos |
-| **Cáscara de la aplicación (*app shell*)** | HTML mínimo visible de inmediato mientras carga el JavaScript (informe 01, sección 5.9) |
 
 ---
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 
@@ -299,4 +204,3 @@ La inscripción del banco de datos ante la Autoridad Nacional de Protección de 
 | V_1_0_0 | 2026-11-09 | Versión inicial: fundamentación en ISO/IEC 25010, Green Software Foundation y W3C WSG (con su numeración oficial), guía de desarrollo verde para backend y frontend, matriz de mapeo de las 8 optimizaciones y estado de los demás estándares | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-11-10 | Se agregan la huella digital dentro del sistema (WSG 5.5, GSF y matriz), las reglas B8 (cabecera `Timing-Allow-Origin`) y F9 (una fórmula, dos lenguajes, una referencia) y se actualiza el número de pruebas (360, 166 y 34) | Inciso Aguilar Elizabeth Antonela |
 | V_1_2_0 | 2026-11-10 | Se agrega el historial y la proyección de emisiones del dashboard a la matriz (WSG 5.5 y 5.24) y se actualiza el número de pruebas (360, 178 y 35) y los enlaces al informe 1.2.0 | Inciso Aguilar Elizabeth Antonela |
-| V_1_3_0 | 2026-11-10 | Se agrega la equivalencia entre la numeración de la rúbrica y la oficial de W3C (1.1), las ocho características de ISO/IEC 25010 con su evidencia y su límite (2.3), la verificación de ISO 14083 con su plan de cierre y de la Ley N° 29733 con sus procedimientos definidos y sus brechas (7.1 y 7.2), la regla F10 y la fila de la cáscara en la matriz | Inciso Aguilar Elizabeth Antonela |

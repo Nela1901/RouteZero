@@ -12,10 +12,10 @@
 | **Fecha de las mediciones** | 2026-11-09 (ANTES) y 2026-11-10 (DESPUÉS en producción, tras el Pull Request #91) |
 | **Stack evaluado** | React 19 + Vite (Vercel), FastAPI (Render), PostgreSQL (Supabase) |
 | **Herramientas** | Lighthouse 13 y Lighthouse CI 0.15.1, Playwright, modelo SWDM v4 verificado contra CO2.js 0.16.9, `svgo`, `curl` |
-| **Documento hermano** | [02 Estándares de Ingeniería de Software](02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_5_0.md) |
-| **Versión** | 1.5.0 |
+| **Documento hermano** | [02 Estándares de Ingeniería de Software](02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_6_0.md) |
+| **Versión** | 1.6.0 |
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../README.md)
 
 ---
 
@@ -56,7 +56,7 @@ Estado de las 8 áreas (el docente confirmó el enfoque: **adaptarlas a nuestro 
 
 **Novedad de la versión 1.4.0:** las 8 áreas se presentan una por una, con lo que pide la rúbrica, su equivalente en nuestro stack, los términos explicados en palabras simples y el código real (sección 5); la paginación de pedidos pasa de 50 a 12 registros (sección 5.2) y se documenta el costo que se evita al usar APIs nativas (sección 5.5).
 
-Todo es reproducible: los comandos están en la sección 10 y los reportes consolidados en la carpeta [`evidencias/`](../evidencias/).
+Todo es reproducible: los comandos están en la sección 10 y los reportes consolidados en la carpeta [`evidencias/`](evidencias/).
 
 ---
 
@@ -95,7 +95,7 @@ Idea central: **menos bytes y menos cómputo = menos energía = menos carbono**.
 
 En algunas áreas RouteZero ya cumplía desde su construcción: nunca hubo un código «malo» que corregir, así que **no existe un ANTES**. En esos casos el informe muestra tres cosas: (a) el **código actual** que cumple, (b) la **evidencia verificable** (conteos, archivos, cabeceras) y, cuando sirve, (c) cuánto **habría costado no hacerlo** (el «costo evitado»), medido.
 
-Esa medición no se agrega para inventar un antes y un después, sino porque convierte «ya lo cumplimos» en un dato comprobable: muestra que no es casualidad, cuantifica el beneficio de la decisión de diseño y permite que cualquiera lo repita con los datos de la carpeta [`evidencias/`](../evidencias/). Por ejemplo, usar `moment` y `lodash` habría sumado 46.4 KB comprimidos, más de la mitad de todo el JavaScript inicial (sección 5.5).
+Esa medición no se agrega para inventar un antes y un después, sino porque convierte «ya lo cumplimos» en un dato comprobable: muestra que no es casualidad, cuantifica el beneficio de la decisión de diseño y permite que cualquiera lo repita con los datos de la carpeta [`evidencias/`](evidencias/). Por ejemplo, usar `moment` y `lodash` habría sumado 46.4 KB comprimidos, más de la mitad de todo el JavaScript inicial (sección 5.5).
 
 ---
 
@@ -124,7 +124,7 @@ Límites de la medición, para no sobreinterpretarla:
 
 **Cómo leer esta sección.** Cada área abre con una pequeña tabla: qué pide la rúbrica (pensada para MERN), su equivalente en nuestro stack y el tipo de cumplimiento. Hay dos tipos. **Con ANTES y DESPUÉS**: algo que se cambió, con el código de antes, el de después y su medición. **Por diseño**: algo que RouteZero ya hacía bien desde su construcción, por lo que no hay un ANTES; se muestra el código actual, la evidencia y, cuando sirve, el costo evitado. Los términos técnicos se explican en palabras simples en cada área y de nuevo en el glosario (sección 11).
 
-### 5.1 Consultas e índices de la base de datos
+### 5.1 Área 1: Consultas e índices de la base de datos
 
 | | |
 |---|---|
@@ -176,7 +176,7 @@ JOIN LATERAL (SELECT COUNT(*) AS paradas FROM ruta_pedidos rp WHERE rp.ruta_id =
 CREATE INDEX IF NOT EXISTS idx_pedidos_creado ON pedidos (creado_en DESC, pedido_id);
 ```
 
-**Evidencia.** Detalle en [`02 Implementación de la sostenibilidad`](../../../02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md), sección 6.
+**Evidencia.** Detalle en [`02 Implementación de la sostenibilidad`](../Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md), sección 6.
 
 | Consulta | ANTES | DESPUÉS |
 |---|---|---|
@@ -185,9 +185,9 @@ CREATE INDEX IF NOT EXISTS idx_pedidos_creado ON pedidos (creado_en DESC, pedido
 | Reporte: rutas del periodo | 6.9 ms | **2.5 ms** |
 | Las 17 consultas críticas | — | **todas ≤ 42 ms** (umbral: 500 ms) |
 
-Código: [`migracion_indices_ht11.sql`](../../../../../../backend/scripts/migracion_indices_ht11.sql) y [`repository.py` de sostenibilidad](../../../../../../backend/src/sostenibilidad/repository.py).
+Código: [`migracion_indices_ht11.sql`](../../../backend/scripts/migracion_indices_ht11.sql) y [`repository.py` de sostenibilidad](../../../backend/src/sostenibilidad/repository.py).
 
-### 5.2 Paginación
+### 5.2 Área 2: Paginación
 
 | | |
 |---|---|
@@ -229,7 +229,7 @@ const pagina = await api.get<PaginaPedidos>(`/api/pedidos?desplazamiento=${pedid
 
 **Notas.** La pantalla del Mapa pide `limite=200` de forma expresa porque necesita todos los pedidos pendientes para dibujarlos. La auditoría de la API también acota su respuesta (`limite` de 100 y máximo de 500). **Flota, clientes y conductores no se paginan**: son listas acotadas por el negocio (unas decenas de filas) y paginarlas añadiría peticiones sin ahorro real; la respuesta completa de clientes pesa 6.9 KB sin comprimir y 1.6 KB comprimida (sección 5.8). Las pruebas de la API (`test_pedidos.py`) y de la pantalla (`PedidosPage.test.tsx`) se actualizaron al nuevo tamaño.
 
-### 5.3 Imágenes
+### 5.3 Área 3: Imágenes
 
 | | |
 |---|---|
@@ -256,7 +256,7 @@ favicon.svg: 9.299 KiB - 0.2 % = 9.283 KiB
 
 Ya estaba tan reducido como se puede (−0.2 %), así que **no se reemplazó**: el cambio no lo justifica. Aparte, se **eliminó** `public/icons.svg` (5 031 B), un archivo distinto que ningún componente usaba. Los atributos `width` y `height` y la carga prioritaria de la imagen principal tampoco aplican, porque no hay una imagen principal (el CLS medido es de 0.001).
 
-### 5.4 Carga diferida y división de código (`React.lazy`)
+### 5.4 Área 4: Carga diferida y división de código (`React.lazy`)
 
 | | |
 |---|---|
@@ -305,7 +305,7 @@ Efecto medido en el login (local): peso 213 → 140 KB en móvil y FCP móvil 2.
 
 **Validación de que no se rompió nada:** 147 de 147 pruebas de Vitest y 33 de 33 de Playwright (escritorio y celular), antes y después.
 
-### 5.5 Dependencias y APIs nativas
+### 5.5 Área 5: Dependencias y APIs nativas
 
 | | |
 |---|---|
@@ -339,7 +339,7 @@ Las dependencias de ejecución del frontend (`frontend/package.json`) son solo c
 
 En el backend, `numpy` y `scipy` sostienen el motor de optimización (ACO) y `fpdf2` genera el reporte PDF: cada una tiene un uso concreto. Para que no se acumulen dependencias, Dependabot propone actualizaciones y el CI ejecuta `npm audit --audit-level=high`, Bandit y `pip-audit` en cada Pull Request. Lo único sobrante que se encontró fue el archivo `public/icons.svg` (sección 5.3), ya eliminado.
 
-**Costo evitado (medido).** Para dimensionar lo que se evita, se midió en una carpeta temporal el mismo ejemplo mínimo escrito con las librerías y con lo nativo (método y datos en [`costo-moment-lodash-vs-nativo.md`](../evidencias/costo-moment-lodash-vs-nativo.md)):
+**Costo evitado (medido).** Para dimensionar lo que se evita, se midió en una carpeta temporal el mismo ejemplo mínimo escrito con las librerías y con lo nativo (método y datos en [`costo-moment-lodash-vs-nativo.md`](evidencias/costo-moment-lodash-vs-nativo.md)):
 
 | Versión | Sin comprimir | Comprimido (gzip) |
 |---|---|---|
@@ -348,7 +348,7 @@ En el backend, `numpy` y `scipy` sostienen el motor de optimización (ACO) y `fp
 
 Las dos librerías habrían sumado un **53 %** al JavaScript inicial de RouteZero (87.4 KB comprimidos). Es un ejemplo con las librerías completas: con versiones recortables el costo sería menor, pero el orden de magnitud se mantiene.
 
-### 5.6 Solicitudes HTTP y SVG en línea
+### 5.6 Área 6: Solicitudes HTTP y SVG en línea
 
 | | |
 |---|---|
@@ -429,7 +429,7 @@ font-family del body: Manrope, sans-serif
 
 Efecto medido en escritorio (local): FCP 510 → 368 ms (−28 %) y LCP 797 → 488 ms (−39 %). En móvil no hubo mejora adicional con este cambio (el FCP móvil se mantuvo en 1.66 s, limitado por la simulación de red lenta). El aspecto visual no cambia: las mismas familias y los mismos pesos. En producción el HTML servido ya no contiene ninguna referencia a Google Fonts.
 
-### 5.7 Caché de recursos
+### 5.7 Área 7: Caché de recursos
 
 | | |
 |---|---|
@@ -479,7 +479,7 @@ if request.url.path.startswith("/api/"):
 
 Como el navegador no guarda una copia, no hay contra qué comparar un ETag, y por eso la API no lo usa; React Query tampoco hace falta, porque cada pantalla pide sus datos al abrirse y las listas son pequeñas. La caché útil de los datos está en el **servidor**: el mapa con los trazados por calles tarda 9.3 s la primera vez y 2.6 s desde la caché.
 
-### 5.8 Compresión de la API
+### 5.8 Área 8: Compresión de la API
 
 | | |
 |---|---|
@@ -542,7 +542,7 @@ La cáscara es **idéntica a la pantalla «Cargando…» que App.tsx ya mostraba
 
 **Por qué el modo simulado casi no lo ve.** Lighthouse mide en una máquina rápida y después *simula* una 4G lenta sobre lo que cargó antes del primer dibujo. Con el servidor en el mismo equipo, el JavaScript (85 KB) y la fuente terminan de cargarse a los 42 ms, antes del primer dibujo observado (61 ms), y la simulación los cuenta como si hubiera que bajarlos por la red lenta. En un servidor real con latencia (Vercel), la cáscara se dibuja antes de que llegue el JavaScript, por eso la medición con red limitada de verdad (702 ms) refleja mejor lo que vive el usuario. El resultado en producción está en la tabla siguiente.
 
-**Resultado en producción (2026-11-10, tras el despliegue; Mapa, Rutas y Conductor).** Reporte: [`lighthouse-produccion-CON-CASCARA-2026-11-10.json`](../evidencias/lighthouse-produccion-CON-CASCARA-2026-11-10.json).
+**Resultado en producción (2026-11-10, tras el despliegue; Mapa, Rutas y Conductor).** Reporte: [`lighthouse-produccion-CON-CASCARA-2026-11-10.json`](evidencias/lighthouse-produccion-CON-CASCARA-2026-11-10.json).
 
 | Perfil | Métrica | Sin cáscara (mañana) | Con cáscara (tarde) |
 |---|---|---|---|
@@ -578,7 +578,7 @@ La cáscara es **idéntica a la pantalla «Cargando…» que App.tsx ya mostraba
 | Peso transferido | 213 KB | **140 KB** | 244 KB | **171 KB** |
 | Peticiones | 7 | 7 | 8 | 8 |
 
-Después de los cambios, accesibilidad, buenas prácticas y SEO quedan en **100** en las doce mediciones (seis pantallas × dos perfiles) y el rendimiento mínimo es 99; antes, el mínimo de rendimiento era 95 y una medición (Mapa en móvil) tenía 96 en buenas prácticas. Reporte completo: [`lighthouse-local-ANTES-2026-11-09.json`](../evidencias/lighthouse-local-ANTES-2026-11-09.json) y [`lighthouse-local-DESPUES-2026-11-09.json`](../evidencias/lighthouse-local-DESPUES-2026-11-09.json).
+Después de los cambios, accesibilidad, buenas prácticas y SEO quedan en **100** en las doce mediciones (seis pantallas × dos perfiles) y el rendimiento mínimo es 99; antes, el mínimo de rendimiento era 95 y una medición (Mapa en móvil) tenía 96 en buenas prácticas. Reporte completo: [`lighthouse-local-ANTES-2026-11-09.json`](evidencias/lighthouse-local-ANTES-2026-11-09.json) y [`lighthouse-local-DESPUES-2026-11-09.json`](evidencias/lighthouse-local-DESPUES-2026-11-09.json).
 
 ### 6.2 Producción ANTES (2026-11-09, Vercel y Render)
 
@@ -591,7 +591,7 @@ Después de los cambios, accesibilidad, buenas prácticas y SEO quedan en **100*
 | Rutas | Móvil | 96 | 2 237 ms | 2 256 ms | 0 ms | 0 | 218 KB | 7 |
 | Conductor | Móvil | 96 | 2 304 ms | 2 304 ms | 0 ms | 0 | 218 KB | 7 |
 
-Reporte: [`lighthouse-produccion-ANTES-2026-11-09.json`](../evidencias/lighthouse-produccion-ANTES-2026-11-09.json). Dato operativo del día: Render tardó **52 s** en responder tras su arranque en frío y el proyecto de Supabase estaba pausado por inactividad (plan gratuito); hubo que restaurarlo antes de medir.
+Reporte: [`lighthouse-produccion-ANTES-2026-11-09.json`](evidencias/lighthouse-produccion-ANTES-2026-11-09.json). Dato operativo del día: Render tardó **52 s** en responder tras su arranque en frío y el proyecto de Supabase estaba pausado por inactividad (plan gratuito); hubo que restaurarlo antes de medir.
 
 ### 6.3 Producción DESPUÉS de las áreas 1 a 8 (2026-11-10, mañana, Vercel y Render)
 
@@ -606,11 +606,11 @@ Mismo procedimiento, pantallas y cuentas que el ANTES, con el Pull Request #91 y
 | Rutas | Móvil | 100 | 1 441 ms | 1 441 ms | 6 ms | 0 | 142 KB | 7 |
 | Conductor | Móvil | 100 | 1 290 ms | 1 307 ms | 8 ms | 0 | 142 KB | 7 |
 
-Accesibilidad, buenas prácticas y SEO: **100** en las seis mediciones. Reporte: [`lighthouse-produccion-DESPUES-2026-11-10.json`](../evidencias/lighthouse-produccion-DESPUES-2026-11-10.json). La mejora en producción es mayor que en local (FCP móvil de 1.29 a 1.44 s frente a 1.66 s); probablemente se debe a que Vercel sirve los archivos por HTTP/2 y con Brotli desde una red de distribución de contenido, mientras que `vite preview` no lo hace, pero esa explicación no se verificó.
+Accesibilidad, buenas prácticas y SEO: **100** en las seis mediciones. Reporte: [`lighthouse-produccion-DESPUES-2026-11-10.json`](evidencias/lighthouse-produccion-DESPUES-2026-11-10.json). La mejora en producción es mayor que en local (FCP móvil de 1.29 a 1.44 s frente a 1.66 s); probablemente se debe a que Vercel sirve los archivos por HTTP/2 y con Brotli desde una red de distribución de contenido, mientras que `vite preview` no lo hace, pero esa explicación no se verificó.
 
 ### 6.4 Cumplimiento de los umbrales de la rúbrica (producción, antes y después)
 
-Las dos primeras columnas son el **perfil de referencia (escritorio)**; las dos últimas, el **complemento móvil** (vista del conductor). Los valores de «DESPUÉS» son los finales, con la cáscara de la sección 5.9 desplegada ([reporte](../evidencias/lighthouse-produccion-CON-CASCARA-2026-11-10.json)). No se omite ningún resultado: el móvil no cumple el LCP.
+Las dos primeras columnas son el **perfil de referencia (escritorio)**; las dos últimas, el **complemento móvil** (vista del conductor). Los valores de «DESPUÉS» son los finales, con la cáscara de la sección 5.9 desplegada ([reporte](evidencias/lighthouse-produccion-CON-CASCARA-2026-11-10.json)). No se omite ningún resultado: el móvil no cumple el LCP.
 
 | Umbral | Escritorio ANTES | Escritorio DESPUÉS | Móvil ANTES | Móvil DESPUÉS |
 |---|---|---|---|---|
@@ -625,7 +625,7 @@ Las dos primeras columnas son el **perfil de referencia (escritorio)**; las dos 
 
 ### 6.5 Evolución histórica
 
-El proyecto ya había mejorado antes de esta actividad. Lighthouse en producción: en el Sprint 2 el mapa daba 88 a 89 y Pedidos 85 de rendimiento; el 22-10-2026 todas las pantallas quedaron entre 91 y 98 (detalle en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../../../../Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md), sección 2.3).
+El proyecto ya había mejorado antes de esta actividad. Lighthouse en producción: en el Sprint 2 el mapa daba 88 a 89 y Pedidos 85 de rendimiento; el 22-10-2026 todas las pantallas quedaron entre 91 y 98 (detalle en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md), sección 2.3).
 
 ---
 
@@ -697,13 +697,13 @@ Carga inicial (visita nueva, intensidad global):
 | Energía al año | 0.5325 kWh | 0.3564 kWh | 0.1761 kWh |
 | **Emisión al año** | **263.04 g CO₂e** | **176.06 g CO₂e** | **86.99 g CO₂e** |
 
-Con los **pesos medidos en producción** (móvil 218 → 142 KB y escritorio 248 → 173 KB, secciones 6.2 y 6.3) el resultado es casi idéntico: peso ponderado por visita 225.50 → 149.75 KB (−33.6 %), emisión por visita 0.025837 → 0.017158 g CO₂e y **268.70 → 178.44 g CO₂e al año (ahorro de 90.26 g)**. Salida completa: [`calculo-swdm-v4-pesos-de-produccion.md`](../evidencias/calculo-swdm-v4-pesos-de-produccion.md).
+Con los **pesos medidos en producción** (móvil 218 → 142 KB y escritorio 248 → 173 KB, secciones 6.2 y 6.3) el resultado es casi idéntico: peso ponderado por visita 225.50 → 149.75 KB (−33.6 %), emisión por visita 0.025837 → 0.017158 g CO₂e y **268.70 → 178.44 g CO₂e al año (ahorro de 90.26 g)**. Salida completa: [`calculo-swdm-v4-pesos-de-produccion.md`](evidencias/calculo-swdm-v4-pesos-de-produccion.md).
 
-Sensibilidad del ahorro anual (g CO₂e): con la intensidad de las diapositivas (481) son 85.51 g; con la intensidad de Perú en el dispositivo (263.27), 76.15 g; y si el sistema tuviera 500 000 visitas al año (la escala del ejemplo del curso), el ahorro sería de 4 182 g (4.2 kg) con la intensidad global. Tabla completa: [`calculo-swdm-v4.md`](../evidencias/calculo-swdm-v4.md).
+Sensibilidad del ahorro anual (g CO₂e): con la intensidad de las diapositivas (481) son 85.51 g; con la intensidad de Perú en el dispositivo (263.27), 76.15 g; y si el sistema tuviera 500 000 visitas al año (la escala del ejemplo del curso), el ahorro sería de 4 182 g (4.2 kg) con la intensidad global. Tabla completa: [`calculo-swdm-v4.md`](evidencias/calculo-swdm-v4.md).
 
 ### 7.4 Verificación y límites
 
-- **Verificación cruzada:** el script [`scripts/calcular_huella_swdm.py`](../../../../../../scripts/calcular_huella_swdm.py) con `--verificar` coincide con CO2.js 0.16.9 (`perByte` y `perVisitTrace`) a seis decimales en ocho casos, incluido el escenario de Perú. Resultado: [`verificacion-swdm-v4-contra-co2js.txt`](../evidencias/verificacion-swdm-v4-contra-co2js.txt).
+- **Verificación cruzada:** el script [`scripts/calcular_huella_swdm.py`](../../../scripts/calcular_huella_swdm.py) con `--verificar` coincide con CO2.js 0.16.9 (`perByte` y `perVisitTrace`) a seis decimales en ocho casos, incluido el escenario de Perú. Resultado: [`verificacion-swdm-v4-contra-co2js.txt`](evidencias/verificacion-swdm-v4-contra-co2js.txt).
 - **Solo cuenta la carga de la página.** No incluye las respuestas de la API durante la sesión (unos pocos KB comprimidos por petición) ni el cómputo del motor de optimización.
 - **Magnitud:** los gramos son pequeños porque la aplicación es liviana y de uso interno. Lo relevante es el cambio relativo (−33 %) y el contraste con el propósito del sistema: el tope mensual de emisiones de la flota que vigila el módulo de sostenibilidad (RN-010) está configurado en 800 kg de CO₂, mientras que la huella digital anual de la plataforma es de unos 0.18 kg. El mayor efecto ambiental del sistema está en las rutas que optimiza, no en las páginas que sirve.
 - **Hosting:** Vercel y Render no están en el directorio de hosting verde. Elegir un proveedor verificado reduciría la parte del centro de datos; hoy no hay descuento.
@@ -717,11 +717,11 @@ Desde la versión 1.1.0 el sistema muestra el CO₂ del día y su propia huella,
 | **Encabezado del panel** (pastilla) | Los **kg de CO₂ que emitieron hoy las rutas confirmadas**, tomados del dashboard de sostenibilidad. Antes mostraba un marcador fijo («— kg CO₂ evitados hoy») que nunca se conectó a datos; se corrigió también la etiqueta, porque el módulo calcula **emisión** y combustible ahorrado, no un CO₂ «evitado» |
 | **Pantalla Sostenibilidad** (tarjeta «Huella digital de esta sesión») | Los KB que el navegador descargó desde que se abrió RouteZero, la energía en Wh y la **emisión en mg CO₂e** con la misma fórmula SWDM v4 de esta sección, junto a la visita promedio del informe (16.9 mg) |
 
-![Pastilla del encabezado y pantalla de Sostenibilidad, con los datos sintéticos de las pruebas](../evidencias/captura-pastilla-y-sostenibilidad.png)
+![Pastilla del encabezado y pantalla de Sostenibilidad, con los datos sintéticos de las pruebas](evidencias/captura-pastilla-y-sostenibilidad.png)
 
-![Tarjeta de huella digital de la sesión, con los datos sintéticos de las pruebas](../evidencias/captura-tarjeta-huella-digital.png)
+![Tarjeta de huella digital de la sesión, con los datos sintéticos de las pruebas](evidencias/captura-tarjeta-huella-digital.png)
 
-Cómo funciona. [`huellaDigital.ts`](../../../../../../frontend/src/components/huellaDigital.ts) implementa la fórmula (0.300 kWh/GB y 494 g CO₂e/kWh) y suma, con un `PerformanceObserver` (API del navegador que avisa de cada recurso que se descarga), el tamaño transferido de cada recurso; la tarjeta se actualiza cada 5 segundos. La pastilla consulta **una sola vez** al abrir el panel, sin sondeos: cada consulta cuesta energía, y sería contradictorio gastarla para mostrar la huella.
+Cómo funciona. [`huellaDigital.ts`](../../../frontend/src/components/huellaDigital.ts) implementa la fórmula (0.300 kWh/GB y 494 g CO₂e/kWh) y suma, con un `PerformanceObserver` (API del navegador que avisa de cada recurso que se descarga), el tamaño transferido de cada recurso; la tarjeta se actualiza cada 5 segundos. La pastilla consulta **una sola vez** al abrir el panel, sin sondeos: cada consulta cuesta energía, y sería contradictorio gastarla para mostrar la huella.
 
 Decisiones y límites:
 
@@ -742,13 +742,13 @@ La pantalla Sostenibilidad ahora muestra, además de los indicadores del periodo
 | **Tabla «Historial por día»** | Una fila por jornada (la más reciente primero): rutas, kilómetros, CO₂, combustible ahorrado y paradas entregadas y fallidas, con el total del periodo. Muestra los últimos 10 días y permite ver todos |
 | **Atajo «Mes anterior»** | Consulta el mes calendario anterior completo, para comparar un mes contra otro |
 
-**Cómo se calcula la proyección.** Es una estimación a **ritmo constante**, no un pronóstico: `emisión acumulada ÷ días del calendario transcurridos × días del mes` (los domingos cuentan como días transcurridos). Solo se muestra cuando el periodo es «el mes desde el día 1 hasta una fecha del mismo mes»; para un mes ya terminado informa en cuánto cerró y para otros periodos no se proyecta. La lógica está en [`proyeccionMes.ts`](../../../../../../frontend/src/components/proyeccionMes.ts) con sus pruebas.
+**Cómo se calcula la proyección.** Es una estimación a **ritmo constante**, no un pronóstico: `emisión acumulada ÷ días del calendario transcurridos × días del mes` (los domingos cuentan como días transcurridos). Solo se muestra cuando el periodo es «el mes desde el día 1 hasta una fecha del mismo mes»; para un mes ya terminado informa en cuánto cerró y para otros periodos no se proyecta. La lógica está en [`proyeccionMes.ts`](../../../frontend/src/components/proyeccionMes.ts) con sus pruebas.
 
 **Cambio en el backend.** La consulta por día (`por_dia`) devuelve ahora también las rutas y las paradas entregadas y fallidas de cada día, contadas igual que el total (sin los pedidos cancelados), con un `JOIN LATERAL` como en la optimización de la sección 5.1. En la auditoría de consultas (`auditar_consultas.py`) la consulta nueva tarda **9.6 ms** con seis meses de historial (umbral: 500 ms).
 
 **Datos de ejemplo.** Un script de SQL que se ejecuta en el SQL Editor de Supabase (`datos_historial_dashboard.sql`, que se conserva en el equipo del autor y no se sube al repositorio) carga jornadas del 01-10 al 14-11-2026 para tener un historial que mostrar: 132 rutas completadas, 3 canceladas, 1 078 paradas entregadas, 56 fallidas y 70 pedidos cancelados, con métricas coherentes con el motor (combustible = km ÷ consumo del vehículo y CO₂ = combustible × factor de emisión). Es repetible, no borra pedidos pendientes, usuarios ni sesiones, y se probó dentro de una transacción que se deshizo.
 
-![Dashboard con el gráfico de columnas, la proyección de cierre del mes y el historial por día, con datos sintéticos de las pruebas](../evidencias/captura-dashboard-historial-y-proyeccion.png)
+![Dashboard con el gráfico de columnas, la proyección de cierre del mes y el historial por día, con datos sintéticos de las pruebas](evidencias/captura-dashboard-historial-y-proyeccion.png)
 
 Los vehículos de ejemplo (`datos_demo.sql`) traían factores de emisión en kg de CO₂ por **litro** (2.31 y 2.68), y el motor los usa como kg por **km** (RN-009). El script los convierte (factor ÷ consumo) para que una ruta generada en vivo sea coherente con el historial; con la conversión, la emisión de cada ruta cargada es exactamente `km × factor`, la fórmula del motor.
 
@@ -762,9 +762,9 @@ Lo que **no** es: los datos del historial son de ejemplo y están marcados («Hi
 
 | Archivo | Función |
 |---|---|
-| [`.github/workflows/green-audit.yml`](../../../../../../.github/workflows/green-audit.yml) | Workflow de GitHub Actions: compila, mide el peso, ejecuta LHCI en escritorio (falla) y móvil (FCP y LCP solo avisan), resume las métricas y guarda los informes como artefacto (no los publica en ningún servicio externo) |
-| [`frontend/lighthouserc.json`](../../../../../../frontend/lighthouserc.json) | Presupuesto de escritorio: rendimiento, accesibilidad, buenas prácticas y SEO ≥ 90; FCP ≤ 1.0 s; LCP ≤ 1.4 s; TBT ≤ 85 ms; CLS ≤ 0.02; peso ≤ 1.1 MB |
-| [`frontend/lighthouserc.movil.json`](../../../../../../frontend/lighthouserc.movil.json) | Presupuesto de móvil (más holgado) |
+| [`.github/workflows/green-audit.yml`](../../../.github/workflows/green-audit.yml) | Workflow de GitHub Actions: compila, mide el peso, ejecuta LHCI en escritorio (falla) y móvil (FCP y LCP solo avisan), resume las métricas y guarda los informes como artefacto (no los publica en ningún servicio externo) |
+| [`frontend/lighthouserc.json`](../../../frontend/lighthouserc.json) | Presupuesto de escritorio: rendimiento, accesibilidad, buenas prácticas y SEO ≥ 90; FCP ≤ 1.0 s; LCP ≤ 1.4 s; TBT ≤ 85 ms; CLS ≤ 0.02; peso ≤ 1.1 MB |
+| [`frontend/lighthouserc.movil.json`](../../../frontend/lighthouserc.movil.json) | Presupuesto de móvil (más holgado) |
 
 Decisiones:
 
@@ -884,7 +884,7 @@ git push origin sprint4
 
 ---
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../README.md)
 
 ## Historial de Control de Cambios
 
@@ -896,3 +896,4 @@ git push origin sprint4
 | V_1_3_0 | 2026-11-10 | Se agrega la cáscara de la aplicación con CSS en línea y sus mediciones (sección 5.9), se presenta el escritorio como perfil de referencia y el móvil como complemento (secciones 1, 4 y 6.4), se aclara que los factores de emisión de los vehículos de ejemplo pasan a kg/km (sección 7.6) y se actualizan las limitaciones del FCP en móvil | Inciso Aguilar Elizabeth Antonela |
 | V_1_4_0 | 2026-11-12 | Versión final: las 8 áreas se presentan una por una con lo que pide la rúbrica, su equivalente en nuestro stack, los términos explicados y el código real; se distingue el cumplimiento con ANTES y DESPUÉS del cumplimiento por diseño (secciones 3 y 5); la paginación de pedidos pasa de 50 a 12 (5.2); se documentan el inventario de imágenes (5.3), las APIs nativas con su costo evitado (5.5), la lista de peticiones HTTP (5.6) y la política de caché de la API (5.7); se agregan las mediciones de producción con la cáscara (5.9, 6.4) y se actualizan el resumen, las limitaciones y el glosario | Inciso Aguilar Elizabeth Antonela |
 | V_1_5_0 | 2026-11-12 | Se corrige la descripción de la compresión de la API: un navegador la recibe con Brotli y no solo con gzip; la sección 5.8 mide gzip y Brotli con datos del 2026-11-12 (ahorro de 75 % a 80 %) | Inciso Aguilar Elizabeth Antonela |
+| V_1_6_0 | 2026-11-12 | Los títulos 5.1 a 5.8 llevan el prefijo «Área N» para identificar cada una de las 8 áreas de la actividad | Inciso Aguilar Elizabeth Antonela |
