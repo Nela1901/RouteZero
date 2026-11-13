@@ -2,7 +2,7 @@
 
 Medido el 2026-11-12 en una carpeta temporal, sin tocar el proyecto. Sirve como «costo evitado» del área 5 del [informe 01](../01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_6_0.md): RouteZero no usa esas librerías, así que no existe un ANTES; esta medición muestra cuánto habría costado usarlas.
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
@@ -40,4 +40,4 @@ El JavaScript inicial de RouteZero pesa 87.4 KB comprimidos; las dos librerías 
 
 ---
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)

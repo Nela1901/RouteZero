@@ -9,13 +9,13 @@
 | **Líder del Proyecto** | Inciso Aguilar Elizabeth Antonela |
 | **Integrantes** | Inciso Aguilar Elizabeth Antonela, Espinoza Tiza Yago Imanol, Guerra Lozano Keen, Uscuvilca Ramos Abraham Luis |
 | **Actividad** | Inspección 04 — Green Software y verificación de estándares (actividad de cierre del Sprint 4) |
-| **Fecha de las mediciones** | 2026-11-09 |
+| **Fecha de las mediciones** | 2026-11-09 (ANTES) y 2026-11-10 (DESPUÉS en producción, tras el Pull Request #91) |
 | **Stack evaluado** | React 19 + Vite (Vercel), FastAPI (Render), PostgreSQL (Supabase) |
 | **Herramientas** | Lighthouse 13 y Lighthouse CI 0.15.1, Playwright, modelo SWDM v4 verificado contra CO2.js 0.16.9, `svgo`, `curl` |
-| **Documento hermano** | [02 Estándares de Ingeniería de Software](02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_0_0.md) |
-| **Versión** | 1.0.0 |
+| **Documento hermano** | [02 Estándares de Ingeniería de Software](02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_3_0.md) |
+| **Versión** | 1.3.0 |
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
@@ -23,18 +23,35 @@
 
 Se auditó el consumo de datos y de recursos de RouteZero, se aplicaron mejoras en las 8 áreas de optimización de la actividad (adaptadas a nuestro stack, sección 3) y se midió el efecto antes y después con las mismas herramientas y condiciones.
 
+**Perfil de referencia: escritorio.** El panel de operaciones es una aplicación web que se usa desde una computadora, por eso los umbrales de la rúbrica se leen primero en el perfil de escritorio. El celular (la vista del conductor) se presenta como **complemento**, con todos sus resultados, incluidos los que no cumplen. El docente confirmará qué perfil toma como referencia.
+
 | Indicador (carga inicial de la aplicación) | ANTES | DESPUÉS | Variación |
 |---|---|---|---|
+| **Escritorio:** peso transferido | 244 KB | 171 KB | **−30 %** |
+| **Escritorio:** LCP | 797 ms | 488 ms | **−39 %** |
 | JavaScript inicial (sin comprimir) | 553.4 KB | 281.9 KB | **−49 %** |
 | JavaScript inicial (comprimido) | 160.4 KB | 87.4 KB | **−46 %** |
-| Peso transferido, móvil | 213 KB | 140 KB | **−34 %** |
-| Peso transferido, escritorio | 244 KB | 171 KB | **−30 %** |
-| FCP en móvil | 2.18 s | 1.66 s | **−24 %** |
-| LCP en escritorio | 797 ms | 488 ms | **−39 %** |
 | Peticiones a dominios de terceros | 4 | 0 | **−100 %** |
 | Emisión estimada por visita (SWDM v4) | 0.0253 g CO₂e | 0.0169 g CO₂e | **−33 %** |
+| *Complemento, móvil:* peso transferido | 213 KB | 140 KB | **−34 %** |
+| *Complemento, móvil:* FCP | 2.18 s | 1.66 s | **−24 %** |
 
-Estado de las 8 áreas: **5 implementadas o mejoradas en esta actividad o ya cumplidas con evidencia, 1 cubierta por la plataforma, 1 parcial y 1 «no aplica» justificada** (detalle en la sección 5). Lo que **no** se logró está en la sección 9: el FCP y el LCP en móvil siguen por encima de los umbrales de la rúbrica.
+Medido en **producción** tras el despliegue (2026-11-10), con las mismas pantallas y los mismos perfiles que el ANTES:
+
+| Indicador en producción (Mapa, Rutas y Conductor) | ANTES (2026-11-09) | DESPUÉS (2026-11-10) | Variación |
+|---|---|---|---|
+| Rendimiento de Lighthouse | 96 a 100 | **100 en las seis mediciones** | hasta +4 |
+| FCP en móvil | 2.24 a 2.30 s | **1.29 a 1.44 s** | **−36 % a −44 %** |
+| LCP en móvil | 2.26 a 2.30 s | **1.31 a 1.44 s** | **−36 % a −43 %** |
+| LCP en escritorio | 0.68 a 1.00 s | **0.41 s** | **−40 % a −59 %** |
+| Peso transferido, móvil | 218 KB | 142 KB | **−35 %** |
+| Peso transferido, escritorio | 248 KB | 173 KB | **−30 %** |
+
+Estado de las 8 áreas: **5 implementadas o mejoradas en esta actividad o ya cumplidas con evidencia, 1 cubierta por la plataforma, 1 parcial y 1 «no aplica» justificada** (detalle en la sección 5). Lo que **no** se logró está en la sección 9: en móvil el FCP (1.29 a 1.44 s) sigue por encima del umbral de 1.0 s y el LCP supera por muy poco el umbral de 1.4 s en dos de las tres pantallas.
+
+**Novedad de la versión 1.1.0:** el sistema ahora muestra su propia huella: el CO₂ que emitieron hoy las rutas (encabezado) y la huella digital de la sesión calculada con SWDM v4 (pantalla Sostenibilidad); ver la sección 7.5.
+
+**Novedad de la versión 1.3.0:** el primer dibujo de la aplicación ya no espera al JavaScript (cáscara en el HTML y CSS en línea, sección 5.9): con la red limitada de verdad, el FCP en móvil baja de 1 952 a 702 ms; en el laboratorio simulado que usa la rúbrica solo baja de 1 657 a 1 506 ms, y el efecto en producción se medirá tras el despliegue.
 
 Todo es reproducible: los comandos están en la sección 10 y los reportes consolidados en la carpeta [`evidencias/`](../evidencias/).
 
@@ -79,10 +96,10 @@ La actividad enumera 8 áreas pensadas para el stack MERN (MongoDB, Express, Rea
 |---|---|
 | **Producción** | `npm run auditar:produccion`: Lighthouse sobre Vercel y Render, con las cuentas de prueba y una ruta de demostración de hoy que se borra al terminar. Pantallas: Mapa, Rutas y Conductor |
 | **Local** | `npm run auditar`: la aplicación compilada con `vite preview` y la API simulada en el navegador (datos sintéticos). Misma máquina y mismas condiciones antes y después, por eso es la comparación válida del efecto de cada cambio |
-| **Perfiles** | **Móvil** (Lighthouse por defecto: celular de gama media con red 4G lenta simulada) y **escritorio** (`desktop-config`) |
+| **Perfiles** | **Escritorio** (`desktop-config`), perfil de referencia porque el panel de operaciones es una aplicación web de computadora, y **móvil** (Lighthouse por defecto: celular de gama media con red 4G lenta simulada), complemento que corresponde a la vista del conductor |
 | **Métricas** | Rendimiento, FCP, LCP, TBT, CLS, Speed Index, peso transferido y número de peticiones (ver glosario, sección 11) |
 | **ANTES** | Código de `main` al 2026-11-09, antes de esta actividad |
-| **DESPUÉS** | Código con las mejoras de la sección 5 |
+| **DESPUÉS** | Código con las mejoras de la sección 5: en local (comparación controlada) y en producción tras el despliegue |
 | **Pipeline** | Lighthouse CI con presupuesto de rendimiento (sección 8) |
 
 Límites de la medición, para no sobreinterpretarla:
@@ -90,7 +107,7 @@ Límites de la medición, para no sobreinterpretarla:
 - El rendimiento **en producción** depende de la latencia de la API en Render gratuito (cada petición cuesta unos 2 s; IMP-016), que no se controla con cambios de código.
 - Las mediciones **locales** no incluyen esa latencia; sirven para aislar el efecto de cada cambio.
 - Lighthouse es una medición de **laboratorio** (simulada), no de usuarios reales (datos de campo).
-- Las cifras del DESPUÉS en producción se actualizarán en la versión siguiente de este informe, una vez desplegado el cambio en Vercel (sección 9).
+- El DESPUÉS en producción se midió el 2026-11-10, con el cambio ya desplegado en Vercel (sección 6.3).
 
 ---
 
@@ -122,7 +139,7 @@ JOIN LATERAL (SELECT COUNT(*) AS paradas FROM ruta_pedidos rp WHERE rp.ruta_id =
 CREATE INDEX IF NOT EXISTS idx_pedidos_creado ON pedidos (creado_en DESC, pedido_id);
 ```
 
-**Evidencia.** Detalle en [`02 Implementación de la sostenibilidad`](../../../02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md), sección 6.
+**Evidencia.** Detalle en [`02 Implementación de la sostenibilidad`](../../Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md), sección 6.
 
 | Consulta | ANTES | DESPUÉS |
 |---|---|---|
@@ -131,7 +148,7 @@ CREATE INDEX IF NOT EXISTS idx_pedidos_creado ON pedidos (creado_en DESC, pedido
 | Reporte: rutas del periodo | 6.9 ms | **2.5 ms** |
 | Las 17 consultas críticas | — | **todas ≤ 42 ms** (umbral: 500 ms) |
 
-Código: [`migracion_indices_ht11.sql`](../../../../../../backend/scripts/migracion_indices_ht11.sql) y [`repository.py` de sostenibilidad](../../../../../../backend/src/sostenibilidad/repository.py).
+Código: [`migracion_indices_ht11.sql`](../../../../backend/scripts/migracion_indices_ht11.sql) y [`repository.py` de sostenibilidad](../../../../backend/src/sostenibilidad/repository.py).
 
 ### 5.2 Paginación — cumplida donde importa; el resto, justificado
 
@@ -264,9 +281,9 @@ Peticiones a dominios externos: 0
 font-family del body: Manrope, sans-serif
 ```
 
-Efecto medido en escritorio (local): FCP 510 → 368 ms (−28 %) y LCP 797 → 488 ms (−39 %). En móvil no hubo mejora adicional (el FCP móvil se mantiene en 1.66 s, limitado por la simulación de red lenta). El aspecto visual no cambia: las mismas familias y los mismos pesos.
+Efecto medido en escritorio (local): FCP 510 → 368 ms (−28 %) y LCP 797 → 488 ms (−39 %). En móvil no hubo mejora adicional (el FCP móvil se mantiene en 1.66 s, limitado por la simulación de red lenta). El aspecto visual no cambia: las mismas familias y los mismos pesos. En producción (2026-11-10) el HTML servido ya no contiene ninguna referencia a Google Fonts.
 
-### 5.7 Caché de recursos — implementada (verificación en producción pendiente del despliegue)
+### 5.7 Caché de recursos — implementada y verificada en producción
 
 **Diagnóstico.** Se inspeccionaron las cabeceras reales de Vercel. Los archivos de `/assets/` llevan un **nombre con hash** (`index-DE2H_Ds6.js`): si el contenido cambia, cambia el nombre. Aun así se servían con:
 
@@ -288,9 +305,9 @@ ANTES: sin regla para `/assets/`. DESPUÉS (`frontend/vercel.json`):
 
 `max-age=31536000` es un año en segundos e `immutable` le dice al navegador que no valide el archivo mientras no caduque. El `index.html` **no** se cachea así: debe revalidarse para que apunte a los archivos nuevos tras cada despliegue.
 
-**Decisión sobre la API.** Las respuestas de la API llevan `Cache-Control: no-store` **a propósito** (OWASP A02: que el navegador o un intermediario no guarde datos autenticados, ver [`backend/src/main.py`](../../../../../../backend/src/main.py)). Con `no-store` no tiene sentido emitir ETag ni usar una caché de datos en el cliente (como TanStack Query, que la rúbrica de MERN menciona): se contradiría la política de seguridad. La caché útil de datos está en el servidor: el mapa con los trazados por calles tarda 9.3 s la primera vez y 2.6 s desde la caché.
+**Decisión sobre la API.** Las respuestas de la API llevan `Cache-Control: no-store` **a propósito** (OWASP A02: que el navegador o un intermediario no guarde datos autenticados, ver [`backend/src/main.py`](../../../../backend/src/main.py)). Con `no-store` no tiene sentido emitir ETag ni usar una caché de datos en el cliente (como TanStack Query, que la rúbrica de MERN menciona): se contradiría la política de seguridad. La caché útil de datos está en el servidor: el mapa con los trazados por calles tarda 9.3 s la primera vez y 2.6 s desde la caché.
 
-**Verificación pendiente.** La cabecera nueva solo se puede comprobar en producción cuando se fusione y Vercel despliegue: `curl -sI https://route-zero-omega.vercel.app/assets/<archivo>.js` debe mostrar `immutable`. Se anotará en la versión siguiente de este informe.
+**Verificación en producción (2026-11-10).** Tras el despliegue del Pull Request #91, `curl -sI https://route-zero-omega.vercel.app/assets/index-CExP8iu6.js` devuelve `Cache-Control: public, max-age=31536000, immutable`. Con eso, desde la segunda visita el navegador ya no vuelve a preguntar por esos archivos.
 
 ### 5.8 Compresión de la API — cubierta por la plataforma, con medición
 
@@ -305,6 +322,53 @@ ANTES: sin regla para `/assets/`. DESPUÉS (`frontend/vercel.json`):
 La respuesta llega con `Content-Encoding: gzip`: **el proxy de Render ya comprime**. El frontend (Vercel) además entrega los archivos estáticos con Brotli.
 
 **Decisión.** No se añadió compresión en la aplicación. Hacerlo duplicaría el trabajo con 0.1 CPU en el plan gratuito, y comprimiría también el reporte PDF, que ya es un formato comprimido (se medían 7.5 s para el PDF de 30 días). Se documenta la medición como evidencia y el supuesto: si en el futuro se despliega fuera de Render, se agregará `GZipMiddleware(minimum_size=1024)` de Starlette, excluyendo el PDF.
+
+### 5.9 Primer dibujo: cáscara de la aplicación y CSS en línea — implementada (efecto en producción por medir)
+
+**Diagnóstico.** RouteZero es una aplicación de una sola página (SPA): su HTML solo trae un `<div id="root"></div>` vacío y, hasta que el navegador descarga y ejecuta el JavaScript, la pantalla queda en blanco. Además la hoja de estilos principal (unos 4 KB) es una petición más que bloquea el primer dibujo. Es la causa del FCP de móvil que seguía por encima de 1.0 s (secciones 6.3 y 6.4).
+
+ANTES (`frontend/index.html`):
+
+```html
+<div id="root"></div>
+<!-- y, al compilar, un <link rel="stylesheet" href="/assets/index-xxxx.css"> que bloqueaba el primer dibujo -->
+```
+
+DESPUÉS:
+
+```html
+<div id="root">
+  <!-- Cáscara de la aplicación: se dibuja con el propio HTML y el CSS en línea, sin esperar al JavaScript; React la reemplaza al arrancar. -->
+  <main class="rz-cascara">Cargando…</main>
+</div>
+```
+
+```ts
+// frontend/vite.config.ts: al compilar, el CSS principal va dentro del HTML en lugar de enlazarse (las hojas de los trozos
+// diferidos, como la de Leaflet, siguen cargándose aparte)
+function cssPrincipalEnLinea(): Plugin { /* reemplaza el <link rel="stylesheet"> por <style>…</style> */ }
+```
+
+La cáscara es **idéntica a la pantalla «Cargando…» que App.tsx ya mostraba** mientras se comprueba la sesión (mismo estilo, mismo texto), de modo que React la reemplaza sin que nada se mueva. Un pequeño script en el `<head>` aplica el tema guardado antes del primer dibujo: sin él, quien eligió el tema claro vería un destello oscuro. Se comprobó con el JavaScript bloqueado que la cáscara sale con el fondo correcto en los dos temas (claro `rgb(245, 247, 246)` y oscuro `rgb(20, 24, 26)`).
+
+**Resultados** (pantalla de inicio de sesión, perfil móvil, 3 repeticiones, mediana, en local):
+
+| Método de medición | Métrica | Sin cáscara | Con cáscara | Variación |
+|---|---|---|---|---|
+| Lighthouse **simulado** (el del CI y el de la rúbrica) | FCP | 1 657 ms | 1 506 ms | −9 % |
+| | LCP | 1 807 ms | 1 806 ms | sin cambio |
+| **Red limitada de verdad** (throttling del navegador) | FCP | 1 952 ms | **702 ms** | **−64 %** |
+| | LCP | 2 135 ms | 2 219 ms | +4 % (dentro de la variación entre corridas) |
+
+**Por qué el modo simulado casi no lo ve.** Lighthouse mide en una máquina rápida y después *simula* una 4G lenta sobre lo que cargó antes del primer dibujo. Con el servidor en el mismo equipo, el JavaScript (85 KB) y la fuente terminan de cargarse a los 42 ms, antes del primer dibujo observado (61 ms), y la simulación los cuenta como si hubiera que bajarlos por la red lenta. En un servidor real con latencia (Vercel), la cáscara se dibuja antes de que llegue el JavaScript, por eso la medición con red limitada de verdad (702 ms) refleja mejor lo que vive el usuario. El resultado en producción se agregará en la siguiente versión de este informe.
+
+**Límites, dichos con claridad.**
+
+- El FCP mide «el primer contenido»: con la cáscara, ese contenido es el texto «Cargando…». Es lo que ya veía el usuario durante la comprobación de la sesión, y evita la pantalla en blanco, pero **no** acelera cuándo aparece la pantalla real.
+- El **LCP no mejora**: depende del contenido real, que sigue necesitando el JavaScript.
+- No se llegó a 1.0 s en el modo simulado. Hacerlo exigiría reducir más el JavaScript inicial (87 KB comprimidos) o renderizar en el servidor, con mucha más complejidad.
+
+**Validación.** Vitest 178 de 178, Playwright 35 de 35, build correcto, y los presupuestos de Lighthouse CI siguen pasando en escritorio y móvil.
 
 ---
 
@@ -338,22 +402,39 @@ Después de los cambios, accesibilidad, buenas prácticas y SEO quedan en **100*
 
 Reporte: [`lighthouse-produccion-ANTES-2026-11-09.json`](../evidencias/lighthouse-produccion-ANTES-2026-11-09.json). Dato operativo del día: Render tardó **52 s** en responder tras su arranque en frío y el proyecto de Supabase estaba pausado por inactividad (plan gratuito); hubo que restaurarlo antes de medir.
 
-### 6.3 Cumplimiento de los umbrales de la rúbrica
+### 6.3 Producción DESPUÉS (2026-11-10, Vercel y Render)
 
-| Umbral | Escritorio (producción ANTES) | Escritorio (local DESPUÉS) | Móvil (local DESPUÉS) |
-|---|---|---|---|
-| Rendimiento ≥ 90 | 98 a 100 ✔ | 100 ✔ | 99 ✔ |
-| FCP ≤ 1.0 s | 0.68 a 0.71 s ✔ | 0.37 s ✔ | **1.66 s ✘** |
-| LCP ≤ 1.4 s | 0.68 a 1.00 s ✔ | 0.49 s ✔ | **1.81 s ✘** |
-| TBT ≤ 85 ms | 0 ms ✔ | 0 ms ✔ | 0 ms ✔ |
-| CLS ≤ 0.02 | 0.001 ✔ | 0.001 ✔ | 0.006 ✔ |
-| Peso ≤ 1.1 MB | 248 KB ✔ | 171 KB ✔ | 140 KB ✔ |
+Mismo procedimiento, pantallas y cuentas que el ANTES, con el Pull Request #91 ya desplegado.
 
-**En escritorio se cumplen todos los umbrales; en móvil, el FCP y el LCP no.** La causa es la simulación de móvil de Lighthouse (red 4G lenta y CPU reducida), más la latencia de Render en producción; con el código actual el piso medido es de 1.6 s. Se declara así, sin forzar las cifras.
+| Pantalla | Perfil | Rend. | FCP | LCP | TBT | CLS | Peso | Peticiones |
+|---|---|---|---|---|---|---|---|---|
+| Mapa | Escritorio | 100 | 411 ms | 416 ms | 0 ms | 0.001 | 173 KB | 8 |
+| Rutas | Escritorio | 100 | 402 ms | 408 ms | 0 ms | 0.001 | 173 KB | 8 |
+| Conductor | Escritorio | 100 | 407 ms | 407 ms | 0 ms | 0.001 | 173 KB | 8 |
+| Mapa | Móvil | 100 | 1 432 ms | 1 432 ms | 0 ms | 0 | 142 KB | 7 |
+| Rutas | Móvil | 100 | 1 441 ms | 1 441 ms | 6 ms | 0 | 142 KB | 7 |
+| Conductor | Móvil | 100 | 1 290 ms | 1 307 ms | 8 ms | 0 | 142 KB | 7 |
 
-### 6.4 Evolución histórica
+Accesibilidad, buenas prácticas y SEO: **100** en las seis mediciones. Reporte: [`lighthouse-produccion-DESPUES-2026-11-10.json`](../evidencias/lighthouse-produccion-DESPUES-2026-11-10.json). La mejora en producción es mayor que en local (FCP móvil de 1.29 a 1.44 s frente a 1.66 s); probablemente se debe a que Vercel sirve los archivos por HTTP/2 y con Brotli desde una red de distribución de contenido, mientras que `vite preview` no lo hace, pero esa explicación no se verificó.
 
-El proyecto ya había mejorado antes de esta actividad. Lighthouse en producción: en el Sprint 2 el mapa daba 88 a 89 y Pedidos 85 de rendimiento; el 22-10-2026 todas las pantallas quedaron entre 91 y 98 (detalle en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../../../../Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md), sección 2.3).
+### 6.4 Cumplimiento de los umbrales de la rúbrica (producción, antes y después)
+
+Las dos primeras columnas son el **perfil de referencia (escritorio)**; las dos últimas, el **complemento móvil** (vista del conductor). No se omite ningún resultado: el móvil no cumple todavía el FCP y, por poco, el LCP de Mapa y Rutas.
+
+| Umbral | Escritorio ANTES | Escritorio DESPUÉS | Móvil ANTES | Móvil DESPUÉS |
+|---|---|---|---|---|
+| Rendimiento ≥ 90 | 98 a 100 ✔ | 100 ✔ | 96 ✔ | 100 ✔ |
+| FCP ≤ 1.0 s | 0.68 a 0.71 s ✔ | 0.40 a 0.41 s ✔ | 2.24 a 2.30 s ✘ | 1.29 a 1.44 s **✘** |
+| LCP ≤ 1.4 s | 0.68 a 1.00 s ✔ | 0.41 s ✔ | 2.26 a 2.30 s ✘ | 1.31 s ✔ en Conductor; 1.43 s en Mapa y 1.44 s en Rutas **✘** por poco |
+| TBT ≤ 85 ms | 0 ms ✔ | 0 ms ✔ | 0 a 6 ms ✔ | 0 a 8 ms ✔ |
+| CLS ≤ 0.02 | 0.001 ✔ | 0.001 ✔ | 0 ✔ | 0 ✔ |
+| Peso ≤ 1.1 MB | 248 KB ✔ | 173 KB ✔ | 218 KB ✔ | 142 KB ✔ |
+
+**En escritorio se cumplen todos los umbrales. En móvil se cumplen todos salvo el FCP (1.29 a 1.44 s contra 1.0 s) y el LCP de Mapa y Rutas (por 30 a 40 ms).** La causa es la simulación de móvil de Lighthouse (red 4G lenta y CPU reducida) más la latencia de Render. Se declara así, sin forzar las cifras.
+
+### 6.5 Evolución histórica
+
+El proyecto ya había mejorado antes de esta actividad. Lighthouse en producción: en el Sprint 2 el mapa daba 88 a 89 y Pedidos 85 de rendimiento; el 22-10-2026 todas las pantallas quedaron entre 91 y 98 (detalle en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../../Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md), sección 2.3).
 
 ---
 
@@ -425,14 +506,62 @@ Carga inicial (visita nueva, intensidad global):
 | Energía al año | 0.5325 kWh | 0.3564 kWh | 0.1761 kWh |
 | **Emisión al año** | **263.04 g CO₂e** | **176.06 g CO₂e** | **86.99 g CO₂e** |
 
+Con los **pesos medidos en producción** (móvil 218 → 142 KB y escritorio 248 → 173 KB, secciones 6.2 y 6.3) el resultado es casi idéntico: peso ponderado por visita 225.50 → 149.75 KB (−33.6 %), emisión por visita 0.025837 → 0.017158 g CO₂e y **268.70 → 178.44 g CO₂e al año (ahorro de 90.26 g)**. Salida completa: [`calculo-swdm-v4-pesos-de-produccion.md`](../evidencias/calculo-swdm-v4-pesos-de-produccion.md).
+
 Sensibilidad del ahorro anual (g CO₂e): con la intensidad de las diapositivas (481) son 85.51 g; con la intensidad de Perú en el dispositivo (263.27), 76.15 g; y si el sistema tuviera 500 000 visitas al año (la escala del ejemplo del curso), el ahorro sería de 4 182 g (4.2 kg) con la intensidad global. Tabla completa: [`calculo-swdm-v4.md`](../evidencias/calculo-swdm-v4.md).
 
 ### 7.4 Verificación y límites
 
-- **Verificación cruzada:** el script [`scripts/calcular_huella_swdm.py`](../../../../../../scripts/calcular_huella_swdm.py) con `--verificar` coincide con CO2.js 0.16.9 (`perByte` y `perVisitTrace`) a seis decimales en ocho casos, incluido el escenario de Perú. Resultado: [`verificacion-swdm-v4-contra-co2js.txt`](../evidencias/verificacion-swdm-v4-contra-co2js.txt).
+- **Verificación cruzada:** el script [`scripts/calcular_huella_swdm.py`](../../../../scripts/calcular_huella_swdm.py) con `--verificar` coincide con CO2.js 0.16.9 (`perByte` y `perVisitTrace`) a seis decimales en ocho casos, incluido el escenario de Perú. Resultado: [`verificacion-swdm-v4-contra-co2js.txt`](../evidencias/verificacion-swdm-v4-contra-co2js.txt).
 - **Solo cuenta la carga de la página.** No incluye las respuestas de la API durante la sesión (unos pocos KB comprimidos por petición) ni el cómputo del motor de optimización.
 - **Magnitud:** los gramos son pequeños porque la aplicación es liviana y de uso interno. Lo relevante es el cambio relativo (−33 %) y el contraste con el propósito del sistema: el tope mensual de emisiones de la flota que vigila el módulo de sostenibilidad (RN-010) está configurado en 800 kg de CO₂, mientras que la huella digital anual de la plataforma es de unos 0.18 kg. El mayor efecto ambiental del sistema está en las rutas que optimiza, no en las páginas que sirve.
 - **Hosting:** Vercel y Render no están en el directorio de hosting verde. Elegir un proveedor verificado reduciría la parte del centro de datos; hoy no hay descuento.
+
+### 7.5 La huella digital dentro del sistema
+
+Desde la versión 1.1.0 el sistema muestra el CO₂ del día y su propia huella, en dos lugares. Solo los ve el administrador, porque el dashboard de sostenibilidad es suyo.
+
+| Dónde | Qué muestra |
+|---|---|
+| **Encabezado del panel** (pastilla) | Los **kg de CO₂ que emitieron hoy las rutas confirmadas**, tomados del dashboard de sostenibilidad. Antes mostraba un marcador fijo («— kg CO₂ evitados hoy») que nunca se conectó a datos; se corrigió también la etiqueta, porque el módulo calcula **emisión** y combustible ahorrado, no un CO₂ «evitado» |
+| **Pantalla Sostenibilidad** (tarjeta «Huella digital de esta sesión») | Los KB que el navegador descargó desde que se abrió RouteZero, la energía en Wh y la **emisión en mg CO₂e** con la misma fórmula SWDM v4 de esta sección, junto a la visita promedio del informe (16.9 mg) |
+
+![Pastilla del encabezado y pantalla de Sostenibilidad, con los datos sintéticos de las pruebas](../evidencias/captura-pastilla-y-sostenibilidad.png)
+
+![Tarjeta de huella digital de la sesión, con los datos sintéticos de las pruebas](../evidencias/captura-tarjeta-huella-digital.png)
+
+Cómo funciona. [`huellaDigital.ts`](../../../../frontend/src/components/huellaDigital.ts) implementa la fórmula (0.300 kWh/GB y 494 g CO₂e/kWh) y suma, con un `PerformanceObserver` (API del navegador que avisa de cada recurso que se descarga), el tamaño transferido de cada recurso; la tarjeta se actualiza cada 5 segundos. La pastilla consulta **una sola vez** al abrir el panel, sin sondeos: cada consulta cuesta energía, y sería contradictorio gastarla para mostrar la huella.
+
+Decisiones y límites:
+
+- **La fórmula existe en dos lenguajes:** Python (para el informe) y TypeScript (para el sistema). Es una duplicación asumida y se controla con pruebas: ambas se comparan con los mismos valores de CO2.js (140 KB → 0.021246 g, 171 KB → 0.025950 g, 213 KB → 0.032324 g y 244 KB → 0.037029 g).
+- **El navegador informa 0 bytes** para lo que viene de la caché y para las respuestas de otro dominio, salvo que el servidor envíe `Timing-Allow-Origin`. El backend ahora envía esa cabecera en las rutas `/api/` con el **origen exacto del frontend, nunca `*`**, de modo que solo nuestro frontend pueda ver el tamaño de las respuestas. Son tamaños, no datos. **Verificado en producción (2026-11-10)** tras el despliegue del Pull Request #92: la API responde `timing-allow-origin: https://route-zero-omega.vercel.app` y, con una sesión real de administrador, el navegador informa el tamaño de cada respuesta (de 447 a 559 B; antes habrían salido en 0). La tarjeta marcó 183.5 KB, 0.056 Wh y 27.8 mg CO₂e en la pantalla de Sostenibilidad.
+- Es una estimación de la **sesión actual**: no se guarda ni se suma entre sesiones, y no incluye el cómputo del servidor ni del motor de rutas.
+
+Pruebas del cambio: 19 de Vitest nuevas (fórmula contra CO2.js, medición de bytes, tarjeta, pastilla y encabezado), 1 de Playwright nueva (y se ajustaron las 3 que contaban consultas al dashboard) y 1 del backend para la cabecera. Totales al 2026-11-10 (tras el historial de la sección 7.6): **Vitest 178 de 178 y Playwright 35 de 35**. En el backend se corrieron la prueba nueva y las de arquitectura (17 de 17); la suite completa no se repitió porque el cambio es una sola cabecera.
+
+### 7.6 Historial y proyección en el dashboard de sostenibilidad
+
+La pantalla Sostenibilidad ahora muestra, además de los indicadores del periodo, su evolución. Todo sale de la misma consulta del dashboard (una sola petición, sin llamadas extra).
+
+| Elemento | Qué muestra |
+|---|---|
+| **Gráfico «Emisiones de CO₂ por día»** | Una columna por día del periodo, con la línea del promedio. Reemplaza la lista de barras anterior y tiene un texto alternativo con el total, el promedio y el día de mayor emisión |
+| **Gráfico «Proyección de cierre del mes»** | La emisión acumulada del mes día a día, la meta mensual (800 kg, RN-010) y una línea punteada con el cierre estimado. Dice si al ritmo actual el mes superaría la meta |
+| **Tabla «Historial por día»** | Una fila por jornada (la más reciente primero): rutas, kilómetros, CO₂, combustible ahorrado y paradas entregadas y fallidas, con el total del periodo. Muestra los últimos 10 días y permite ver todos |
+| **Atajo «Mes anterior»** | Consulta el mes calendario anterior completo, para comparar un mes contra otro |
+
+**Cómo se calcula la proyección.** Es una estimación a **ritmo constante**, no un pronóstico: `emisión acumulada ÷ días del calendario transcurridos × días del mes` (los domingos cuentan como días transcurridos). Solo se muestra cuando el periodo es «el mes desde el día 1 hasta una fecha del mismo mes»; para un mes ya terminado informa en cuánto cerró y para otros periodos no se proyecta. La lógica está en [`proyeccionMes.ts`](../../../../frontend/src/components/proyeccionMes.ts) con sus pruebas.
+
+**Cambio en el backend.** La consulta por día (`por_dia`) devuelve ahora también las rutas y las paradas entregadas y fallidas de cada día, contadas igual que el total (sin los pedidos cancelados), con un `JOIN LATERAL` como en la optimización de la sección 5.1. En la auditoría de consultas (`auditar_consultas.py`) la consulta nueva tarda **9.6 ms** con seis meses de historial (umbral: 500 ms).
+
+**Datos de ejemplo.** Un script de SQL que se ejecuta en el SQL Editor de Supabase (`datos_historial_dashboard.sql`, que se conserva en el equipo del autor y no se sube al repositorio) carga jornadas del 01-10 al 14-11-2026 para tener un historial que mostrar: 132 rutas completadas, 3 canceladas, 1 078 paradas entregadas, 56 fallidas y 70 pedidos cancelados, con métricas coherentes con el motor (combustible = km ÷ consumo del vehículo y CO₂ = combustible × factor de emisión). Es repetible, no borra pedidos pendientes, usuarios ni sesiones, y se probó dentro de una transacción que se deshizo.
+
+![Dashboard con el gráfico de columnas, la proyección de cierre del mes y el historial por día, con datos sintéticos de las pruebas](../evidencias/captura-dashboard-historial-y-proyeccion.png)
+
+Los vehículos de ejemplo (`datos_demo.sql`) traían factores de emisión en kg de CO₂ por **litro** (2.31 y 2.68), y el motor los usa como kg por **km** (RN-009). El script los convierte (factor ÷ consumo) para que una ruta generada en vivo sea coherente con el historial; con la conversión, la emisión de cada ruta cargada es exactamente `km × factor`, la fórmula del motor.
+
+Lo que **no** es: los datos del historial son de ejemplo y están marcados («Histórico · » en la descripción de los pedidos); no son operación real de la empresa.
 
 ---
 
@@ -442,9 +571,9 @@ Sensibilidad del ahorro anual (g CO₂e): con la intensidad de las diapositivas 
 
 | Archivo | Función |
 |---|---|
-| [`.github/workflows/green-audit.yml`](../../../../../../.github/workflows/green-audit.yml) | Workflow de GitHub Actions: compila, mide el peso, ejecuta LHCI en escritorio (falla) y móvil (FCP y LCP solo avisan), resume las métricas y guarda los informes como artefacto (no los publica en ningún servicio externo) |
-| [`frontend/lighthouserc.json`](../../../../../../frontend/lighthouserc.json) | Presupuesto de escritorio: rendimiento, accesibilidad, buenas prácticas y SEO ≥ 90; FCP ≤ 1.0 s; LCP ≤ 1.4 s; TBT ≤ 85 ms; CLS ≤ 0.02; peso ≤ 1.1 MB |
-| [`frontend/lighthouserc.movil.json`](../../../../../../frontend/lighthouserc.movil.json) | Presupuesto de móvil (más holgado) |
+| [`.github/workflows/green-audit.yml`](../../../../.github/workflows/green-audit.yml) | Workflow de GitHub Actions: compila, mide el peso, ejecuta LHCI en escritorio (falla) y móvil (FCP y LCP solo avisan), resume las métricas y guarda los informes como artefacto (no los publica en ningún servicio externo) |
+| [`frontend/lighthouserc.json`](../../../../frontend/lighthouserc.json) | Presupuesto de escritorio: rendimiento, accesibilidad, buenas prácticas y SEO ≥ 90; FCP ≤ 1.0 s; LCP ≤ 1.4 s; TBT ≤ 85 ms; CLS ≤ 0.02; peso ≤ 1.1 MB |
+| [`frontend/lighthouserc.movil.json`](../../../../frontend/lighthouserc.movil.json) | Presupuesto de móvil (más holgado) |
 
 Decisiones:
 
@@ -452,7 +581,7 @@ Decisiones:
 - **Mide la pantalla pública (el login).** El resto exige sesión; esas pantallas se siguen midiendo con `npm run auditar:produccion`.
 - **Acciones fijadas por hash de commit**, igual que nuestro `ci.yml`, y `@lhci/cli@0.15.1` con versión exacta.
 
-Verificación local de que **funciona de verdad**: con el presupuesto actual pasa las 3 repeticiones (rendimiento 100, FCP 0.37 s, LCP 0.49 s, TBT 0 ms, peso 171 KB); y con una copia que exigía FCP ≤ 100 ms **falló con código de salida 1** (`expected: <=100, found: 371`). La primera ejecución en GitHub Actions queda como evidencia en la pestaña *Actions* del Pull Request.
+Verificación local de que **funciona de verdad**: con el presupuesto actual pasa las 3 repeticiones (rendimiento 100, FCP 0.37 s, LCP 0.49 s, TBT 0 ms, peso 171 KB); y con una copia que exigía FCP ≤ 100 ms **falló con código de salida 1** (`expected: <=100, found: 371`). **Primera ejecución en GitHub (2026-11-10):** en el Pull Request #91 el workflow *Green IT (auditoría de rendimiento)* terminó en **success**, igual que `CI`. Queda como evidencia en la pestaña *Actions* del Pull Request.
 
 ---
 
@@ -460,8 +589,8 @@ Verificación local de que **funciona de verdad**: con el presupuesto actual pas
 
 | Limitación | Detalle |
 |---|---|
-| FCP y LCP en móvil | 1.66 s y 1.81 s contra 1.0 s y 1.4 s de la rúbrica. Se podría reducir aún más separando `react-router` y `react-dom` en trozos con su propia caché, o pasando a renderizado en servidor, a costa de mucha más complejidad |
-| Cifras de producción DESPUÉS | Requieren el despliegue en Vercel; se agregarán en la versión 1.1.0 junto con la verificación de la cabecera `immutable` |
+| FCP y LCP en móvil | En producción, antes de la cáscara de la sección 5.9: FCP de 1.29 a 1.44 s (umbral 1.0 s) y LCP de 1.31 a 1.44 s (umbral 1.4 s: Conductor cumple; Mapa y Rutas fallan por 30 a 40 ms). La cáscara baja el FCP a 1.51 s en el laboratorio simulado y a 0.70 s con la red limitada de verdad; su efecto en producción se mide tras el despliegue. El LCP depende del contenido real y no mejora con ella. Cumplir 1.0 s en el modo simulado exigiría reducir más el JavaScript inicial (87 KB comprimidos) o renderizar en el servidor |
+| Tarjeta de huella digital | Solo cuenta lo que el navegador informa (no la caché ni lo que no envía `Timing-Allow-Origin`, que la API ya envía desde el 2026-11-10) y solo la sesión actual |
 | Latencia de Render gratuito | Arranque en frío de 52 s y unos 2 s por petición (IMP-016): no depende del código |
 | Pausa de Supabase | El plan gratuito pausa el proyecto tras días sin uso; ocurrió el 2026-11-09 y hubo que restaurarlo |
 | Hosting no verde | Vercel y Render no figuran como verdes; cambiar de proveedor excede el alcance |
@@ -478,6 +607,8 @@ Desde `frontend/`:
 ```powershell
 npm run build                       # tamaños de los trozos de código
 npm run auditar                     # Lighthouse y W3C locales (datos sintéticos)
+npm test                            # 178 pruebas de Vitest
+npm run test:e2e                    # 35 pruebas de extremo a extremo
 npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.json   # presupuesto de escritorio
 $env:CLAVE_PRUEBA="..."; npm run auditar:produccion              # producción (necesita la ruta de demostración)
 ```
@@ -537,13 +668,25 @@ git push origin sprint4
 | **`unicode-range`** | Qué caracteres cubre un archivo de fuente; el navegador solo lo descarga si hacen falta |
 | **`font-display: swap`** | Muestra el texto de inmediato con una fuente del sistema y cambia cuando llega la propia |
 | **Terceros (*third parties*)** | Recursos servidos por otros dominios; cada uno suma peticiones y dependencias externas |
+| **`PerformanceObserver` / Resource Timing** | API del navegador que avisa de cada recurso que se descarga y de cuántos bytes pesó |
+| **`Timing-Allow-Origin`** | Cabecera con la que un servidor autoriza a otro origen a ver los tiempos y tamaños de sus respuestas |
+| **Pastilla** | Elemento redondeado del encabezado que resume un dato (aquí, el CO₂ emitido hoy) |
+| **Proyección a ritmo constante** | Estimación del cierre del mes que supone que los días que faltan emiten lo mismo que el promedio de los transcurridos |
+| **App shell (cáscara de la aplicación)** | HTML mínimo ya visible que se dibuja de inmediato mientras el JavaScript carga; React lo reemplaza al arrancar |
+| **SPA (aplicación de una sola página)** | Aplicación cuyo HTML está casi vacío y que dibuja las pantallas con JavaScript en el navegador |
+| **CSS en línea (*inline*)** | Estilos escritos dentro del propio HTML: ahorran una petición que, de otro modo, bloquearía el primer dibujo |
+| **Throttling simulado y del navegador** | Lighthouse puede *simular* una red lenta sobre una medición rápida (por defecto) o *limitar de verdad* la red del navegador; el segundo refleja mejor la experiencia real, el primero es el que usa la rúbrica |
+| **SVG** | Formato de imagen vectorial; los gráficos del dashboard se dibujan con él, sin librerías ni imágenes descargadas |
 
 ---
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 
 | Versión | Fecha | Cambio realizado | Responsable |
 |---|---|---|---|
 | V_1_0_0 | 2026-11-09 | Versión inicial: diagnóstico, 8 optimizaciones con código antes y después, mediciones de Lighthouse en producción y local, cálculo de la huella de carbono con SWDM v4 y Lighthouse CI | Inciso Aguilar Elizabeth Antonela |
+| V_1_1_0 | 2026-11-10 | Se agregan las mediciones de producción DESPUÉS del despliegue (sección 6.3) y la comparación de umbrales entre producción antes y después, la verificación de la caché `immutable`, el cálculo con los pesos de producción, la huella digital y la pastilla de CO₂ dentro del sistema (sección 7.5), el resultado del workflow en GitHub y las limitaciones actualizadas | Inciso Aguilar Elizabeth Antonela |
+| V_1_2_0 | 2026-11-10 | La cabecera `Timing-Allow-Origin` queda verificada en producción con cifras (sección 7.5); se agrega el historial por día, los gráficos y la proyección de cierre del mes del dashboard con su script de datos de ejemplo (sección 7.6) y se actualiza el número de pruebas (178 de Vitest y 35 de extremo a extremo) | Inciso Aguilar Elizabeth Antonela |
+| V_1_3_0 | 2026-11-10 | Se agrega la cáscara de la aplicación con CSS en línea y sus mediciones (sección 5.9), se presenta el escritorio como perfil de referencia y el móvil como complemento (secciones 1, 4 y 6.4), se aclara que los factores de emisión de los vehículos de ejemplo pasan a kg/km (sección 7.6) y se actualizan las limitaciones del FCP en móvil | Inciso Aguilar Elizabeth Antonela |

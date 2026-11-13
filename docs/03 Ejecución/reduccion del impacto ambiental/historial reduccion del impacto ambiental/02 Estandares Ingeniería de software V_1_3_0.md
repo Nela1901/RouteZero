@@ -11,16 +11,16 @@
 | **Actividad** | Inspección 04 — Green Software y verificación de estándares (actividad de cierre del Sprint 4) |
 | **Fecha** | 2026-11-10 |
 | **Estándares aplicados** | ISO/IEC 25010, principios de la Green Software Foundation, W3C Web Sustainability Guidelines, Clean Code, SOLID, DRY y YAGNI |
-| **Documento hermano** | [01 Informe de Reducción del Impacto Ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md) |
-| **Versión** | 1.5.0 |
+| **Documento hermano** | [01 Informe de Reducción del Impacto Ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md) |
+| **Versión** | 1.3.0 |
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
 ## 1. Propósito y alcance
 
-Este documento fundamenta en estándares las mejoras del [informe de reducción del impacto ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md), define las reglas de desarrollo verde que sigue el equipo para el backend y el frontend, y cruza cada una de las 8 áreas de optimización con los estándares en una matriz (sección 6).
+Este documento fundamenta en estándares las mejoras del [informe de reducción del impacto ambiental](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md), define las reglas de desarrollo verde que sigue el equipo para el backend y el frontend, y cruza cada una de las 8 áreas de optimización con los estándares en una matriz (sección 6).
 
 **Nota sobre la numeración de W3C.** Las *Web Sustainability Guidelines* (WSG, Pautas de Sostenibilidad Web) de W3C están publicadas como **Group Note Draft del 16 de octubre de 2026** (borrador del Grupo de Interés en Web Sostenible; el documento no se rotula «1.0»). Su numeración oficial es: **2.x** Diseño de experiencia de usuario, **3.x** Desarrollo web, **4.x** Hosting, infraestructura y sistemas, y **5.x** Estrategia de negocio y gestión de producto; la sección 1 es solo introducción. Este documento cita siempre **la numeración oficial**. Los materiales de la actividad hablan de «pautas 1.2, 2.4 y 3.1» con tres temas (optimización de medios, arquitectura y caché, transferencia de red); esos temas se corresponden con las pautas oficiales **2.9, 4.2 y 4.3** (y 3.1), como se explica en la sección 4.
 
@@ -30,9 +30,9 @@ La rúbrica de la inspección habla de las pautas «1.2», «2.4» y «3.1». En
 
 | Rúbrica | Tema que describe | Pauta oficial (16-10-2026) | Evidencia de RouteZero |
 |---|---|---|---|
-| 1.2 | Optimización de medios | **2.9** Optimizar los medios para reducir el uso de recursos | `favicon.svg` ya minimizado (−0.2 %) y sin imágenes rasterizadas ([informe 01, 5.3](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md)) |
+| 1.2 | Optimización de medios | **2.9** Optimizar los medios para reducir el uso de recursos | `favicon.svg` ya minimizado (−0.2 %) y sin imágenes rasterizadas ([informe 01, 5.3](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md)) |
 | 2.4 | Arquitectura y caché | **4.2** Optimizar la caché y 3.7 Diferir recursos no críticos | `Cache-Control: immutable` en `/assets/*` y carga diferida con `React.lazy` (5.7 y 5.4) |
-| 3.1 | Transferencia de red | **4.3** Reducir la transferencia de datos con compresión | compresión de la API por Render (Brotli o gzip, −75 % a −80 %) y Brotli en los archivos estáticos (5.8) |
+| 3.1 | Transferencia de red | **4.3** Reducir la transferencia de datos con compresión | gzip en la API (−72 % a −83 %) y Brotli en los archivos estáticos (5.8) |
 
 En el documento oficial, la 2.4 es «Diseñar recorridos de usuario eficientes» y la 3.1 es «Fijar metas según el impacto en rendimiento y energía»; ambas también se cubren (sección 4).
 
@@ -40,7 +40,7 @@ En el documento oficial, la 2.4 es «Diseñar recorridos de usuario eficientes»
 
 ## 2. ISO/IEC 25010: las ocho características de calidad
 
-**ISO/IEC 25010** es el modelo internacional de calidad del producto de software: define características de calidad y las subdivide en subcaracterísticas medibles. La actividad se apoya en dos: la **eficiencia de desempeño** (qué tan bien rinde el software con los recursos que usa) y la **mantenibilidad** (qué tan fácil es cambiarlo). El requisito no funcional que las motiva es **RNF-011, Eficiencia energética** (ver [`07. Requisitos no funcionales`](../../../../../01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md)).
+**ISO/IEC 25010** es el modelo internacional de calidad del producto de software: define características de calidad y las subdivide en subcaracterísticas medibles. La actividad se apoya en dos: la **eficiencia de desempeño** (qué tan bien rinde el software con los recursos que usa) y la **mantenibilidad** (qué tan fácil es cambiarlo). El requisito no funcional que las motiva es **RNF-011, Eficiencia energética** (ver [`07. Requisitos no funcionales`](../../../01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md)).
 
 ### 2.1 Eficiencia de desempeño
 
@@ -48,15 +48,15 @@ En el documento oficial, la 2.4 es «Diseñar recorridos de usuario eficientes»
 |---|---|---|---|
 | **Comportamiento temporal** (*time behaviour*) | Tiempos de respuesta y de procesamiento | Carga diferida y fuentes propias reducen el FCP y el LCP; índices y consultas acotadas bajan los tiempos de la base | FCP móvil 2.18 → 1.66 s; LCP de escritorio 797 → 488 ms; 17 consultas críticas ≤ 42 ms (informe 01, secciones 5.1, 5.4 y 5.6) |
 | **Utilización de recursos** (*resource utilization*) | Cantidad de recursos (red, CPU, memoria) que consume | Menos bytes transferidos y menos JavaScript que ejecutar en el celular del conductor | Peso 213 → 140 KB en móvil (−34 %); JavaScript inicial −49 %; TBT de 0 ms |
-| **Capacidad** (*capacity*) | Límites que soporta el sistema | Paginación de la tabla que más crece (pedidos, de 12 en 12 y máximo 200 por página); el motor de rutas se probó con 150 pedidos y 15 vehículos | Informe 01, sección 5.2; mediciones de generación y re-optimización de los sprints 2 y 3 |
+| **Capacidad** (*capacity*) | Límites que soporta el sistema | Paginación de la tabla que más crece (pedidos, máximo 200 por página); el motor de rutas se probó con 150 pedidos y 15 vehículos | Informe 01, sección 5.2; mediciones de generación y re-optimización de los sprints 2 y 3 |
 
 ### 2.2 Mantenibilidad
 
 | Subcaracterística | Qué mide | Cómo se aplicó en RouteZero | Evidencia |
 |---|---|---|---|
-| **Modularidad** | Cambiar una parte sin afectar al resto | Backend organizado por características; ningún módulo de negocio importa a otro. Frontend dividido en un trozo de código por pantalla | [`test_arquitectura.py`](../../../../../../backend/tests/test_arquitectura.py) vigila la independencia; trozos de la sección 5.4 del informe 01 |
+| **Modularidad** | Cambiar una parte sin afectar al resto | Backend organizado por características; ningún módulo de negocio importa a otro. Frontend dividido en un trozo de código por pantalla | [`test_arquitectura.py`](../../../../backend/tests/test_arquitectura.py) vigila la independencia; trozos de la sección 5.4 del informe 01 |
 | **Reusabilidad** | Reutilizar componentes en varios lugares | Componentes y utilidades compartidas en lugar de copias | `utilesCrud.ts` lo usan 4 pantallas y `ui.tsx`; `ui.tsx` y `acciones.tsx` los usan 9 archivos |
-| **Analizabilidad** | Entender y diagnosticar el sistema | Comentarios que explican el porqué, documentación por sprint, auditorías con script | [Calidad de código](../../../../Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) (SonarQube); `auditar_consultas.py` |
+| **Analizabilidad** | Entender y diagnosticar el sistema | Comentarios que explican el porqué, documentación por sprint, auditorías con script | [Calidad de código](../../Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) (SonarQube); `auditar_consultas.py` |
 | **Modificabilidad** | Cambiar sin introducir defectos | Parámetros que se ajustan sin tocar la lógica (precio del combustible, meta mensual, factores de congestión) | `backend/src/core/config.py`, `backend/src/rutas/congestion.py` |
 | **Capacidad de ser probado** (*testability*) | Facilidad de verificar | Pruebas automáticas en las tres capas | 360 de backend (cobertura de 98 %), 178 de Vitest y 35 de extremo a extremo |
 
@@ -69,9 +69,9 @@ Se usa la edición de ISO/IEC 25010 de ocho características (la que citan los d
 | **Adecuación funcional** | Que haga lo que debe, completo y correcto | Todos los ítems de los Sprints 3 y 4 completados (26 y 18 Story Points); las reglas de negocio RN-001 a RN-003 y RN-005 a RN-015 de los módulos entregados están implementadas y con pruebas automáticas | RN-004 (restricción por placa) está **desactivada a propósito**: el decreto citado inicialmente no existe |
 | **Eficiencia de desempeño** | Tiempos, recursos y capacidad | Sección 2.1 | Latencia de Render gratuito (IMP-016) |
 | **Compatibilidad** | Convivir e intercambiar información con otros sistemas | API REST/JSON documentada con Swagger (`/docs`); integra OpenStreetMap, Supabase Auth y PostgreSQL | Probado en Chrome y Chromium (Playwright y Lighthouse); Firefox y Safari **no** se probaron |
-| **Usabilidad** | Facilidad de uso y accesibilidad | Lighthouse de accesibilidad en 100 (24 mediciones); WCAG 2.2 AA con 36 de 40 criterios cumplidos ([evaluación](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)); ayudas «i» en los indicadores; todas las pantallas se ven en ancho móvil | La escala SUS y la evaluación con las 10 heurísticas de Nielsen **están pendientes** (Inspección 05) |
+| **Usabilidad** | Facilidad de uso y accesibilidad | Lighthouse de accesibilidad en 100 (24 mediciones); WCAG 2.2 AA con 36 de 40 criterios cumplidos ([evaluación](../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)); ayudas «i» en los indicadores; todas las pantallas se ven en ancho móvil | La escala SUS y la evaluación con las 10 heurísticas de Nielsen **están pendientes** (Inspección 05) |
 | **Fiabilidad** | Funcionar sin fallar y recuperarse | Respuestas 503 claras si Supabase o la base no responden (OWASP A10); la re-optimización cumple RN-012 (22.2 s en Render, límite de 30 s) y la generación RN-015 | Render gratuito tiene arranque en frío de unos 52 s y Supabase gratuito se pausa por inactividad (ocurrió el 09-11-2026) |
-| **Seguridad** | Proteger datos y accesos | Verificación en dos pasos (TOTP), sesiones con detección de robo, RLS en la base, roles por endpoint (RN-014), CORS con el origen exacto y OWASP Top 10 evaluado ([documento](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md)); Bandit, `pip-audit` y `npm audit` en el CI | El DNI del conductor está en texto plano en la base y los tokens se guardan en `localStorage` (brechas declaradas) |
+| **Seguridad** | Proteger datos y accesos | Verificación en dos pasos (TOTP), sesiones con detección de robo, RLS en la base, roles por endpoint (RN-014), CORS con el origen exacto y OWASP Top 10 evaluado ([documento](../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md)); Bandit, `pip-audit` y `npm audit` en el CI | El DNI del conductor está en texto plano en la base y los tokens se guardan en `localStorage` (brechas declaradas) |
 | **Mantenibilidad** | Facilidad para cambiar | Sección 2.2 | — |
 | **Portabilidad** | Instalarlo y moverlo a otro entorno | Todo se configura con variables de entorno (`.env.example`) y se despliega con `render.yaml` y Vercel; sin contenedores | Depende de Supabase (autenticación y base de datos): reemplazarlo exigiría reescribir esa capa |
 
@@ -94,7 +94,7 @@ La GSF también publica otros marcos (por ejemplo, un conjunto de ocho principio
 
 ## 4. W3C Web Sustainability Guidelines (WSG)
 
-Las **WSG** son pautas del W3C para que los sitios y aplicaciones web sean más sostenibles. Cada pauta tiene criterios de éxito verificables. La tabla relaciona las pautas oficiales (numeración y títulos de la publicación del 16-10-2026) con la evidencia del proyecto. Los números entre paréntesis remiten a las secciones del [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md).
+Las **WSG** son pautas del W3C para que los sitios y aplicaciones web sean más sostenibles. Cada pauta tiene criterios de éxito verificables. La tabla relaciona las pautas oficiales (numeración y títulos de la publicación del 16-10-2026) con la evidencia del proyecto. Los números entre paréntesis remiten a las secciones del [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md).
 
 | Pauta | Título (traducción) | Evidencia en RouteZero |
 |---|---|---|
@@ -111,7 +111,7 @@ Las **WSG** son pautas del W3C para que los sitios y aplicaciones web sean más 
 | **3.16** | Reducir el número y la complejidad de las consultas a la base de datos | Auditoría de 17 consultas, índice nuevo y conteo solo del periodo con `JOIN LATERAL` (5.1) |
 | **4.1** | Usar hosting sostenible | **Brecha declarada:** Vercel y Render no figuran como hosting verde (7.4) |
 | **4.2** | Optimizar la caché | `Cache-Control: public, max-age=31536000, immutable` para `/assets/*`; `no-store` en la API por seguridad (5.7). *Corresponde al tema de «arquitectura y caché» de los materiales* |
-| **4.3** | Reducir la transferencia de datos con compresión | La API responde comprimida (Brotli o gzip, −75 % a −80 %) y los archivos estáticos con Brotli, ambos a cargo de la plataforma (5.8). *Corresponde al tema de «transferencia de red»* |
+| **4.3** | Reducir la transferencia de datos con compresión | La API responde con gzip (−72 % a −83 %) y los archivos estáticos con Brotli, ambos a cargo de la plataforma (5.8). *Corresponde al tema de «transferencia de red»* |
 | **5.5** | Calcular el impacto ambiental | Cálculo con SWDM v4 verificado contra CO2.js (7) y mostrado dentro del sistema en la tarjeta «Huella digital de esta sesión» (7.5); el dashboard muestra la evolución y la proyección de las emisiones frente a la meta (7.6) |
 | **5.24** | Definir presupuestos de rendimiento, ambientales y humanos | Los umbrales de `lighthouserc.json` son un presupuesto de rendimiento y peso (8) |
 
@@ -135,7 +135,7 @@ Reglas que sigue el equipo, ordenadas por el principio de ingeniería que las so
 | B3 | Cada consulta frecuente trae solo las columnas y filas que necesita, las listas que crecen se paginan y cada consulta tiene el índice que la resuelve | Green (energía), YAGNI | `auditar_consultas.py` falla si una consulta pasa de 500 ms o recorre una tabla grande sin índice utilizable (informe 01, 5.1) |
 | B4 | No duplicar lo que la plataforma ya hace (compresión, TLS) | YAGNI, Green | Se midió que Render comprime y no se agregó otro middleware (5.8) |
 | B5 | Un valor configurable se define una sola vez | DRY | Precio del combustible, meta mensual y factores de congestión viven en `config.py` y `congestion.py` y se leen desde ahí |
-| B6 | La seguridad no se sacrifica por rendimiento | Clean Code, OWASP | Las respuestas de la API llevan `Cache-Control: no-store`: el navegador no guarda copia de datos autenticados |
+| B6 | La seguridad no se sacrifica por rendimiento | Clean Code, OWASP | Las respuestas de la API llevan `Cache-Control: no-store`; por eso no hay caché de datos en el cliente |
 | B7 | Todo cambio de lógica lleva pruebas; la cobertura no baja | Clean Code | 360 pruebas, cobertura de 98 %; análisis de SonarQube, Bandit y `pip-audit` |
 | B8 | El navegador solo puede ver de la API lo mínimo y solo nuestro frontend | Clean Code, OWASP | `Timing-Allow-Origin` con el origen exacto del frontend, nunca `*` (`test_seguridad_cabeceras.py`); los tamaños alimentan la huella digital de la sesión |
 
@@ -160,16 +160,16 @@ Reglas que sigue el equipo, ordenadas por el principio de ingeniería que las so
 
 | # | Optimización (informe 01) | ISO/IEC 25010 | GSF | W3C WSG | Estado |
 |---|---|---|---|---|---|
-| 1 | Consultas e índices de PostgreSQL (5.1) | Eficiencia de desempeño: comportamiento temporal y utilización de recursos | Eficiencia energética | 3.16 | Con ANTES y DESPUÉS (índice y `JOIN LATERAL`, HT-11) y por diseño (columnas necesarias, sin ORM) |
-| 2 | Paginación (5.2) | Eficiencia de desempeño: capacidad | Eficiencia energética | 3.16 y 4.2 (menos datos que viajan y se guardan) | Con ANTES y DESPUÉS: de 50 a 12 pedidos por página; el resto de las listas, justificado |
-| 3 | Imágenes (5.3) | Eficiencia de desempeño: utilización de recursos | Eficiencia de carbono | 2.9 (la «1.2» de la rúbrica) | Por diseño: no hay imágenes PNG ni JPEG; inventario y medición con `svgo` |
-| 4 | Carga diferida y división de código (5.4) | Mantenibilidad: modularidad; eficiencia: utilización de recursos | Eficiencia energética y de hardware (menos CPU en el celular) | 3.3 y 3.7 | Con ANTES y DESPUÉS |
-| 5 | Dependencias y APIs nativas (5.5) | Mantenibilidad: analizabilidad | Eficiencia de carbono | 3.2 y 3.12 | Por diseño: APIs nativas y 5 dependencias; costo evitado medido (46.4 KB comprimidos) |
-| 6 | Peticiones HTTP, terceros y SVG en línea (5.6) | Eficiencia de desempeño: comportamiento temporal | Eficiencia de carbono | 3.5 y 2.11 | Con ANTES y DESPUÉS (fuentes y CSS: de 4 peticiones de terceros a 0) y por diseño (iconos SVG en línea) |
-| 7 | Caché (5.7) | Eficiencia de desempeño: comportamiento temporal | Eficiencia energética | 4.2 (la «2.4» de la rúbrica) | Con ANTES y DESPUÉS (`immutable`, verificado en producción) y por diseño (`no-store` en la API) |
-| 8 | Compresión de la API (5.8) | Eficiencia de desempeño: capacidad | Eficiencia de carbono | 4.3 (la «3.1» de la rúbrica) | Por la plataforma (Render comprime la API con Brotli o gzip; Vercel, los archivos con Brotli), con medición |
+| 1 | Consultas e índices de PostgreSQL (5.1) | Eficiencia de desempeño: comportamiento temporal y utilización de recursos | Eficiencia energética | 3.16 | Cumplida, con evidencia (HT-11) |
+| 2 | Paginación (5.2) | Eficiencia de desempeño: capacidad | Eficiencia energética | 3.16 y 4.2 (menos datos que viajan y se guardan) | Parcial: pedidos paginado; el resto, justificado |
+| 3 | Imágenes (5.3) | Eficiencia de desempeño: utilización de recursos | Eficiencia de carbono | 2.9 | «No aplica», medida con `svgo` |
+| 4 | Carga diferida y división de código (5.4) | Mantenibilidad: modularidad; eficiencia: utilización de recursos | Eficiencia energética y de hardware (menos CPU en el celular) | 3.3 y 3.7 | Implementada |
+| 5 | Dependencias (5.5) | Mantenibilidad: analizabilidad | Eficiencia de carbono | 3.2 y 3.12 | Ya mínima, con controles automáticos |
+| 6 | Peticiones HTTP y terceros (5.6) | Eficiencia de desempeño: comportamiento temporal | Eficiencia de carbono | 3.5 y 2.11 | Implementada |
+| 7 | Caché (5.7) | Eficiencia de desempeño: comportamiento temporal | Eficiencia energética | 4.2 | Implementada (verificación en producción pendiente del despliegue) |
+| 8 | Compresión de la API (5.8) | Eficiencia de desempeño: capacidad | Eficiencia de carbono | 4.3 | Cubierta por la plataforma, con medición |
 | — | Presupuesto en CI (8) | Mantenibilidad: capacidad de ser probado | Eficiencia de carbono (medición) | 3.1, 5.24 y 2.15 | Implementado |
-| — | Cáscara de la aplicación y CSS en línea (5.9) | Eficiencia de desempeño: comportamiento temporal | Eficiencia energética y de hardware (menos espera en el celular) | 3.7 y 3.2 | Implementada y medida en producción |
+| — | Cáscara de la aplicación y CSS en línea (5.9) | Eficiencia de desempeño: comportamiento temporal | Eficiencia energética y de hardware (menos espera en el celular) | 3.7 y 3.2 | Implementada; efecto en producción por medir |
 | — | Cálculo SWDM v4 (7) | Analizabilidad | Eficiencia de carbono (medición) | 5.5 | Implementado y verificado |
 | — | Huella digital dentro del sistema (7.5) | Analizabilidad | Eficiencia de carbono (medición) | 5.5 | Implementada, probada y verificada en producción |
 | — | Historial y proyección de emisiones en el dashboard (7.6) | Analizabilidad | Eficiencia de carbono (medición y seguimiento de la meta) | 5.5 y 5.24 | Implementada y probada |
@@ -182,11 +182,11 @@ El README declara ocho estándares de referencia. Este es su estado, con la evid
 
 | Estándar | Estado | Evidencia |
 |---|---|---|
-| W3C (HTML válido) | Cubierto | 0 errores y 0 avisos en las 6 pantallas ([accesibilidad WCAG](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)) |
-| OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
-| WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
+| W3C (HTML válido) | Cubierto | 0 errores y 0 avisos en las 6 pantallas ([accesibilidad WCAG](../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md)) |
+| OWASP Top 10 | Cubierto | [Evaluación de seguridad](../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
+| WCAG 2.2 AA | Cubierto | [Evaluación de accesibilidad](../../Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md): 36 de 40 criterios evaluados cumplen |
 | ISO/IEC 25010 | **Cubierto: las ocho características** | Secciones 2.1 a 2.3 de este documento, cada una con su evidencia y su límite |
-| Green Software | Cubierto | Este documento y el [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_5_0.md) |
+| Green Software | Cubierto | Este documento y el [informe 01](01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_3_0.md) |
 | Ley N° 29733 (datos personales) | **Parcial: controles técnicos y procedimientos definidos; faltan operarlos, anonimizar e inscribir el banco de datos** | Sección 7.2 |
 | DS 033-2001-MTC | Cubierto | Velocidades por tipo de vía; se corrigió que el decreto «2012» citado inicialmente no existe |
 | ISO 14083 | **Parcial: método por distancia coherente, sin cumplir la norma completa; plan de cierre definido** | Sección 7.1 |
@@ -195,7 +195,7 @@ El README declara ocho estándares de referencia. Este es su estado, con la evid
 
 **ISO 14083** es la norma internacional para cuantificar e informar las emisiones de gases de efecto invernadero de las operaciones de transporte (las del marco GLEC la usan). **Alcance de esta verificación:** se hizo a partir del resumen público de la norma y del código del sistema; la norma completa es de pago y no se consultó, así que esto **no sustituye una auditoría**.
 
-El motor calcula las emisiones de cada ruta como `distancia (km) × factor de emisión del vehículo (kg de CO₂ por km)` (regla RN-009; [`evaluacion.py`](../../../../../../backend/src/algoritmo/evaluacion.py)), y el dashboard y el reporte PDF las suman.
+El motor calcula las emisiones de cada ruta como `distancia (km) × factor de emisión del vehículo (kg de CO₂ por km)` (regla RN-009; [`evaluacion.py`](../../../../backend/src/algoritmo/evaluacion.py)), y el dashboard y el reporte PDF las suman.
 
 | Aspecto | Qué pide la norma (en términos generales) | RouteZero | Evaluación |
 |---|---|---|---|
@@ -230,7 +230,7 @@ La **Ley N° 29733** regula el tratamiento de datos personales; su reglamento es
 |---|---|---|---|
 | Consentimiento | Consentimiento previo, libre e informado | `consentimiento_datos` y `consentimiento_en` obligatorios, con una restricción `CHECK` en la base (RN-013): sin consentimiento no se registra al conductor | No hay un flujo documentado para retirar el consentimiento |
 | Finalidad y proporcionalidad | Pedir solo los datos necesarios para la finalidad | Solo los datos necesarios para asignar rutas y comprobar la licencia y el horario; el DNI **nunca** se escribe en la auditoría | No hay una política de retención de datos |
-| Seguridad | Medidas técnicas y organizativas | Las fichas de conductores solo las gestiona el administrador (RN-014), RLS, verificación en dos pasos y sesiones seguras; HTTPS en Vercel y Render | El DNI está en texto plano en la base (sin cifrado a nivel de columna), declarado en el [documento de OWASP](../../../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
+| Seguridad | Medidas técnicas y organizativas | Las fichas de conductores solo las gestiona el administrador (RN-014), RLS, verificación en dos pasos y sesiones seguras; HTTPS en Vercel y Render | El DNI está en texto plano en la base (sin cifrado a nivel de columna), declarado en el [documento de OWASP](../../Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
 | Derechos de acceso, rectificación, cancelación y oposición | Atender las solicitudes de la persona titular | El administrador puede **consultar** la ficha de un conductor, **editarla** (rectificación) y **eliminarla** (cancelación); cada acción queda en la auditoría (`conductor_registrado`, `conductor_editado` y `conductor_eliminado`) **sin escribir el DNI** | Si el conductor ya tiene rutas, la ficha no se puede eliminar (solo marcarse como no disponible) y sus datos personales permanecen: **no hay anonimización**. Falta un procedimiento escrito (7.2.1) |
 | Registro del banco de datos | Inscribir el banco de datos ante la Autoridad Nacional de Protección de Datos Personales | — | No realizado: es un proyecto académico con datos ficticios; en una operación real habría que inscribirlo |
 
@@ -290,7 +290,7 @@ La inscripción del banco de datos ante la Autoridad Nacional de Protección de 
 
 ---
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 
@@ -300,5 +300,3 @@ La inscripción del banco de datos ante la Autoridad Nacional de Protección de 
 | V_1_1_0 | 2026-11-10 | Se agregan la huella digital dentro del sistema (WSG 5.5, GSF y matriz), las reglas B8 (cabecera `Timing-Allow-Origin`) y F9 (una fórmula, dos lenguajes, una referencia) y se actualiza el número de pruebas (360, 166 y 34) | Inciso Aguilar Elizabeth Antonela |
 | V_1_2_0 | 2026-11-10 | Se agrega el historial y la proyección de emisiones del dashboard a la matriz (WSG 5.5 y 5.24) y se actualiza el número de pruebas (360, 178 y 35) y los enlaces al informe 1.2.0 | Inciso Aguilar Elizabeth Antonela |
 | V_1_3_0 | 2026-11-10 | Se agrega la equivalencia entre la numeración de la rúbrica y la oficial de W3C (1.1), las ocho características de ISO/IEC 25010 con su evidencia y su límite (2.3), la verificación de ISO 14083 con su plan de cierre y de la Ley N° 29733 con sus procedimientos definidos y sus brechas (7.1 y 7.2), la regla F10 y la fila de la cáscara en la matriz | Inciso Aguilar Elizabeth Antonela |
-| V_1_4_0 | 2026-11-12 | Versión final: se actualizan los enlaces al informe 1.4.0, la paginación de pedidos pasa a 12 en la matriz y se ajusta la redacción de la regla B6 sobre `no-store` | Inciso Aguilar Elizabeth Antonela |
-| V_1_5_0 | 2026-11-12 | Se corrige la descripción de la compresión de la API (Brotli o gzip, −75 % a −80 %) en las secciones 1.1 y 4 y en la matriz, y se actualizan los enlaces al informe 1.5.0 | Inciso Aguilar Elizabeth Antonela |

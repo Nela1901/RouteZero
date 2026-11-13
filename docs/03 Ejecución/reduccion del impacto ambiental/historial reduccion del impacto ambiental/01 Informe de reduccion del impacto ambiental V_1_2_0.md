@@ -15,7 +15,7 @@
 | **Documento hermano** | [02 Estándares de Ingeniería de Software](02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_2_0.md) |
 | **Versión** | 1.2.0 |
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
@@ -135,7 +135,7 @@ JOIN LATERAL (SELECT COUNT(*) AS paradas FROM ruta_pedidos rp WHERE rp.ruta_id =
 CREATE INDEX IF NOT EXISTS idx_pedidos_creado ON pedidos (creado_en DESC, pedido_id);
 ```
 
-**Evidencia.** Detalle en [`02 Implementación de la sostenibilidad`](../../../02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md), sección 6.
+**Evidencia.** Detalle en [`02 Implementación de la sostenibilidad`](../../Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md), sección 6.
 
 | Consulta | ANTES | DESPUÉS |
 |---|---|---|
@@ -144,7 +144,7 @@ CREATE INDEX IF NOT EXISTS idx_pedidos_creado ON pedidos (creado_en DESC, pedido
 | Reporte: rutas del periodo | 6.9 ms | **2.5 ms** |
 | Las 17 consultas críticas | — | **todas ≤ 42 ms** (umbral: 500 ms) |
 
-Código: [`migracion_indices_ht11.sql`](../../../../../../backend/scripts/migracion_indices_ht11.sql) y [`repository.py` de sostenibilidad](../../../../../../backend/src/sostenibilidad/repository.py).
+Código: [`migracion_indices_ht11.sql`](../../../../backend/scripts/migracion_indices_ht11.sql) y [`repository.py` de sostenibilidad](../../../../backend/src/sostenibilidad/repository.py).
 
 ### 5.2 Paginación — cumplida donde importa; el resto, justificado
 
@@ -301,7 +301,7 @@ ANTES: sin regla para `/assets/`. DESPUÉS (`frontend/vercel.json`):
 
 `max-age=31536000` es un año en segundos e `immutable` le dice al navegador que no valide el archivo mientras no caduque. El `index.html` **no** se cachea así: debe revalidarse para que apunte a los archivos nuevos tras cada despliegue.
 
-**Decisión sobre la API.** Las respuestas de la API llevan `Cache-Control: no-store` **a propósito** (OWASP A02: que el navegador o un intermediario no guarde datos autenticados, ver [`backend/src/main.py`](../../../../../../backend/src/main.py)). Con `no-store` no tiene sentido emitir ETag ni usar una caché de datos en el cliente (como TanStack Query, que la rúbrica de MERN menciona): se contradiría la política de seguridad. La caché útil de datos está en el servidor: el mapa con los trazados por calles tarda 9.3 s la primera vez y 2.6 s desde la caché.
+**Decisión sobre la API.** Las respuestas de la API llevan `Cache-Control: no-store` **a propósito** (OWASP A02: que el navegador o un intermediario no guarde datos autenticados, ver [`backend/src/main.py`](../../../../backend/src/main.py)). Con `no-store` no tiene sentido emitir ETag ni usar una caché de datos en el cliente (como TanStack Query, que la rúbrica de MERN menciona): se contradiría la política de seguridad. La caché útil de datos está en el servidor: el mapa con los trazados por calles tarda 9.3 s la primera vez y 2.6 s desde la caché.
 
 **Verificación en producción (2026-11-10).** Tras el despliegue del Pull Request #91, `curl -sI https://route-zero-omega.vercel.app/assets/index-CExP8iu6.js` devuelve `Cache-Control: public, max-age=31536000, immutable`. Con eso, desde la segunda visita el navegador ya no vuelve a preguntar por esos archivos.
 
@@ -381,7 +381,7 @@ Accesibilidad, buenas prácticas y SEO: **100** en las seis mediciones. Reporte:
 
 ### 6.5 Evolución histórica
 
-El proyecto ya había mejorado antes de esta actividad. Lighthouse en producción: en el Sprint 2 el mapa daba 88 a 89 y Pedidos 85 de rendimiento; el 22-10-2026 todas las pantallas quedaron entre 91 y 98 (detalle en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../../../../Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md), sección 2.3).
+El proyecto ya había mejorado antes de esta actividad. Lighthouse en producción: en el Sprint 2 el mapa daba 88 a 89 y Pedidos 85 de rendimiento; el 22-10-2026 todas las pantallas quedaron entre 91 y 98 (detalle en [`06 Calidad de la interfaz y pruebas de extremo a extremo`](../../Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md), sección 2.3).
 
 ---
 
@@ -459,7 +459,7 @@ Sensibilidad del ahorro anual (g CO₂e): con la intensidad de las diapositivas 
 
 ### 7.4 Verificación y límites
 
-- **Verificación cruzada:** el script [`scripts/calcular_huella_swdm.py`](../../../../../../scripts/calcular_huella_swdm.py) con `--verificar` coincide con CO2.js 0.16.9 (`perByte` y `perVisitTrace`) a seis decimales en ocho casos, incluido el escenario de Perú. Resultado: [`verificacion-swdm-v4-contra-co2js.txt`](../evidencias/verificacion-swdm-v4-contra-co2js.txt).
+- **Verificación cruzada:** el script [`scripts/calcular_huella_swdm.py`](../../../../scripts/calcular_huella_swdm.py) con `--verificar` coincide con CO2.js 0.16.9 (`perByte` y `perVisitTrace`) a seis decimales en ocho casos, incluido el escenario de Perú. Resultado: [`verificacion-swdm-v4-contra-co2js.txt`](../evidencias/verificacion-swdm-v4-contra-co2js.txt).
 - **Solo cuenta la carga de la página.** No incluye las respuestas de la API durante la sesión (unos pocos KB comprimidos por petición) ni el cómputo del motor de optimización.
 - **Magnitud:** los gramos son pequeños porque la aplicación es liviana y de uso interno. Lo relevante es el cambio relativo (−33 %) y el contraste con el propósito del sistema: el tope mensual de emisiones de la flota que vigila el módulo de sostenibilidad (RN-010) está configurado en 800 kg de CO₂, mientras que la huella digital anual de la plataforma es de unos 0.18 kg. El mayor efecto ambiental del sistema está en las rutas que optimiza, no en las páginas que sirve.
 - **Hosting:** Vercel y Render no están en el directorio de hosting verde. Elegir un proveedor verificado reduciría la parte del centro de datos; hoy no hay descuento.
@@ -477,7 +477,7 @@ Desde la versión 1.1.0 el sistema muestra el CO₂ del día y su propia huella,
 
 ![Tarjeta de huella digital de la sesión, con los datos sintéticos de las pruebas](../evidencias/captura-tarjeta-huella-digital.png)
 
-Cómo funciona. [`huellaDigital.ts`](../../../../../../frontend/src/components/huellaDigital.ts) implementa la fórmula (0.300 kWh/GB y 494 g CO₂e/kWh) y suma, con un `PerformanceObserver` (API del navegador que avisa de cada recurso que se descarga), el tamaño transferido de cada recurso; la tarjeta se actualiza cada 5 segundos. La pastilla consulta **una sola vez** al abrir el panel, sin sondeos: cada consulta cuesta energía, y sería contradictorio gastarla para mostrar la huella.
+Cómo funciona. [`huellaDigital.ts`](../../../../frontend/src/components/huellaDigital.ts) implementa la fórmula (0.300 kWh/GB y 494 g CO₂e/kWh) y suma, con un `PerformanceObserver` (API del navegador que avisa de cada recurso que se descarga), el tamaño transferido de cada recurso; la tarjeta se actualiza cada 5 segundos. La pastilla consulta **una sola vez** al abrir el panel, sin sondeos: cada consulta cuesta energía, y sería contradictorio gastarla para mostrar la huella.
 
 Decisiones y límites:
 
@@ -498,7 +498,7 @@ La pantalla Sostenibilidad ahora muestra, además de los indicadores del periodo
 | **Tabla «Historial por día»** | Una fila por jornada (la más reciente primero): rutas, kilómetros, CO₂, combustible ahorrado y paradas entregadas y fallidas, con el total del periodo. Muestra los últimos 10 días y permite ver todos |
 | **Atajo «Mes anterior»** | Consulta el mes calendario anterior completo, para comparar un mes contra otro |
 
-**Cómo se calcula la proyección.** Es una estimación a **ritmo constante**, no un pronóstico: `emisión acumulada ÷ días del calendario transcurridos × días del mes` (los domingos cuentan como días transcurridos). Solo se muestra cuando el periodo es «el mes desde el día 1 hasta una fecha del mismo mes»; para un mes ya terminado informa en cuánto cerró y para otros periodos no se proyecta. La lógica está en [`proyeccionMes.ts`](../../../../../../frontend/src/components/proyeccionMes.ts) con sus pruebas.
+**Cómo se calcula la proyección.** Es una estimación a **ritmo constante**, no un pronóstico: `emisión acumulada ÷ días del calendario transcurridos × días del mes` (los domingos cuentan como días transcurridos). Solo se muestra cuando el periodo es «el mes desde el día 1 hasta una fecha del mismo mes»; para un mes ya terminado informa en cuánto cerró y para otros periodos no se proyecta. La lógica está en [`proyeccionMes.ts`](../../../../frontend/src/components/proyeccionMes.ts) con sus pruebas.
 
 **Cambio en el backend.** La consulta por día (`por_dia`) devuelve ahora también las rutas y las paradas entregadas y fallidas de cada día, contadas igual que el total (sin los pedidos cancelados), con un `JOIN LATERAL` como en la optimización de la sección 5.1. En la auditoría de consultas (`auditar_consultas.py`) la consulta nueva tarda **9.6 ms** con seis meses de historial (umbral: 500 ms).
 
@@ -516,9 +516,9 @@ Lo que **no** es: los datos del historial son de ejemplo y están marcados («Hi
 
 | Archivo | Función |
 |---|---|
-| [`.github/workflows/green-audit.yml`](../../../../../../.github/workflows/green-audit.yml) | Workflow de GitHub Actions: compila, mide el peso, ejecuta LHCI en escritorio (falla) y móvil (FCP y LCP solo avisan), resume las métricas y guarda los informes como artefacto (no los publica en ningún servicio externo) |
-| [`frontend/lighthouserc.json`](../../../../../../frontend/lighthouserc.json) | Presupuesto de escritorio: rendimiento, accesibilidad, buenas prácticas y SEO ≥ 90; FCP ≤ 1.0 s; LCP ≤ 1.4 s; TBT ≤ 85 ms; CLS ≤ 0.02; peso ≤ 1.1 MB |
-| [`frontend/lighthouserc.movil.json`](../../../../../../frontend/lighthouserc.movil.json) | Presupuesto de móvil (más holgado) |
+| [`.github/workflows/green-audit.yml`](../../../../.github/workflows/green-audit.yml) | Workflow de GitHub Actions: compila, mide el peso, ejecuta LHCI en escritorio (falla) y móvil (FCP y LCP solo avisan), resume las métricas y guarda los informes como artefacto (no los publica en ningún servicio externo) |
+| [`frontend/lighthouserc.json`](../../../../frontend/lighthouserc.json) | Presupuesto de escritorio: rendimiento, accesibilidad, buenas prácticas y SEO ≥ 90; FCP ≤ 1.0 s; LCP ≤ 1.4 s; TBT ≤ 85 ms; CLS ≤ 0.02; peso ≤ 1.1 MB |
+| [`frontend/lighthouserc.movil.json`](../../../../frontend/lighthouserc.movil.json) | Presupuesto de móvil (más holgado) |
 
 Decisiones:
 
@@ -621,7 +621,7 @@ git push origin sprint4
 
 ---
 
-[← Volver al README Principal](../../../../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 
