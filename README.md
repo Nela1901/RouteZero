@@ -368,7 +368,7 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Sprint 2: plan de ejecución y estado | [`docs/03 Implementación/Sprint 2/Plan y documentos técnicos/01 Sprint 2 Plan de ejecución y estado V_1_8_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%202/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_8_0.md) |
 | Implementación del motor de rutas | [`docs/03 Implementación/Sprint 2/Plan y documentos técnicos/02 Implementación del motor de rutas V_1_5_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%202/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20del%20motor%20de%20rutas%20V_1_5_0.md) |
 
-**Seguimiento del Sprint 2** (`docs/03 Implementación/Sprint 2/`):
+**Entregables de cierre del Sprint 2** (`docs/03 Implementación/Sprint 2/`):
 
 | Documento | Ubicación |
 |---|---|
@@ -388,7 +388,7 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Implementación de la vista del conductor | [`docs/03 Implementación/Sprint 3/Plan y documentos técnicos/05 Implementación de la vista del conductor V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/05%20Implementaci%C3%B3n%20de%20la%20vista%20del%20conductor%20V_1_2_0.md) |
 | Calidad de la interfaz y pruebas de extremo a extremo | [`docs/03 Implementación/Sprint 3/Plan y documentos técnicos/06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md) |
 
-**Seguimiento del Sprint 3** (`docs/03 Implementación/Sprint 3/`; incluye las evaluaciones de calidad de código, seguridad y accesibilidad de la Inspección 03):
+**Entregables de cierre del Sprint 3** (`docs/03 Implementación/Sprint 3/`; incluye las evaluaciones de calidad de código, seguridad y accesibilidad de la Inspección 03):
 
 | Documento | Ubicación |
 |---|---|
@@ -407,7 +407,7 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Sprint 4: plan de ejecución y estado | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/01 Sprint 4 Plan de ejecución y estado V_1_4_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md) |
 | Implementación de la sostenibilidad | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/02 Implementación de la sostenibilidad V_1_3_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md) |
 
-**Seguimiento del Sprint 4** (`docs/03 Implementación/Sprint 4/`):
+**Entregables de cierre del Sprint 4** (`docs/03 Implementación/Sprint 4/`):
 
 | Documento | Ubicación |
 |---|---|
