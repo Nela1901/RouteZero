@@ -222,55 +222,55 @@ RouteZero/
 │   │   ├── 03 Registro de riesgos V_1_0_0.md
 │   │   ├── 04 Presupuesto del proyecto V_1_1_0.md
 │   │   └── historial Planificación/   (3 versiones anteriores)
-│   ├── 03 Ejecución/
+│   ├── 03 Implementación/
 │   │   ├── Sprint 1/
-│   │   │   ├── 01 Sprint 1 Plan de ejecución y estado V_1_5_0.md
-│   │   │   ├── 02 Implementación del módulo de autenticación V_1_0_0.md
-│   │   │   ├── 03 Plan y resultados de pruebas V_1_0_0.md
-│   │   │   ├── Implementación/
-│   │   │   │   ├── 01 Informe de estado del proyecto V_1_3_0.md
-│   │   │   │   ├── 02 Registro de Impedimentos V_1_1_0.md
-│   │   │   │   ├── 03 Revisión del Sprint V_1_1_0.md
-│   │   │   │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
-│   │   │   │   └── historial Implementación/   (6 versiones anteriores)
-│   │   │   └── historial Sprint 1/   (5 versiones anteriores)
+│   │   │   ├── 01 Informe de estado del proyecto V_1_3_0.md
+│   │   │   ├── 02 Registro de Impedimentos V_1_1_0.md
+│   │   │   ├── 03 Revisión del Sprint V_1_1_0.md
+│   │   │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
+│   │   │   ├── historial Sprint 1/   (6 versiones anteriores de esos cuatro documentos)
+│   │   │   └── Plan y documentos técnicos/
+│   │   │       ├── 01 Sprint 1 Plan de ejecución y estado V_1_5_0.md
+│   │   │       ├── 02 Implementación del módulo de autenticación V_1_0_0.md
+│   │   │       ├── 03 Plan y resultados de pruebas V_1_0_0.md
+│   │   │       └── historial Plan y documentos técnicos/   (5 versiones anteriores)
 │   │   ├── Sprint 2/
-│   │   │   ├── 01 Sprint 2 Plan de ejecución y estado V_1_8_0.md
-│   │   │   ├── 02 Implementación del motor de rutas V_1_5_0.md
-│   │   │   ├── Implementación/
-│   │   │   │   ├── 01 Informe de estado del proyecto V_1_6_0.md
-│   │   │   │   ├── 02 Registro de Impedimentos V_1_2_0.md
-│   │   │   │   ├── 03 Revisión del Sprint V_1_6_0.md
-│   │   │   │   ├── 04 Retrospectiva del Sprint V_1_4_0.md
-│   │   │   │   └── historial Implementación/   (18 versiones anteriores)
-│   │   │   └── historial Sprint 2/   (13 versiones anteriores)
+│   │   │   ├── 01 Informe de estado del proyecto V_1_6_0.md
+│   │   │   ├── 02 Registro de Impedimentos V_1_2_0.md
+│   │   │   ├── 03 Revisión del Sprint V_1_6_0.md
+│   │   │   ├── 04 Retrospectiva del Sprint V_1_4_0.md
+│   │   │   ├── historial Sprint 2/   (18 versiones anteriores de esos cuatro documentos)
+│   │   │   └── Plan y documentos técnicos/
+│   │   │       ├── 01 Sprint 2 Plan de ejecución y estado V_1_8_0.md
+│   │   │       ├── 02 Implementación del motor de rutas V_1_5_0.md
+│   │   │       └── historial Plan y documentos técnicos/   (13 versiones anteriores)
 │   │   ├── Sprint 3/
-│   │   │   ├── 01 Sprint 3 Plan de ejecución y estado V_1_7_0.md
-│   │   │   ├── 02 Implementación de la re-optimización V_1_3_0.md
-│   │   │   ├── 03 Estrategia y resultados de pruebas V_1_6_0.md
-│   │   │   ├── 04 Implementación del mapa de rutas V_1_3_0.md
-│   │   │   ├── 05 Implementación de la vista del conductor V_1_2_0.md
-│   │   │   ├── 06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md
-│   │   │   ├── Implementación/
-│   │   │   │   ├── 01 Informe de estado del proyecto V_1_7_0.md
-│   │   │   │   ├── 02 Registro de Impedimentos V_1_1_0.md
-│   │   │   │   ├── 03 Revisión del Sprint V_1_3_0.md
-│   │   │   │   ├── 04 Retrospectiva del Sprint V_1_5_0.md
-│   │   │   │   ├── 05 Calidad de código V_1_2_0.md
-│   │   │   │   ├── 06 Evaluación de seguridad OWASP V_1_2_0.md
-│   │   │   │   ├── 07 Evaluación de accesibilidad WCAG V_1_0_0.md
-│   │   │   │   └── historial Implementación/   (20 versiones anteriores)
-│   │   │   └── historial Sprint 3/   (22 versiones anteriores)
+│   │   │   ├── 01 Informe de estado del proyecto V_1_7_0.md
+│   │   │   ├── 02 Registro de Impedimentos V_1_1_0.md
+│   │   │   ├── 03 Revisión del Sprint V_1_3_0.md
+│   │   │   ├── 04 Retrospectiva del Sprint V_1_5_0.md
+│   │   │   ├── 05 Calidad de código V_1_2_0.md
+│   │   │   ├── 06 Evaluación de seguridad OWASP V_1_2_0.md
+│   │   │   ├── 07 Evaluación de accesibilidad WCAG V_1_0_0.md
+│   │   │   ├── historial Sprint 3/   (20 versiones anteriores de esos siete documentos)
+│   │   │   └── Plan y documentos técnicos/
+│   │   │       ├── 01 Sprint 3 Plan de ejecución y estado V_1_7_0.md
+│   │   │       ├── 02 Implementación de la re-optimización V_1_3_0.md
+│   │   │       ├── 03 Estrategia y resultados de pruebas V_1_6_0.md
+│   │   │       ├── 04 Implementación del mapa de rutas V_1_3_0.md
+│   │   │       ├── 05 Implementación de la vista del conductor V_1_2_0.md
+│   │   │       ├── 06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md
+│   │   │       └── historial Plan y documentos técnicos/   (22 versiones anteriores)
 │   │   ├── Sprint 4/
-│   │   │   ├── 01 Sprint 4 Plan de ejecución y estado V_1_4_0.md
-│   │   │   ├── 02 Implementación de la sostenibilidad V_1_3_0.md
-│   │   │   ├── Implementación/
-│   │   │   │   ├── 01 Informe de estado del proyecto V_1_1_0.md
-│   │   │   │   ├── 02 Registro de Impedimentos V_1_0_0.md
-│   │   │   │   ├── 03 Revisión del Sprint V_1_1_0.md
-│   │   │   │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
-│   │   │   │   └── historial Implementación/   (3 versiones anteriores)
-│   │   │   └── historial Sprint 4/   (7 versiones anteriores)
+│   │   │   ├── 01 Informe de estado del proyecto V_1_1_0.md
+│   │   │   ├── 02 Registro de Impedimentos V_1_0_0.md
+│   │   │   ├── 03 Revisión del Sprint V_1_1_0.md
+│   │   │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
+│   │   │   ├── historial Sprint 4/   (3 versiones anteriores de esos cuatro documentos)
+│   │   │   └── Plan y documentos técnicos/
+│   │   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_4_0.md
+│   │   │       ├── 02 Implementación de la sostenibilidad V_1_3_0.md
+│   │   │       └── historial Plan y documentos técnicos/   (7 versiones anteriores)
 │   │   └── reduccion del impacto ambiental/   (Inspección 04: Green Software y estándares)
 │   │       ├── 01 Informe de reduccion del impacto ambiental V_1_6_0.md
 │   │       ├── 02 Estandares Ingeniería de software V_1_6_0.md
@@ -302,7 +302,7 @@ RouteZero/
 └── README.md
 ```
 
-Cada carpeta de documentos muestra solo la **última versión** de cada archivo. Las versiones anteriores se conservan en una subcarpeta de esa misma carpeta, con el mismo nombre, para no perder la trazabilidad. La subcarpeta se llama `historial` seguido del nombre de la carpeta a la que pertenece: `historial Inicio`, `historial Planificación`, `historial Sprint 1`, `historial Sprint 2`, `historial Sprint 3` y `historial Sprint 4` (plan de ejecución e implementación técnica de cada sprint) e `historial Implementación` (informe de estado, registro de impedimentos, revisión y retrospectiva de cada sprint); dentro de `reduccion del impacto ambiental` está `historial reduccion del impacto ambiental` (versiones anteriores de sus dos documentos).
+Cada carpeta de documentos muestra solo la **última versión** de cada archivo. Las versiones anteriores se conservan en una subcarpeta de esa misma carpeta, con el mismo nombre, para no perder la trazabilidad. La subcarpeta se llama `historial` seguido del nombre de la carpeta a la que pertenece: `historial Inicio`, `historial Planificación`, `historial reduccion del impacto ambiental` y, en cada sprint, dos: `historial Sprint N` (informe de estado, registro de impedimentos, revisión, retrospectiva y, en el Sprint 3, las evaluaciones de calidad, seguridad y accesibilidad) e `historial Plan y documentos técnicos` (plan de ejecución, implementación técnica y pruebas del sprint). En cada sprint, los documentos de seguimiento están a la vista al entrar y los técnicos en `Plan y documentos técnicos`.
 
 Antes de abrir un Pull Request con cambios en la documentación se ejecuta `python scripts/verificar_enlaces.py`, que revisa todos los enlaces, las secciones enlazadas y el enlace de retorno de cada documento.
 
@@ -315,16 +315,16 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 
 | Documento | Ubicación |
 |---|---|
-| Selección del enfoque del proyecto | [`docs/01 Inicio/01. Selección del enfoque del proyecto V_1_2_0.md`](docs/01%20Inicio/01.%20Selección%20del%20enfoque%20del%20proyecto%20V_1_2_0.md) |
-| Acta de constitución | [`docs/01 Inicio/02. Acta de constitución V_1_0_0.md`](docs/01%20Inicio/02.%20Acta%20de%20constitución%20V_1_0_0.md) |
-| Declaración de la visión | [`docs/01 Inicio/03. Declaración de la visión V_1_0_0.md`](docs/01%20Inicio/03.%20Declaración%20de%20la%20visión%20V_1_0_0.md) |
+| Selección del enfoque del proyecto | [`docs/01 Inicio/01. Selección del enfoque del proyecto V_1_2_0.md`](docs/01%20Inicio/01.%20Selecci%C3%B3n%20del%20enfoque%20del%20proyecto%20V_1_2_0.md) |
+| Acta de constitución | [`docs/01 Inicio/02. Acta de constitución V_1_0_0.md`](docs/01%20Inicio/02.%20Acta%20de%20constituci%C3%B3n%20V_1_0_0.md) |
+| Declaración de la visión | [`docs/01 Inicio/03. Declaración de la visión V_1_0_0.md`](docs/01%20Inicio/03.%20Declaraci%C3%B3n%20de%20la%20visi%C3%B3n%20V_1_0_0.md) |
 | Registro de supuestos y restricciones | [`docs/01 Inicio/04. Registro de supuestos y restricciones V_1_2_0.md`](docs/01%20Inicio/04.%20Registro%20de%20supuestos%20y%20restricciones%20V_1_2_0.md) |
 | Registro de interesados | [`docs/01 Inicio/05. Registro de interesados V_1_2_0.md`](docs/01%20Inicio/05.%20Registro%20de%20interesados%20V_1_2_0.md) |
 | Requisitos funcionales | [`docs/01 Inicio/06. Requisitos funcionales V_1_1_0.md`](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_1_0.md) |
 | Requisitos no funcionales | [`docs/01 Inicio/07. Requisitos no funcionales V_1_2_0.md`](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md) |
 | Usuarios | [`docs/01 Inicio/08. Usuarios V_1_0_0.md`](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) |
 | Reglas de negocio | [`docs/01 Inicio/09. Reglas de negocio V_1_1_0.md`](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) |
-| Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_1_0.md`](docs/01%20Inicio/10.%20Stack%20tecnológico%20V_1_1_0.md) |
+| Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_1_0.md`](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_1_0.md) |
 | Base de datos | [`docs/01 Inicio/11. Base de datos V_1_10_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_10_0.md) |
 | Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_2_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_2_0.md) |
 | Restricciones | [`docs/01 Inicio/13. Restricciones V_1_2_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_2_0.md) |
@@ -342,87 +342,87 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 
 ---
 
-### Fase 03: Ejecución
+### Fase 03: Implementación
 
 #### Sprint 1 — Base del sistema
 
 | Documento | Ubicación |
 |---|---|
-| Sprint 1: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 1/01 Sprint 1 Plan de ejecución y estado V_1_5_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/01%20Sprint%201%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_5_0.md) |
-| Implementación del módulo de autenticación | [`docs/03 Ejecución/Sprint 1/02 Implementación del módulo de autenticación V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/02%20Implementaci%C3%B3n%20del%20m%C3%B3dulo%20de%20autenticaci%C3%B3n%20V_1_0_0.md) |
-| Plan y resultados de pruebas | [`docs/03 Ejecución/Sprint 1/03 Plan y resultados de pruebas V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/03%20Plan%20y%20resultados%20de%20pruebas%20V_1_0_0.md) |
+| Sprint 1: plan de ejecución y estado | [`docs/03 Implementación/Sprint 1/Plan y documentos técnicos/01 Sprint 1 Plan de ejecución y estado V_1_5_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%201/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%201%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_5_0.md) |
+| Implementación del módulo de autenticación | [`docs/03 Implementación/Sprint 1/Plan y documentos técnicos/02 Implementación del módulo de autenticación V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%201/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20del%20m%C3%B3dulo%20de%20autenticaci%C3%B3n%20V_1_0_0.md) |
+| Plan y resultados de pruebas | [`docs/03 Implementación/Sprint 1/Plan y documentos técnicos/03 Plan y resultados de pruebas V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%201/Plan%20y%20documentos%20t%C3%A9cnicos/03%20Plan%20y%20resultados%20de%20pruebas%20V_1_0_0.md) |
 
-**Entregables de cierre del Sprint 1** (`docs/03 Ejecución/Sprint 1/Implementación/`):
+**Entregables de cierre del Sprint 1** (`docs/03 Implementación/Sprint 1/`):
 
 | Documento | Ubicación |
 |---|---|
-| Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 1/Implementación/01 Informe de estado del proyecto V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_3_0.md) |
-| Registro de Impedimentos | [`docs/03 Ejecución/Sprint 1/Implementación/02 Registro de Impedimentos V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
-| Revisión del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
-| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 1/Implementación/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%201/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
+| Informe de Estado del Proyecto | [`docs/03 Implementación/Sprint 1/01 Informe de estado del proyecto V_1_3_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%201/01%20Informe%20de%20estado%20del%20proyecto%20V_1_3_0.md) |
+| Registro de Impedimentos | [`docs/03 Implementación/Sprint 1/02 Registro de Impedimentos V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%201/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
+| Revisión del Sprint | [`docs/03 Implementación/Sprint 1/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%201/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
+| Retrospectiva del Sprint | [`docs/03 Implementación/Sprint 1/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%201/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
 
 #### Sprint 2 — Personas y Algoritmo ACO (completado)
 
 | Documento | Ubicación |
 |---|---|
-| Sprint 2: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 2/01 Sprint 2 Plan de ejecución y estado V_1_8_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_8_0.md) |
-| Implementación del motor de rutas | [`docs/03 Ejecución/Sprint 2/02 Implementación del motor de rutas V_1_5_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/02%20Implementaci%C3%B3n%20del%20motor%20de%20rutas%20V_1_5_0.md) |
+| Sprint 2: plan de ejecución y estado | [`docs/03 Implementación/Sprint 2/Plan y documentos técnicos/01 Sprint 2 Plan de ejecución y estado V_1_8_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%202/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%202%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_8_0.md) |
+| Implementación del motor de rutas | [`docs/03 Implementación/Sprint 2/Plan y documentos técnicos/02 Implementación del motor de rutas V_1_5_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%202/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20del%20motor%20de%20rutas%20V_1_5_0.md) |
 
-**Seguimiento del Sprint 2** (`docs/03 Ejecución/Sprint 2/Implementación/`):
+**Seguimiento del Sprint 2** (`docs/03 Implementación/Sprint 2/`):
 
 | Documento | Ubicación |
 |---|---|
-| Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 2/Implementación/01 Informe de estado del proyecto V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_6_0.md) |
-| Registro de Impedimentos | [`docs/03 Ejecución/Sprint 2/Implementación/02 Registro de Impedimentos V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_2_0.md) |
-| Revisión del Sprint | [`docs/03 Ejecución/Sprint 2/Implementación/03 Revisión del Sprint V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_6_0.md) |
-| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 2/Implementación/04 Retrospectiva del Sprint V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%202/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_4_0.md) |
+| Informe de Estado del Proyecto | [`docs/03 Implementación/Sprint 2/01 Informe de estado del proyecto V_1_6_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%202/01%20Informe%20de%20estado%20del%20proyecto%20V_1_6_0.md) |
+| Registro de Impedimentos | [`docs/03 Implementación/Sprint 2/02 Registro de Impedimentos V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%202/02%20Registro%20de%20Impedimentos%20V_1_2_0.md) |
+| Revisión del Sprint | [`docs/03 Implementación/Sprint 2/03 Revisión del Sprint V_1_6_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%202/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_6_0.md) |
+| Retrospectiva del Sprint | [`docs/03 Implementación/Sprint 2/04 Retrospectiva del Sprint V_1_4_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%202/04%20Retrospectiva%20del%20Sprint%20V_1_4_0.md) |
 
 #### Sprint 3 — Rutas y Visualización (completado)
 
 | Documento | Ubicación |
 |---|---|
-| Sprint 3: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 3/01 Sprint 3 Plan de ejecución y estado V_1_7_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_7_0.md) |
-| Implementación de la re-optimización | [`docs/03 Ejecución/Sprint 3/02 Implementación de la re-optimización V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md) |
-| Estrategia y resultados de pruebas | [`docs/03 Ejecución/Sprint 3/03 Estrategia y resultados de pruebas V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/03%20Estrategia%20y%20resultados%20de%20pruebas%20V_1_6_0.md) |
-| Implementación del mapa de rutas | [`docs/03 Ejecución/Sprint 3/04 Implementación del mapa de rutas V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/04%20Implementaci%C3%B3n%20del%20mapa%20de%20rutas%20V_1_3_0.md) |
-| Implementación de la vista del conductor | [`docs/03 Ejecución/Sprint 3/05 Implementación de la vista del conductor V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/05%20Implementaci%C3%B3n%20de%20la%20vista%20del%20conductor%20V_1_2_0.md) |
-| Calidad de la interfaz y pruebas de extremo a extremo | [`docs/03 Ejecución/Sprint 3/06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md) |
+| Sprint 3: plan de ejecución y estado | [`docs/03 Implementación/Sprint 3/Plan y documentos técnicos/01 Sprint 3 Plan de ejecución y estado V_1_7_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%203%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_7_0.md) |
+| Implementación de la re-optimización | [`docs/03 Implementación/Sprint 3/Plan y documentos técnicos/02 Implementación de la re-optimización V_1_3_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md) |
+| Estrategia y resultados de pruebas | [`docs/03 Implementación/Sprint 3/Plan y documentos técnicos/03 Estrategia y resultados de pruebas V_1_6_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/03%20Estrategia%20y%20resultados%20de%20pruebas%20V_1_6_0.md) |
+| Implementación del mapa de rutas | [`docs/03 Implementación/Sprint 3/Plan y documentos técnicos/04 Implementación del mapa de rutas V_1_3_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/04%20Implementaci%C3%B3n%20del%20mapa%20de%20rutas%20V_1_3_0.md) |
+| Implementación de la vista del conductor | [`docs/03 Implementación/Sprint 3/Plan y documentos técnicos/05 Implementación de la vista del conductor V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/05%20Implementaci%C3%B3n%20de%20la%20vista%20del%20conductor%20V_1_2_0.md) |
+| Calidad de la interfaz y pruebas de extremo a extremo | [`docs/03 Implementación/Sprint 3/Plan y documentos técnicos/06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/06%20Calidad%20de%20la%20interfaz%20y%20pruebas%20de%20extremo%20a%20extremo%20V_1_1_0.md) |
 
-**Seguimiento del Sprint 3** (`docs/03 Ejecución/Sprint 3/Implementación/`; incluye las evaluaciones de calidad de código, seguridad y accesibilidad de la Inspección 03):
+**Seguimiento del Sprint 3** (`docs/03 Implementación/Sprint 3/`; incluye las evaluaciones de calidad de código, seguridad y accesibilidad de la Inspección 03):
 
 | Documento | Ubicación |
 |---|---|
-| Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 3/Implementación/01 Informe de estado del proyecto V_1_7_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_7_0.md) |
-| Registro de Impedimentos | [`docs/03 Ejecución/Sprint 3/Implementación/02 Registro de Impedimentos V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
-| Revisión del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/03 Revisión del Sprint V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_3_0.md) |
-| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 3/Implementación/04 Retrospectiva del Sprint V_1_5_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_5_0.md) |
-| Evaluación de calidad de código (SonarQube) | [`docs/03 Ejecución/Sprint 3/Implementación/05 Calidad de código V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) |
-| Evaluación de seguridad (OWASP Top 10 2025) | [`docs/03 Ejecución/Sprint 3/Implementación/06 Evaluación de seguridad OWASP V_1_2_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
-| Evaluación de accesibilidad (WCAG 2.2) | [`docs/03 Ejecución/Sprint 3/Implementación/07 Evaluación de accesibilidad WCAG V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%203/Implementaci%C3%B3n/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md) |
+| Informe de Estado del Proyecto | [`docs/03 Implementación/Sprint 3/01 Informe de estado del proyecto V_1_7_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/01%20Informe%20de%20estado%20del%20proyecto%20V_1_7_0.md) |
+| Registro de Impedimentos | [`docs/03 Implementación/Sprint 3/02 Registro de Impedimentos V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
+| Revisión del Sprint | [`docs/03 Implementación/Sprint 3/03 Revisión del Sprint V_1_3_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_3_0.md) |
+| Retrospectiva del Sprint | [`docs/03 Implementación/Sprint 3/04 Retrospectiva del Sprint V_1_5_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/04%20Retrospectiva%20del%20Sprint%20V_1_5_0.md) |
+| Evaluación de calidad de código (SonarQube) | [`docs/03 Implementación/Sprint 3/05 Calidad de código V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/05%20Calidad%20de%20c%C3%B3digo%20V_1_2_0.md) |
+| Evaluación de seguridad (OWASP Top 10 2025) | [`docs/03 Implementación/Sprint 3/06 Evaluación de seguridad OWASP V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/06%20Evaluaci%C3%B3n%20de%20seguridad%20OWASP%20V_1_2_0.md) |
+| Evaluación de accesibilidad (WCAG 2.2) | [`docs/03 Implementación/Sprint 3/07 Evaluación de accesibilidad WCAG V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%203/07%20Evaluaci%C3%B3n%20de%20accesibilidad%20WCAG%20V_1_0_0.md) |
 
 #### Sprint 4 — Sostenibilidad y Cierre (completado)
 
 | Documento | Ubicación |
 |---|---|
-| Sprint 4: plan de ejecución y estado | [`docs/03 Ejecución/Sprint 4/01 Sprint 4 Plan de ejecución y estado V_1_4_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md) |
-| Implementación de la sostenibilidad | [`docs/03 Ejecución/Sprint 4/02 Implementación de la sostenibilidad V_1_3_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md) |
+| Sprint 4: plan de ejecución y estado | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/01 Sprint 4 Plan de ejecución y estado V_1_4_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md) |
+| Implementación de la sostenibilidad | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/02 Implementación de la sostenibilidad V_1_3_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md) |
 
-**Seguimiento del Sprint 4** (`docs/03 Ejecución/Sprint 4/Implementación/`):
-
-| Documento | Ubicación |
-|---|---|
-| Informe de Estado del Proyecto | [`docs/03 Ejecución/Sprint 4/Implementación/01 Informe de estado del proyecto V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/01%20Informe%20de%20estado%20del%20proyecto%20V_1_1_0.md) |
-| Registro de Impedimentos | [`docs/03 Ejecución/Sprint 4/Implementación/02 Registro de Impedimentos V_1_0_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/02%20Registro%20de%20Impedimentos%20V_1_0_0.md) |
-| Revisión del Sprint | [`docs/03 Ejecución/Sprint 4/Implementación/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
-| Retrospectiva del Sprint | [`docs/03 Ejecución/Sprint 4/Implementación/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Ejecuci%C3%B3n/Sprint%204/Implementaci%C3%B3n/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
-
-**Reducción del impacto ambiental y estándares de ingeniería de software** (Inspección 04, `docs/03 Ejecución/reduccion del impacto ambiental/`):
+**Seguimiento del Sprint 4** (`docs/03 Implementación/Sprint 4/`):
 
 | Documento | Ubicación |
 |---|---|
-| Informe de reducción del impacto ambiental (8 optimizaciones, mediciones antes y después y cálculo SWDM v4) | [`docs/03 Ejecución/reduccion del impacto ambiental/01 Informe de reduccion del impacto ambiental V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_6_0.md) |
-| Estándares de ingeniería de software y guía de desarrollo verde (ISO/IEC 25010, GSF, W3C WSG y matriz de mapeo) | [`docs/03 Ejecución/reduccion del impacto ambiental/02 Estandares Ingeniería de software V_1_6_0.md`](docs/03%20Ejecuci%C3%B3n/reduccion%20del%20impacto%20ambiental/02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_6_0.md) |
-| Reportes consolidados de auditoría (Lighthouse en producción y local antes y después, cálculo SWDM v4 y capturas) | [`docs/03 Ejecución/reduccion del impacto ambiental/evidencias/`](docs/03%20Ejecuci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/) |
+| Informe de Estado del Proyecto | [`docs/03 Implementación/Sprint 4/01 Informe de estado del proyecto V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/01%20Informe%20de%20estado%20del%20proyecto%20V_1_1_0.md) |
+| Registro de Impedimentos | [`docs/03 Implementación/Sprint 4/02 Registro de Impedimentos V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/02%20Registro%20de%20Impedimentos%20V_1_0_0.md) |
+| Revisión del Sprint | [`docs/03 Implementación/Sprint 4/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
+| Retrospectiva del Sprint | [`docs/03 Implementación/Sprint 4/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
+
+**Reducción del impacto ambiental y estándares de ingeniería de software** (Inspección 04, `docs/03 Implementación/reduccion del impacto ambiental/`):
+
+| Documento | Ubicación |
+|---|---|
+| Informe de reducción del impacto ambiental (8 optimizaciones, mediciones antes y después y cálculo SWDM v4) | [`docs/03 Implementación/reduccion del impacto ambiental/01 Informe de reduccion del impacto ambiental V_1_6_0.md`](docs/03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_6_0.md) |
+| Estándares de ingeniería de software y guía de desarrollo verde (ISO/IEC 25010, GSF, W3C WSG y matriz de mapeo) | [`docs/03 Implementación/reduccion del impacto ambiental/02 Estandares Ingeniería de software V_1_6_0.md`](docs/03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_6_0.md) |
+| Reportes consolidados de auditoría (Lighthouse en producción y local antes y después, cálculo SWDM v4 y capturas) | [`docs/03 Implementación/reduccion del impacto ambiental/evidencias/`](docs/03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/) |
 
 *El Sprint 4 es el último del plan; el cierre del proyecto se documentará en `docs/04 Seguimiento_Control/` y `docs/05 Cierre/`.*
 
