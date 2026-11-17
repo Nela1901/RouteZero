@@ -243,3 +243,9 @@ frontend/coverage/
 
 # SQL para el SQL Editor de Supabase que solo se usa en este equipo (datos de ejemplo, consultas sueltas): no se sube
 backend/scripts/sql_editor/
+
+# Respuestas de la encuesta SUS (CSV exportados de Google Forms) y resultados generados: datos de personas, no se suben
+scripts/usabilidad/*.csv
+scripts/usabilidad/resultados_sus/
+resultados_sus/
+respuestas*.csv
