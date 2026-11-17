@@ -88,6 +88,7 @@ jobs:
   e2e:
     name: E2E Playwright (${{ matrix.navegador }})
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -115,7 +116,14 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ matrix.navegador }}-${{ hashFiles('frontend/package-lock.json') }}
       - name: Instalar ${{ matrix.navegador }} y sus dependencias del sistema
-        run: npx playwright install --with-deps ${{ matrix.navegador }}
+        # La instalación de las dependencias del sistema (apt) puede quedarse colgada en los ejecutores de GitHub: cada intento
+        # tiene un tope de 8 minutos y se reintenta hasta 3 veces antes de fallar.
+        run: |
+          for intento in 1 2 3; do
+            if timeout 480 npx playwright install --with-deps ${{ matrix.navegador }}; then exit 0; fi
+            echo "Intento $intento fallido o agotado; se reintenta"
+          done
+          echo "::error::No se pudo instalar ${{ matrix.navegador }} tras 3 intentos"; exit 1
       - name: Pruebas E2E (headless)
         run: npx playwright test ${{ matrix.proyectos }}
       - name: Informe HTML y trazas
