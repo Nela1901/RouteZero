@@ -1,0 +1,130 @@
+# Pruebas automatizadas: unitarias del frontend (Vitest), unitarias y de integración del motor del backend (pytest, sin
+# base de datos) y de extremo a extremo con Playwright en Chromium, Firefox y WebKit, en modo headless. Los informes
+# se guardan como artefactos del workflow aunque las pruebas pasen, para poder consultarlos.
+#
+# Las pruebas de integración del resto del backend (autenticación, flota, pedidos, rutas, sostenibilidad...) usan la
+# base de datos y Supabase Auth reales: se ejecutan en local antes de cada Pull Request porque llevarlas aquí exigiría
+# publicar credenciales de una base compartida. Aquí corren las que no la necesitan (motor ACO, red vial, trazado,
+# arquitectura), con valores ficticios en las variables de entorno.
+name: Pruebas
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: pruebas-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  unitarias-frontend:
+    name: Unitarias del frontend (Vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --ignore-scripts
+      - name: Vitest con cobertura
+        run: npm run test:coverage
+      - name: Informe de cobertura
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cobertura-frontend
+          path: frontend/coverage
+          retention-days: 14
+          if-no-files-found: ignore
+
+  unitarias-backend:
+    name: Unitarias del backend (motor, red vial y arquitectura)
+    runs-on: ubuntu-latest
+    env:
+      # Valores ficticios: estas pruebas no abren ninguna conexión, pero la configuración exige que existan.
+      DATABASE_URL: postgresql://ficticio:ficticio@127.0.0.1:1/ficticio
+      DATABASE_ADMIN_URL: ""
+      SUPABASE_URL: https://ficticio.supabase.co
+      SUPABASE_ANON_KEY: ficticia
+      FRONTEND_ORIGIN: http://localhost:5173
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - run: python -m pip install -r backend/requirements.txt
+      - name: pytest (sin base de datos)
+        working-directory: backend
+        run: >
+          python -m pytest
+          tests/test_algoritmo.py tests/test_algoritmo_punta.py tests/test_algoritmo_reoptimizacion.py
+          tests/test_red_vial.py tests/test_red_vial_congestion.py tests/test_trazado.py
+          tests/test_arquitectura.py tests/test_raiz.py tests/test_mfa_cambio_de_ip.py
+          -o addopts="" -q --junitxml=resultados-backend.xml
+          --cov=src.algoritmo --cov=src.red_vial --cov-report=term --cov-report=xml:cobertura-backend.xml
+      - name: Resultados del backend
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: resultados-backend
+          path: |
+            backend/resultados-backend.xml
+            backend/cobertura-backend.xml
+          retention-days: 14
+          if-no-files-found: ignore
+
+  e2e:
+    name: E2E Playwright (${{ matrix.navegador }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - navegador: chromium
+            proyectos: "--project=chromium --project=movil-chromium"
+          - navegador: firefox
+            proyectos: "--project=firefox"
+          - navegador: webkit
+            proyectos: "--project=webkit --project=movil-webkit"
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --ignore-scripts
+      - name: Navegador (se guarda en caché entre ejecuciones)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ matrix.navegador }}-${{ hashFiles('frontend/package-lock.json') }}
+      - name: Instalar ${{ matrix.navegador }} y sus dependencias del sistema
+        run: npx playwright install --with-deps ${{ matrix.navegador }}
+      - name: Pruebas E2E (headless)
+        run: npx playwright test ${{ matrix.proyectos }}
+      - name: Informe HTML y trazas
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: informe-playwright-${{ matrix.navegador }}
+          path: |
+            frontend/playwright-report
+            frontend/test-results
+          retention-days: 14
+          if-no-files-found: ignore

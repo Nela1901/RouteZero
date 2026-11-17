@@ -1,13 +1,14 @@
-# Integración continua, fase 1 (HT-10): todo lo que no necesita credenciales ni acceso a la base de datos.
-# Las pruebas de pytest del backend corren contra la base real de Supabase y se siguen ejecutando en local antes de
-# cada Pull Request; llevarlas aquí (fase 2) se reevalúa al terminar todos los sprints.
+# Integración continua (HT-10): verificación de estilo, análisis estático, compilación y validación de dependencias del
+# frontend y del backend, más la higiene de la documentación. No necesita credenciales ni acceso a la base de datos.
+# Las pruebas (unitarias, de integración y de extremo a extremo) viven en `tests.yml`, y el despliegue en
+# `deploy-production.yml`, que solo actúa cuando estas verificaciones y las pruebas terminan en verde.
 name: CI
 
 on:
-  pull_request:
-    branches: [main]
   push:
-    branches: [main]
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -18,7 +19,7 @@ permissions:
 
 jobs:
   frontend:
-    name: Frontend (lint, pruebas, build y auditoría)
+    name: Frontend (lint, compilación y dependencias)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -31,54 +32,44 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --ignore-scripts
-      - run: npm run lint
-      - name: Pruebas de Vitest
-        run: npm test -- --reporter=default --reporter=github-actions
-      - run: npm run build
+      - name: Estilo y análisis estático (oxlint)
+        run: npm run lint
+      - name: Compilación (tsc y vite build)
+        run: npm run build
       - name: Auditoría de dependencias (sin vulnerabilidades altas ni críticas)
         run: npm audit --audit-level=high
 
-  e2e:
-    name: Pruebas de extremo a extremo (Playwright)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - run: npm ci --ignore-scripts
-      - name: Navegador (se guarda en caché entre ejecuciones)
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
-      - run: npm run e2e:navegador
-      - run: npm run test:e2e
-      - name: Informe y trazas de las pruebas fallidas
-        if: failure()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: informe-playwright
-          path: |
-            frontend/playwright-report
-            frontend/test-results
-          retention-days: 7
-
-  backend-seguridad:
-    name: Backend (análisis estático y dependencias)
+  backend:
+    name: Backend (compilación, análisis estático y dependencias)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.13"
+      - name: Compilación (todos los módulos deben compilar)
+        run: python -m compileall -q backend/src
       - run: "python -m pip install --only-binary :all: bandit==1.9.4 pip-audit==2.10.1"
       - name: Bandit (sin hallazgos de severidad alta)
         run: python -m bandit -r backend/src -lll
       - name: pip-audit (dependencias del backend)
         run: python -m pip_audit -r backend/requirements.txt
+
+  repositorio:
+    name: Higiene del repositorio y enlaces de la documentación
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Sin archivos residuales ni secretos versionados
+        run: |
+          residuales="$(git ls-files | grep -E '(~$|\.env$|^node_modules/|/node_modules/|playwright-report/|test-results/)' || true)"
+          if [ -n "$residuales" ]; then
+            echo "::error::Archivos que no deben estar en el repositorio:"
+            echo "$residuales"
+            exit 1
+          fi
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Enlaces relativos de todos los documentos Markdown
+        run: python scripts/verificar_enlaces.py
