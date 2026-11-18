@@ -1,0 +1,218 @@
+{
+  "fecha": "2026-11-17T19:35:05.528Z",
+  "frontend": "https://route-zero-omega.vercel.app",
+  "api": "https://routezero-7k7j.onrender.com",
+  "webVitals": {
+    "cargas": [
+      {
+        "estado": 200,
+        "ttfb": 375.79999999701977,
+        "fcp": 444,
+        "lcp": 612,
+        "domContentLoaded": 538.0999999940395,
+        "carga": 677.5999999940395
+      },
+      {
+        "estado": 200,
+        "ttfb": 256.20000000298023,
+        "fcp": 308,
+        "lcp": 524,
+        "domContentLoaded": 470.20000000298023,
+        "carga": 470.29999999701977
+      },
+      {
+        "estado": 200,
+        "ttfb": 257.5,
+        "fcp": 308,
+        "lcp": 456,
+        "domContentLoaded": 409.90000000596046,
+        "carga": 560
+      },
+      {
+        "estado": 200,
+        "ttfb": 268.90000000596046,
+        "fcp": 312,
+        "lcp": 564,
+        "domContentLoaded": 502.1000000089407,
+        "carga": 502.1000000089407
+      },
+      {
+        "estado": 200,
+        "ttfb": 253.90000000596046,
+        "fcp": 304,
+        "lcp": 484,
+        "domContentLoaded": 419.29999999701977,
+        "carga": 649.6000000089407
+      }
+    ],
+    "resumen": {
+      "ttfb": {
+        "n": 5,
+        "min": 254,
+        "mediana": 258,
+        "p95": 376,
+        "max": 376
+      },
+      "fcp": {
+        "n": 5,
+        "min": 304,
+        "mediana": 308,
+        "p95": 444,
+        "max": 444
+      },
+      "lcp": {
+        "n": 5,
+        "min": 456,
+        "mediana": 524,
+        "p95": 612,
+        "max": 612
+      },
+      "domContentLoaded": {
+        "n": 5,
+        "min": 410,
+        "mediana": 470,
+        "p95": 538,
+        "max": 538
+      },
+      "carga": {
+        "n": 5,
+        "min": 470,
+        "mediana": 560,
+        "p95": 678,
+        "max": 678
+      }
+    },
+    "clasificacion": {
+      "ttfb": "bueno",
+      "fcp": "bueno",
+      "lcp": "bueno"
+    },
+    "umbralesMs": {
+      "ttfb": 800,
+      "fcp": 1800,
+      "lcp": 2500
+    }
+  },
+  "salud": {
+    "muestras": [
+      {
+        "estado": 200,
+        "ms": 681
+      },
+      {
+        "estado": 200,
+        "ms": 199
+      },
+      {
+        "estado": 200,
+        "ms": 243
+      },
+      {
+        "estado": 200,
+        "ms": 199
+      },
+      {
+        "estado": 200,
+        "ms": 203
+      },
+      {
+        "estado": 200,
+        "ms": 202
+      },
+      {
+        "estado": 200,
+        "ms": 203
+      },
+      {
+        "estado": 200,
+        "ms": 210
+      },
+      {
+        "estado": 200,
+        "ms": 194
+      },
+      {
+        "estado": 200,
+        "ms": 192
+      }
+    ],
+    "disponibilidadPorcentaje": 100,
+    "primeraPeticionMs": 681,
+    "siguientes": {
+      "n": 9,
+      "min": 192,
+      "mediana": 202,
+      "p95": 243,
+      "max": 243
+    },
+    "todas": {
+      "n": 10,
+      "min": 192,
+      "mediana": 202,
+      "p95": 681,
+      "max": 681
+    },
+    "nota": "La primera petición puede incluir el arranque en frío del plan gratuito de Render; las siguientes reflejan el servicio en caliente."
+  },
+  "codigosHttp": {
+    "filas": [
+      {
+        "nombre": "salud",
+        "metodo": "GET",
+        "ruta": "/api/health",
+        "esperado": [
+          200
+        ],
+        "obtenido": 200,
+        "correcto": true
+      },
+      {
+        "nombre": "ruta protegida sin sesión (rutas)",
+        "metodo": "GET",
+        "ruta": "/api/rutas",
+        "esperado": [
+          401,
+          403
+        ],
+        "obtenido": 401,
+        "correcto": true
+      },
+      {
+        "nombre": "ruta protegida sin sesión (pedidos)",
+        "metodo": "GET",
+        "ruta": "/api/pedidos",
+        "esperado": [
+          401,
+          403
+        ],
+        "obtenido": 401,
+        "correcto": true
+      },
+      {
+        "nombre": "ruta protegida sin sesión (sostenibilidad)",
+        "metodo": "GET",
+        "ruta": "/api/sostenibilidad/dashboard",
+        "esperado": [
+          401,
+          403
+        ],
+        "obtenido": 401,
+        "correcto": true
+      },
+      {
+        "nombre": "ruta inexistente",
+        "metodo": "GET",
+        "ruta": "/api/no-existe",
+        "esperado": [
+          404
+        ],
+        "obtenido": 404,
+        "correcto": true
+      }
+    ],
+    "corsOrigenAjeno": {
+      "permiteOrigen": null,
+      "correcto": true
+    }
+  }
+}
