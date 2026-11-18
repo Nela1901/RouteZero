@@ -28,12 +28,13 @@ UMBRAL_ACEPTACION = 68.0  # media de la industria; la consigna exige >= 68
 MUESTRA_MINIMA = 5  # la rúbrica pide n >= 5
 
 # Grado de letra según la escala «curved grading» de Sauro y Lewis (2016, Quantifying the User Experience, 2.ª ed.).
-# Verifica los cortes con la fuente antes de citarlos en el informe.
+# Los cortes coinciden con la tabla publicada por los autores (A+ desde 84.1; D de 51.7 a 62.6; F hasta 51.6).
 GRADOS = [
     (84.1, "A+"), (80.8, "A"), (78.9, "A-"), (77.2, "B+"), (74.1, "B"), (72.6, "B-"),
     (71.1, "C+"), (65.0, "C"), (62.7, "C-"), (51.7, "D"), (0.0, "F"),
 ]
-# Adjetivo según Bangor, Kortum y Miller (2009). Se usa el adjetivo cuya media de referencia queda más cerca.
+# Adjetivo según Bangor, Kortum y Miller (2009): «regular» ≈ 51, «bueno» ≈ 71 y «excelente» ≈ 85. Se usa el adjetivo cuya media de
+# referencia queda más cerca del puntaje.
 ADJETIVOS = [
     (12.5, "el peor imaginable"), (20.3, "pésimo"), (35.7, "malo"), (50.9, "regular"),
     (71.4, "bueno"), (85.5, "excelente"), (90.9, "el mejor imaginable"),

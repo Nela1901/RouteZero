@@ -38,7 +38,7 @@ Se aplicó la escala SUS a **10 personas** con experiencia laboral en las áreas
 
 ### 2.1 Instrumento
 
-- **System Usability Scale (SUS)** de Brooke (1996): 10 afirmaciones que alternan el sentido positivo (ítems impares) y negativo (ítems pares) y cubren soporte técnico, complejidad, consistencia, aprendizaje y confianza.
+- **System Usability Scale (SUS)** de Brooke (1996), uno de los cuestionarios estandarizados posteriores al estudio que Sauro y Lewis (2016, cap. 8) revisan: 10 afirmaciones que alternan el sentido positivo (ítems impares) y negativo (ítems pares) y cubren soporte técnico, complejidad, consistencia, aprendizaje y confianza.
 - **Escala de valoración:** Likert de 1 a 5 (1 = totalmente en desacuerdo; 5 = totalmente de acuerdo).
 - **Enunciados:** traducción al español del material del curso, en el orden original. Las respuestas se recogieron con un formulario de Google Forms que no pide nombre ni correo ni exige iniciar sesión.
 - **Puntaje:** impares, respuesta menos 1; pares, 5 menos la respuesta; la suma de las 10 contribuciones se multiplica por 2.5 (rango de 0 a 100).
@@ -77,7 +77,7 @@ Resumen del perfil: 3 administradores, 3 operadores y 4 conductores; 7 usaron el
 
 ### 2.3 Procedimiento y tareas ejecutadas antes de responder
 
-Sesiones individuales de 10 a 34 minutos, sobre el sistema desplegado (frontend en Vercel y backend en Render), siguiendo la [guía de la sesión](../../../scripts/usabilidad/GUION_SESION.md). Cada participante realizó las tareas de su rol **sin ayuda**, y **después** respondió el formulario SUS con el enlace compartido, antes de conversar sobre el sistema (como indica Brooke).
+Sesiones individuales de 10 a 34 minutos, sobre el sistema desplegado (frontend en Vercel y backend en Render), siguiendo la [guía de la sesión](../../../scripts/usabilidad/GUION_SESION.md). Cada participante realizó las tareas de su rol **sin ayuda**. El formulario SUS se compartió con un enlace y cada persona lo respondió **por su cuenta**, cuando tuvo tiempo, el mismo día de la sesión (las respuestas llegaron entre las 2:36 y las 8:24 p. m.). Brooke recomienda responder inmediatamente después de usar el sistema; aquí varias respuestas se dieron algunas horas después (ver limitaciones).
 
 | Rol | Tareas | Criterio de éxito |
 |---|---|---|
@@ -163,7 +163,8 @@ Puntaje de P01 = 30 × 2.5 = **75**. El mismo cálculo para los 10 participantes
 
 - **El promedio (73.8) supera el umbral de aceptación de 68** por 5.8 puntos. Ocho de los diez participantes lo alcanzan; los dos que no lo hacen son P08 (57.5) y P10 (67.5, a medio punto).
 - **Grado B-** en la escala de calificación por letras de Sauro y Lewis (2016), cuyo rango para esa nota es de 72.6 a 74.0 y que corresponde a los percentiles 65 a 69 de su base de referencia: el sistema se percibe más usable que alrededor de dos de cada tres sistemas evaluados. Es el promedio de un grupo pequeño, así que conviene leerlo como una **señal, no como una medida precisa**.
-- **Adjetivo «bueno»** según la escala adjetival de Bangor et al. (2009).
+- **Adjetivo «bueno»** según la escala adjetival de Bangor et al. (2009), que asocia «bueno» con puntajes de alrededor de 71, «regular» con alrededor de 51 y «excelente» con más de 85: el promedio (73.8) queda por encima de «bueno» y lejos de «excelente».
+- **Referencia de la industria:** el puntaje medio de la base de Sauro y Lewis es 68 (percentil 50), de modo que 73.8 está por encima del promedio.
 
 ### 4.2 Por ítem
 
@@ -248,6 +249,7 @@ Mejoras **propuestas**, ordenadas por impacto sobre los puntos débiles (P4 y P1
 - La SUS mide la **percepción global**; no mide por sí sola si las tareas se completaron ni cuánto tardaron. No se registraron tiempos por tarea.
 - Los enunciados en español son la traducción del material del curso; no se hizo una validación formal de esa traducción.
 - Las duraciones de las sesiones incluyen el tiempo de la encuesta.
+- **Momento de la respuesta:** la escala se respondió por cuenta de cada participante algunas horas después de usar el sistema, no inmediatamente, como recomienda Brooke; el recuerdo de la experiencia pudo ser menos preciso.
 - Los grados de letra y el adjetivo son referencias de la literatura calculadas sobre muestras mucho mayores; con n = 10 conviene leerlos como orientación.
 
 ## 7. Evidencias
@@ -275,3 +277,5 @@ Sauro, J., & Lewis, J. R. (2016). *Quantifying the user experience: Practical st
 | Versión | Fecha | Cambio realizado | Responsable |
 |---|---|---|---|
 | V_1_0_0 | 2026-11-17 | Versión inicial: ficha técnica, respuestas de 10 participantes, cálculo paso a paso del puntaje SUS (73.8; grado B-), análisis por ítem, rol, dispositivo y experiencia, cuellos de botella, mejoras propuestas y limitaciones | Inciso Aguilar Elizabeth Antonela |
+| V_1_0_0 (ajuste) | 2026-11-17 | Se precisa cómo se recogieron las respuestas (por cuenta de cada participante, algunas horas después de usar el sistema) y se agrega la limitación correspondiente | Inciso Aguilar Elizabeth Antonela |
+| V_1_0_0 (ajuste) | 2026-11-17 | Se precisan la referencia de la industria y la correspondencia del adjetivo «bueno», ya verificadas con la tabla de los autores | Inciso Aguilar Elizabeth Antonela |
