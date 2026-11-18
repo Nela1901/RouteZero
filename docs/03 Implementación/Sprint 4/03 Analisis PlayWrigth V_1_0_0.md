@@ -26,6 +26,7 @@ La aplicación se prueba de extremo a extremo con Playwright en **tres motores d
 | Resultado | **105 aprobados, 0 fallidos, 0 inestables y 1 omitida** con justificación (sección 3.4) |
 | Tasa de éxito de los casos ejecutados | **100 %** (105 de 105) |
 | Duración de la suite completa | 1.4 min en local, con ejecución en paralelo |
+| Ejecución en GitHub Actions (Linux) | **Verde en los tres navegadores** (Pull Request #100 y `main`) y despliegue a producción en verde |
 | TTFB, FCP y LCP de la pantalla de inicio (producción, mediana) | **258 ms, 308 ms y 524 ms**, los tres en el rango «bueno» de Web Vitals |
 | Tiempo de respuesta de la API con el servicio despierto (`/api/health`) | mediana **202 ms**, máximo 243 ms en 9 consultas seguidas |
 | Códigos HTTP | 200, 401 sin sesión, 404 en ruta inexistente y sin CORS para orígenes ajenos: **todos los esperados** |
@@ -254,12 +255,20 @@ En las dos mediciones, **10 de 10 consultas** a `/api/health` respondieron 200: 
 | [`deploy-production.yml`](../../../.github/workflows/deploy-production.yml) | Después de desplegar, ejecuta `npm run monitorear` contra producción y guarda el resultado como artefacto |
 | [`ci.yml`](../../../.github/workflows/ci.yml) | Estilo, compilación, análisis estático y dependencias; es previo a las pruebas |
 
-La ejecución de estos workflows en GitHub Actions se verifica al integrar la rama a `main`; hasta entonces la evidencia es la ejecución local descrita arriba.
+Resultados en GitHub Actions (Linux, 17-11-2026), sobre el Pull Request #100 y su fusión a `main` (commit `9f0fb77`):
+
+| Ejecución | Resultado |
+|---|---|
+| [`CI` #82](https://github.com/Nela1901/RouteZero/actions/runs/44206577702) | Verde: frontend, backend, higiene del repositorio y enlaces de la documentación |
+| [`Pruebas` #5](https://github.com/Nela1901/RouteZero/actions/runs/44206577733) | Verde: Vitest, pruebas del backend sin base de datos y E2E en Chromium (1.3 min), Firefox (1.1 min) y WebKit (1.3 min), con el informe HTML de cada navegador guardado como artefacto |
+| [`Despliegue a producción` #2](https://github.com/Nela1901/RouteZero/actions/runs/44208747571) | Verde: validación de CI y pruebas, hooks de Render y Vercel, espera de ambos servicios y comprobación posterior con Playwright, con su resultado guardado como artefacto |
+
+**Un problema real de la integración:** en una primera ejecución, el trabajo de WebKit se quedó más de 26 minutos colgado instalando las dependencias del sistema con `playwright install --with-deps` y en la siguiente agotó su tiempo, sin llegar a ejecutar las pruebas. Se resolvió ejecutando el trabajo dentro de la imagen oficial de Playwright (`mcr.microsoft.com/playwright:v1.64.1-noble`), que ya trae los tres navegadores y sus dependencias, con un tope de 30 minutos por trabajo. Desde entonces los tres navegadores pasan en CI.
 
 ## 7. Limitaciones y trabajo futuro
 
 - La suite de extremo a extremo **simula la API**: no detecta fallos del backend real ni de la base. Ese riesgo lo cubren las pruebas de integración del backend (359, contra Supabase), que corren en local y no en GitHub Actions.
-- WebKit en Windows y WebKit en Linux (el de GitHub Actions) pueden diferir; las pruebas de este informe se ejecutaron en Windows.
+- Las cifras de las secciones 3 y 5 corresponden a la ejecución local en Windows; en GitHub Actions (Linux) los tres navegadores también pasaron (sección 6), pero ahí el informe HTML queda como artefacto y no se reproduce completo en este documento.
 - La disponibilidad se midió en ventanas cortas; un monitoreo periódico (por ejemplo, cada 15 minutos) daría un *uptime* real, a costa de mantener despierto el plan gratuito de Render.
 - Firefox no tiene emulación móvil en Playwright, por lo que el móvil solo se prueba en Chromium y WebKit.
 
@@ -278,3 +287,4 @@ La ejecución de estos workflows en GitHub Actions se verifica al integrar la ra
 | Versión | Fecha | Cambio realizado | Responsable |
 |---|---|---|---|
 | V_1_0_0 | 2026-11-17 | Versión inicial: configuración de Playwright en tres navegadores, 106 casos de extremo a extremo (105 aprobados y 1 omitido en WebKit), pruebas de resiliencia, monitoreo de producción con Web Vitals, tiempos de la API y códigos HTTP, e integración en los workflows | Inciso Aguilar Elizabeth Antonela |
+| V_1_0_0 (ajuste) | 2026-11-17 | Se agregan los resultados reales de GitHub Actions (CI, pruebas en los tres navegadores y despliegue a producción) y el problema de instalación de WebKit con su solución; no cambian la estructura ni las mediciones | Inciso Aguilar Elizabeth Antonela |
