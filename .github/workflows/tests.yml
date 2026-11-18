@@ -89,6 +89,14 @@ jobs:
     name: E2E Playwright (${{ matrix.navegador }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Se ejecuta dentro de la imagen oficial de Playwright, que ya trae los tres navegadores y sus dependencias del sistema.
+    # Así no se instala nada con apt: la instalación de WebKit con `--with-deps` se quedó colgada y luego agotó su tiempo en los
+    # ejecutores de GitHub. La versión de la imagen debe coincidir con la de `@playwright/test` (1.64.1, fijada en package-lock.json).
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --ipc=host
+    env:
+      HOME: /root # Firefox lo necesita dentro de contenedores
     strategy:
       fail-fast: false
       matrix:
@@ -110,20 +118,6 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --ignore-scripts
-      - name: Navegador (se guarda en caché entre ejecuciones)
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ matrix.navegador }}-${{ hashFiles('frontend/package-lock.json') }}
-      - name: Instalar ${{ matrix.navegador }} y sus dependencias del sistema
-        # La instalación de las dependencias del sistema (apt) puede quedarse colgada en los ejecutores de GitHub: cada intento
-        # tiene un tope de 8 minutos y se reintenta hasta 3 veces antes de fallar.
-        run: |
-          for intento in 1 2 3; do
-            if timeout 480 npx playwright install --with-deps ${{ matrix.navegador }}; then exit 0; fi
-            echo "Intento $intento fallido o agotado; se reintenta"
-          done
-          echo "::error::No se pudo instalar ${{ matrix.navegador }} tras 3 intentos"; exit 1
       - name: Pruebas E2E (headless)
         run: npx playwright test ${{ matrix.proyectos }}
       - name: Informe HTML y trazas

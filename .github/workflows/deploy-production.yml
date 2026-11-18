@@ -102,6 +102,13 @@ jobs:
     name: Comprobación posterior (Web Vitals, API y códigos HTTP)
     needs: [validar, desplegar]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Imagen oficial de Playwright (trae Chromium y sus dependencias): evita instalar con apt, que llegó a colgarse en GitHub.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --ipc=host
+    env:
+      HOME: /root
     defaults:
       run:
         working-directory: frontend
@@ -115,7 +122,6 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --ignore-scripts
-      - run: npx playwright install --with-deps chromium
       - name: Monitoreo de producción con Playwright
         env:
           MUESTRAS: "5"
