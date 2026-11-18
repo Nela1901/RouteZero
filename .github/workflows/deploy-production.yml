@@ -1,0 +1,139 @@
+# Despliegue continuo a producción: backend en Render y frontend en Vercel.
+#
+# Se dispara cuando el workflow «Pruebas» termina en verde sobre `main` (es decir, después de que el código se
+# fusionó y se probó), y también a mano desde la pestaña Actions. Antes de desplegar comprueba que `ci.yml` también
+# esté en verde para ese mismo commit. Los despliegues usan *deploy hooks* guardados como GitHub Secrets
+# (`RENDER_DEPLOY_HOOK` y `VERCEL_DEPLOY_HOOK`): son URL secretas que ordenan construir la última versión de `main`, y
+# nunca se escriben en el repositorio ni en los registros.
+#
+# Para que este workflow sea el único camino al despliegue, la integración automática de Render y de Vercel con GitHub
+# debe estar desactivada; si no, cada fusión a `main` desplegaría dos veces.
+name: Despliegue a producción
+
+on:
+  workflow_run:
+    workflows: ["Pruebas"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  # URL públicas de producción (no son secretos).
+  URL_API: https://routezero-7k7j.onrender.com
+  URL_FRONTEND: https://route-zero-omega.vercel.app
+
+jobs:
+  validar:
+    name: Validar que el commit pasó CI y pruebas
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - id: commit
+        run: echo "sha=${{ github.event.workflow_run.head_sha || github.sha }}" >> "$GITHUB_OUTPUT"
+      - name: Esperar el resultado de ci.yml y de tests.yml para este commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.commit.outputs.sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          for flujo in ci.yml tests.yml; do
+            resultado=""
+            for intento in $(seq 1 40); do
+              resultado="$(gh run list --repo "$REPO" --workflow "$flujo" --commit "$SHA" --limit 1 --json status,conclusion --jq '.[0] | "\(.status) \(.conclusion)"' || true)"
+              case "$resultado" in
+                "completed success") echo "$flujo: en verde"; break ;;
+                "completed "*) echo "::error::$flujo terminó con '$resultado'; no se despliega."; exit 1 ;;
+              esac
+              echo "$flujo: '$resultado' (intento $intento de 40)"; sleep 15
+            done
+            [ "$resultado" = "completed success" ] || { echo "::error::$flujo no terminó a tiempo; no se despliega."; exit 1; }
+          done
+
+  desplegar:
+    name: Desplegar en Render y Vercel
+    needs: validar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar que los Secrets existen
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ] || [ -z "$VERCEL_DEPLOY_HOOK" ]; then
+            echo "::error::Faltan los Secrets RENDER_DEPLOY_HOOK y/o VERCEL_DEPLOY_HOOK (Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+      - name: Backend en Render (deploy hook)
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: curl --fail --silent --show-error --max-time 60 --request POST --output /dev/null "$RENDER_DEPLOY_HOOK"
+      - name: Frontend en Vercel (deploy hook)
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: curl --fail --silent --show-error --max-time 60 --request POST --output /dev/null "$VERCEL_DEPLOY_HOOK"
+      - name: Esperar a que el backend responda (Render gratuito puede tardar varios minutos)
+        run: |
+          for intento in $(seq 1 60); do
+            codigo="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 30 "$URL_API/api/health" || true)"
+            if [ "$codigo" = "200" ]; then echo "Backend disponible (intento $intento)"; exit 0; fi
+            echo "Backend: HTTP '$codigo' (intento $intento de 60)"; sleep 15
+          done
+          echo "::error::El backend no respondió 200 en /api/health tras el despliegue."; exit 1
+      - name: Esperar a que el frontend responda
+        run: |
+          for intento in $(seq 1 40); do
+            codigo="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 30 "$URL_FRONTEND/" || true)"
+            if [ "$codigo" = "200" ]; then echo "Frontend disponible (intento $intento)"; exit 0; fi
+            echo "Frontend: HTTP '$codigo' (intento $intento de 40)"; sleep 15
+          done
+          echo "::error::El frontend no respondió 200 tras el despliegue."; exit 1
+
+  verificar-produccion:
+    name: Comprobación posterior (Web Vitals, API y códigos HTTP)
+    needs: [validar, desplegar]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Imagen oficial de Playwright (trae Chromium y sus dependencias): evita instalar con apt, que llegó a colgarse en GitHub.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --ipc=host
+    env:
+      HOME: /root
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ needs.validar.outputs.sha }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --ignore-scripts
+      - name: Monitoreo de producción con Playwright
+        env:
+          MUESTRAS: "5"
+          PAUSA_MS: "2000"
+        run: npm run monitorear
+      - name: Resultados del monitoreo
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: monitoreo-produccion
+          path: |
+            frontend/test-results/monitoreo-produccion.json
+            frontend/playwright-report
+          retention-days: 30
+          if-no-files-found: ignore

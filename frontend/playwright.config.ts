@@ -19,9 +19,14 @@ export default defineConfig({
     timezoneId: "America/Lima",
     trace: "retain-on-failure",
   },
+  // Tres motores de navegador (Chromium, Firefox y WebKit) para las pruebas de escritorio, y Chromium y WebKit en móvil
+  // (Pixel 7 y iPhone 14). La aplicación se prueba igual en todos: un fallo en un solo motor suele ser un problema real.
   projects: [
-    { name: "escritorio", testIgnore: /movil\.spec\.ts/, use: { ...devices["Desktop Chrome"], channel: canal } },
-    { name: "movil", testMatch: /movil\.spec\.ts/, use: { ...devices["Pixel 7"], channel: canal } },
+    { name: "chromium", testIgnore: /movil\.spec\.ts/, use: { ...devices["Desktop Chrome"], channel: canal } },
+    { name: "firefox", testIgnore: /movil\.spec\.ts/, use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", testIgnore: /movil\.spec\.ts/, use: { ...devices["Desktop Safari"] } },
+    { name: "movil-chromium", testMatch: /movil\.spec\.ts/, use: { ...devices["Pixel 7"], channel: canal } },
+    { name: "movil-webkit", testMatch: /movil\.spec\.ts/, use: { ...devices["iPhone 14"] } },
   ],
   webServer: {
     // La API se pide al mismo origen que la aplicación: así `page.route` la intercepta sin CORS.

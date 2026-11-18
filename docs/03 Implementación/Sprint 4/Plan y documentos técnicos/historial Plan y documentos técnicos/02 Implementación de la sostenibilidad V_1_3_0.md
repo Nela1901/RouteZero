@@ -12,7 +12,7 @@
 | **Fecha de corte** | 2026-10-23 |
 | **Versión** | 1.3.0 |
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ---
 
@@ -137,12 +137,12 @@ Medido el 23-10-2026 contra `https://routezero-7k7j.onrender.com` (plan gratuito
 
 ## 9. Limitaciones conocidas
 
-- Tras una re-optimización, las métricas de la ruta cubren solo el tramo restante (ver [`02 Implementación de la re-optimización`](../../Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md)); el dashboard y el reporte pueden quedar por debajo de lo recorrido en las rutas re-optimizadas del periodo.
+- Tras una re-optimización, las métricas de la ruta cubren solo el tramo restante (ver [`02 Implementación de la re-optimización`](../../../Sprint%203/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20re-optimizaci%C3%B3n%20V_1_3_0.md)); el dashboard y el reporte pueden quedar por debajo de lo recorrido en las rutas re-optimizadas del periodo.
 - El combustible ahorrado se mide frente a la solución inicial del optimizador, no frente a una operación real sin optimizar.
 - Los tres supuestos de la sección 3 deben validarse con Andina Reparto antes de usar las cifras para decidir, y los vehículos ya registrados necesitan que se les cargue el precio de compra y la vida útil para entrar al costo del ciclo de vida.
 - Un reporte de un mes completo tarda unos 7.5 s en Render (CPU 0.1); si el sistema pasara a un plan con más CPU bajaría casi todo ese tiempo. Tampoco se midió Lighthouse sobre la pantalla Sostenibilidad ya desplegada en Vercel: la medición de este documento es local, con datos sintéticos.
 
-[← Volver al README Principal](../../../../README.md)
+[← Volver al README Principal](../../../../../README.md)
 
 ## Historial de Control de Cambios
 

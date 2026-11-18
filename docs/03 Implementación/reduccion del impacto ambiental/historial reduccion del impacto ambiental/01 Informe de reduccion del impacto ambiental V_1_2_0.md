@@ -135,7 +135,7 @@ JOIN LATERAL (SELECT COUNT(*) AS paradas FROM ruta_pedidos rp WHERE rp.ruta_id =
 CREATE INDEX IF NOT EXISTS idx_pedidos_creado ON pedidos (creado_en DESC, pedido_id);
 ```
 
-**Evidencia.** Detalle en [`02 Implementación de la sostenibilidad`](../../Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md), sección 6.
+**Evidencia.** Detalle en [`02 Implementación de la sostenibilidad`](../../Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/historial%20Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md), sección 6.
 
 | Consulta | ANTES | DESPUÉS |
 |---|---|---|

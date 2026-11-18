@@ -26,12 +26,16 @@ test.describe("Accesibilidad (WCAG 2.2)", () => {
     expect(api.noSimuladas).toEqual([]);
   });
 
-  test("el primer Tab lleva a «Saltar al contenido» y Enter mueve el foco al contenido principal (2.4.1)", async ({ page }) => {
+  test("el primer Tab lleva a «Saltar al contenido» y Enter mueve el foco al contenido principal (2.4.1)", async ({ page, browserName }) => {
     const api = await simularApi(page, { rol: "ADMINISTRADOR" });
     await conSesion(page, "ADMINISTRADOR");
     await page.goto("/app/rutas");
     await expect(page.getByRole("heading", { name: "Rutas", level: 1 })).toBeVisible();
 
+    // Safari (WebKit) no pasa el foco a los enlaces al tabular (solo a botones y campos) salvo que el usuario active una
+    // preferencia del navegador, y Playwright no puede cambiarla: es el comportamiento por defecto del motor, no un
+    // fallo de la aplicación. Esta comprobación se hace en Chromium y Firefox; en WebKit no se puede verificar con teclado.
+    test.skip(browserName === "webkit", "WebKit no incluye los enlaces en el orden del Tab por defecto");
     await page.keyboard.press("Tab");
     const enlace = page.getByRole("link", { name: "Saltar al contenido" });
     await expect(enlace).toBeFocused();

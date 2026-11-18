@@ -11,6 +11,10 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi)]()
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?style=for-the-badge&logo=postgresql)]()
 
+[![CI](https://github.com/Nela1901/RouteZero/actions/workflows/ci.yml/badge.svg)](https://github.com/Nela1901/RouteZero/actions/workflows/ci.yml)
+[![Pruebas](https://github.com/Nela1901/RouteZero/actions/workflows/tests.yml/badge.svg)](https://github.com/Nela1901/RouteZero/actions/workflows/tests.yml)
+[![Despliegue a producción](https://github.com/Nela1901/RouteZero/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/Nela1901/RouteZero/actions/workflows/deploy-production.yml)
+
 **Taller de Proyectos 2 — Ingeniería de Sistemas e Informática**
 **Universidad Continental | Huancayo, Perú | 2026**
 
@@ -262,15 +266,18 @@ RouteZero/
 │   │   │       ├── 06 Calidad de la interfaz y pruebas de extremo a extremo V_1_1_0.md
 │   │   │       └── historial Plan y documentos técnicos/   (22 versiones anteriores)
 │   │   ├── Sprint 4/
-│   │   │   ├── 01 Informe de estado del proyecto V_1_1_0.md
-│   │   │   ├── 02 Registro de Impedimentos V_1_0_0.md
-│   │   │   ├── 03 Revisión del Sprint V_1_1_0.md
-│   │   │   ├── 04 Retrospectiva del Sprint V_1_1_0.md
-│   │   │   ├── historial Sprint 4/   (3 versiones anteriores de esos cuatro documentos)
+│   │   │   ├── 01 Revisión del Sprint V_1_0_0.md
+│   │   │   ├── 02 Retrospectiva del Sprint V_1_0_0.md
+│   │   │   ├── 03 Analisis PlayWrigth V_1_0_0.md
+│   │   │   ├── 04 Usabilidad V_1_0_0.md
+│   │   │   ├── 05 Informe de estado del proyecto V_1_2_0.md
+│   │   │   ├── 06 Registro de Impedimentos V_1_1_0.md
+│   │   │   ├── evidencias/   (informe HTML de Playwright y resultados del monitoreo de producción)
+│   │   │   ├── historial Sprint 4/   (7 versiones anteriores de los documentos 01, 02, 05 y 06)
 │   │   │   └── Plan y documentos técnicos/
-│   │   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_4_0.md
-│   │   │       ├── 02 Implementación de la sostenibilidad V_1_3_0.md
-│   │   │       └── historial Plan y documentos técnicos/   (7 versiones anteriores)
+│   │   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_5_0.md
+│   │   │       ├── 02 Implementación de la sostenibilidad V_1_4_0.md
+│   │   │       └── historial Plan y documentos técnicos/   (9 versiones anteriores)
 │   │   └── reduccion del impacto ambiental/   (Inspección 04: Green Software y estándares)
 │   │       ├── 01 Informe de reduccion del impacto ambiental V_1_6_0.md
 │   │       ├── 02 Estandares Ingeniería de software V_1_6_0.md
@@ -289,13 +296,14 @@ RouteZero/
 │   ├── e2e/   (pruebas de extremo a extremo y auditorías de calidad)
 │   ├── lighthouserc.json   (presupuesto de rendimiento de Lighthouse CI)
 │   └── public/
-├── .github/workflows/   (ci.yml: integración continua; green-audit.yml: auditoría Green IT)
+├── .github/workflows/   (ci.yml: calidad y compilación; tests.yml: pruebas; deploy-production.yml: despliegue a Render y Vercel; green-audit.yml: auditoría Green IT)
 ├── openspec/
 │   ├── specs/
 │   └── changes/archive/
 ├── scripts/
 │   ├── verificar_enlaces.py
-│   └── calcular_huella_swdm.py
+│   ├── calcular_huella_swdm.py
+│   └── usabilidad/   (formulario y procesamiento de la escala SUS)
 ├── render.yaml
 ├── .env.example
 ├── .gitignore
@@ -404,17 +412,27 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 
 | Documento | Ubicación |
 |---|---|
-| Sprint 4: plan de ejecución y estado | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/01 Sprint 4 Plan de ejecución y estado V_1_4_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md) |
-| Implementación de la sostenibilidad | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/02 Implementación de la sostenibilidad V_1_3_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md) |
+| Sprint 4: plan de ejecución y estado | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/01 Sprint 4 Plan de ejecución y estado V_1_5_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_5_0.md) |
+| Implementación de la sostenibilidad | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/02 Implementación de la sostenibilidad V_1_4_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_4_0.md) |
 
-**Entregables de cierre del Sprint 4** (`docs/03 Implementación/Sprint 4/`):
+**Entregables de cierre del Sprint 4** (`docs/03 Implementación/Sprint 4/`, Inspección 05):
 
 | Documento | Ubicación |
 |---|---|
-| Informe de Estado del Proyecto | [`docs/03 Implementación/Sprint 4/01 Informe de estado del proyecto V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/01%20Informe%20de%20estado%20del%20proyecto%20V_1_1_0.md) |
-| Registro de Impedimentos | [`docs/03 Implementación/Sprint 4/02 Registro de Impedimentos V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/02%20Registro%20de%20Impedimentos%20V_1_0_0.md) |
-| Revisión del Sprint | [`docs/03 Implementación/Sprint 4/03 Revisión del Sprint V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md) |
-| Retrospectiva del Sprint | [`docs/03 Implementación/Sprint 4/04 Retrospectiva del Sprint V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md) |
+| Revisión del Sprint | [`docs/03 Implementación/Sprint 4/01 Revisión del Sprint V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/01%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md) |
+| Retrospectiva del Sprint | [`docs/03 Implementación/Sprint 4/02 Retrospectiva del Sprint V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md) |
+| Pruebas E2E y monitoreo con Playwright | [`docs/03 Implementación/Sprint 4/03 Analisis PlayWrigth V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/03%20Analisis%20PlayWrigth%20V_1_0_0.md) |
+| Informe de Estado del Proyecto | [`docs/03 Implementación/Sprint 4/05 Informe de estado del proyecto V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/05%20Informe%20de%20estado%20del%20proyecto%20V_1_2_0.md) |
+| Registro de Impedimentos | [`docs/03 Implementación/Sprint 4/06 Registro de Impedimentos V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/06%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
+| Evidencias (informe HTML de Playwright y monitoreo de producción) | [`docs/03 Implementación/Sprint 4/evidencias/`](docs/03%20Implementaci%C3%B3n/Sprint%204/evidencias/) |
+
+**Integración y despliegue continuos** (GitHub Actions, `.github/workflows/`):
+
+| Workflow | Función | Estado |
+|---|---|---|
+| [`ci.yml`](.github/workflows/ci.yml) | Estilo, compilación, análisis estático, dependencias e higiene del repositorio | [![CI](https://github.com/Nela1901/RouteZero/actions/workflows/ci.yml/badge.svg)](https://github.com/Nela1901/RouteZero/actions/workflows/ci.yml) |
+| [`tests.yml`](.github/workflows/tests.yml) | Pruebas unitarias y de extremo a extremo (Chromium, Firefox y WebKit) con informes como artefactos | [![Pruebas](https://github.com/Nela1901/RouteZero/actions/workflows/tests.yml/badge.svg)](https://github.com/Nela1901/RouteZero/actions/workflows/tests.yml) |
+| [`deploy-production.yml`](.github/workflows/deploy-production.yml) | Despliegue a Render y Vercel con Secrets, cuando `ci.yml` y `tests.yml` terminan en verde, y comprobación posterior | [![Despliegue](https://github.com/Nela1901/RouteZero/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/Nela1901/RouteZero/actions/workflows/deploy-production.yml) |
 
 **Reducción del impacto ambiental y estándares de ingeniería de software** (Inspección 04, `docs/03 Implementación/reduccion del impacto ambiental/`):
 

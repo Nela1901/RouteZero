@@ -12,7 +12,7 @@
 | **Fecha de la revisión** | Por confirmar (contenido al 23-10-2026) |
 | **Versión** | 1.1.0 |
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## Historias de Usuario completadas en este Sprint
 
-Compromiso del sprint: 5 ítems y 18 Story Points. Detalle y evidencias en [`01 Sprint 4 Plan de ejecución y estado`](Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md) y en [`02 Implementación de la sostenibilidad`](Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md).
+Compromiso del sprint: 5 ítems y 18 Story Points. Detalle y evidencias en [`01 Sprint 4 Plan de ejecución y estado`](../Plan%20y%20documentos%20t%C3%A9cnicos/historial%20Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_4_0.md) y en [`02 Implementación de la sostenibilidad`](../Plan%20y%20documentos%20t%C3%A9cnicos/historial%20Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_3_0.md).
 
 | ID | Historia | Épica | SP | Estado |
 |---|---|---|---|---|
@@ -100,7 +100,7 @@ La columna «Asignación en Jira» es el dato objetivo del tablero. La columna �
 
 ---
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 
