@@ -215,11 +215,11 @@ RouteZero/
 │   │   ├── 07. Requisitos no funcionales V_1_2_0.md
 │   │   ├── 08. Usuarios V_1_0_0.md
 │   │   ├── 09. Reglas de negocio V_1_1_0.md
-│   │   ├── 10. Stack tecnológico V_1_1_0.md
+│   │   ├── 10. Stack tecnológico V_1_2_0.md
 │   │   ├── 11. Base de datos V_1_10_0.md
-│   │   ├── 12. Modelo C4 V_1_2_0.md
+│   │   ├── 12. Modelo C4 V_1_3_0.md
 │   │   ├── 13. Restricciones V_1_2_0.md
-│   │   └── historial Inicio/   (25 versiones anteriores)
+│   │   └── historial Inicio/   (27 versiones anteriores)
 │   ├── 02 Planificación/
 │   │   ├── 01 Transformando a ágil V_1_1_0.md
 │   │   ├── 02 Artefactos Jira V_1_1_0.md
@@ -332,9 +332,9 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Requisitos no funcionales | [`docs/01 Inicio/07. Requisitos no funcionales V_1_2_0.md`](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_2_0.md) |
 | Usuarios | [`docs/01 Inicio/08. Usuarios V_1_0_0.md`](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) |
 | Reglas de negocio | [`docs/01 Inicio/09. Reglas de negocio V_1_1_0.md`](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) |
-| Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_1_0.md`](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_1_0.md) |
+| Stack tecnológico | [`docs/01 Inicio/10. Stack tecnológico V_1_2_0.md`](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_2_0.md) |
 | Base de datos | [`docs/01 Inicio/11. Base de datos V_1_10_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_10_0.md) |
-| Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_2_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_2_0.md) |
+| Modelo C4 | [`docs/01 Inicio/12. Modelo C4 V_1_3_0.md`](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_3_0.md) |
 | Restricciones | [`docs/01 Inicio/13. Restricciones V_1_2_0.md`](docs/01%20Inicio/13.%20Restricciones%20V_1_2_0.md) |
 
 ---
@@ -422,6 +422,7 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Revisión del Sprint | [`docs/03 Implementación/Sprint 4/01 Revisión del Sprint V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/01%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md) |
 | Retrospectiva del Sprint | [`docs/03 Implementación/Sprint 4/02 Retrospectiva del Sprint V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md) |
 | Pruebas E2E y monitoreo con Playwright | [`docs/03 Implementación/Sprint 4/03 Analisis PlayWrigth V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/03%20Analisis%20PlayWrigth%20V_1_0_0.md) |
+| Evaluación de usabilidad con la escala SUS | [`docs/03 Implementación/Sprint 4/04 Usabilidad V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/04%20Usabilidad%20V_1_0_0.md) |
 | Informe de Estado del Proyecto | [`docs/03 Implementación/Sprint 4/05 Informe de estado del proyecto V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/05%20Informe%20de%20estado%20del%20proyecto%20V_1_2_0.md) |
 | Registro de Impedimentos | [`docs/03 Implementación/Sprint 4/06 Registro de Impedimentos V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/06%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
 | Evidencias (informe HTML de Playwright y monitoreo de producción) | [`docs/03 Implementación/Sprint 4/evidencias/`](docs/03%20Implementaci%C3%B3n/Sprint%204/evidencias/) |
