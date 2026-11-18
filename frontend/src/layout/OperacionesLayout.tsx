@@ -16,6 +16,7 @@ const ITEMS_NAV: { a: string; etiqueta: string; descripcion: string; icono: () =
   { a: "/app/pedidos", etiqueta: "Pedidos", descripcion: "Registro y estado", icono: IconoPedidos },
   { a: "/app/sostenibilidad", etiqueta: "Sostenibilidad", descripcion: "CO₂ y ahorro", icono: IconoSostenibilidad, roles: ["ADMINISTRADOR"] },
   { a: "/app/seguridad", etiqueta: "Seguridad", descripcion: "Verificación en 2 pasos", icono: IconoSeguridad },
+  { a: "/app/ayuda", etiqueta: "Ayuda", descripcion: "Primeros pasos y preguntas", icono: IconoAyuda },
 ];
 
 const CLAVE_ALMACENAMIENTO = "routezero:sidebar-expandido";
@@ -345,6 +346,16 @@ function IconoSeguridad() {
   return (
     <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+    </svg>
+  );
+}
+
+function IconoAyuda() {
+  return (
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 9.5a2.5 2.5 0 114.2 1.8c-.8.7-1.7 1.2-1.7 2.5" />
+      <path d="M12 17h.01" />
     </svg>
   );
 }

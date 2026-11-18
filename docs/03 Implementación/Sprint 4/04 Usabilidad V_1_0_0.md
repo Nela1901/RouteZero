@@ -29,6 +29,7 @@ Se aplicó la escala SUS a **10 personas** con experiencia laboral en las áreas
 | Adjetivo (Bangor et al., 2009) | **Bueno** |
 | Puntos más débiles | Ítems 4 y 10: necesidad de acompañamiento y de aprender antes de usarlo |
 | Principal cuello de botella | **Orientación inicial**: 8 de 10 comentarios dicen que costó entender el funcionamiento sin una explicación previa |
+| Mejora aplicada | **Guía de primeros pasos y preguntas frecuentes** dentro del sistema (sección 4.6); falta medir su efecto con una nueva aplicación de la escala |
 
 ![Puntaje SUS de cada participante, con el umbral de 68 y el promedio](evidencias/sus-por-participante.png)
 
@@ -222,25 +223,56 @@ Lo positivo que señalan: el mapa («está bien elaborado»), la lista de entreg
 
 Lo que pidieron los participantes: sección de preguntas y respuestas (P03), notificación de la siguiente parada (P06), historial de entregas (P08), observaciones en cada entrega, por ejemplo cuando el cliente no estaba (P09 y P10), fotos del conductor y del vehículo (P07), cobro de cada servicio (P05) y una estética acorde con la empresa que lo adopte (P01). Dos participantes (P02 y P04) no cambiarían nada. Se contrastó con lo que ya existe en la interfaz (el mapa tiene leyenda de estados de entrega, el login explica el código de 6 dígitos y las entregas ya admiten «No se pudo», pero sin nota libre ni historial).
 
-Mejoras **propuestas**, ordenadas por impacto sobre los puntos débiles (P4 y P10):
+Mejoras ordenadas por impacto sobre los puntos débiles (P4 y P10), con su estado:
 
-| Prioridad | Mejora propuesta | Responde a | Esfuerzo |
-|---|---|---|---|
-| 1 | **Guía de primeros pasos y preguntas frecuentes** dentro del sistema, con un recorrido corto por rol | Cuello de botella 1; P4 y P10; pedido de P03 | Bajo |
-| 2 | **Ampliar la leyenda del mapa** para incluir los estados de las rutas y explicar cómo se generan y confirman | Cuello de botella 2 | Bajo |
-| 3 | **Explicar la verificación en dos pasos** la primera vez (por qué se pide y cómo obtener el código) | Cuello de botella 4 | Bajo |
-| 4 | **Nota opcional en cada entrega** (por ejemplo, «el cliente no estaba») | P09, P10 | Medio: requiere un campo nuevo en la base de datos y en la API |
-| 5 | **Historial de entregas del conductor** | P08 | Medio |
-| 6 | **Fotos del conductor y del vehículo** (ya está pendiente con Cloudinary) | P07 | Medio |
-| 7 | Notificación de la siguiente parada; cobro por servicio; identidad visual de la empresa | P06, P05, P01 | Alto o fuera del alcance de este proyecto |
+| Prioridad | Mejora | Responde a | Esfuerzo | Estado |
+|---|---|---|---|---|
+| 1 | **Guía de primeros pasos y preguntas frecuentes** dentro del sistema, con un recorrido corto por rol | Cuello de botella 1; P4 y P10; pedido de P03 | Bajo | **Aplicada** (sección 4.6) |
+| 2 | **Explicar cómo leer el mapa** y cómo se generan y confirman las rutas | Cuello de botella 2 | Bajo | **Aplicada en la guía** (sección «Cómo leer el mapa» y preguntas frecuentes); la leyenda del propio mapa no cambió |
+| 3 | **Explicar la verificación en dos pasos** (por qué se pide y cómo obtener el código) | Cuello de botella 4 | Bajo | **Aplicada en la guía** (sección «Verificación en dos pasos»); la pantalla de inicio de sesión no cambió |
+| 4 | **Nota opcional en cada entrega** (por ejemplo, «el cliente no estaba») | P09, P10 | Medio: requiere un campo nuevo en la base de datos y en la API | Propuesta |
+| 5 | **Historial de entregas del conductor** | P08 | Medio | Propuesta |
+| 6 | **Fotos del conductor y del vehículo** (ya está pendiente con Cloudinary) | P07 | Medio | Propuesta |
+| 7 | Notificación de la siguiente parada; cobro por servicio; identidad visual de la empresa | P06, P05, P01 | Alto o fuera del alcance de este proyecto | Propuesta |
 
-**Verificación de las mejoras:** repetir la escala SUS con el mismo instrumento y el mismo tipo de participantes. Meta: promedio igual o mayor a 73.8, **sin ningún participante bajo 68** y una contribución media de los ítems P4 y P10 de al menos 2.0 (hoy 1.4). Hasta el cierre de este informe no se aplicó ninguna de estas mejoras.
+**Verificación de las mejoras:** repetir la escala SUS con el mismo instrumento y el mismo tipo de participantes. Meta: promedio igual o mayor a 73.8, **sin ningún participante bajo 68** y una contribución media de los ítems P4 y P10 de al menos 2.0 (hoy 1.4). Todavía no se volvió a medir con la mejora aplicada.
+
+### 4.6 Mejora aplicada: guía de primeros pasos y preguntas frecuentes
+
+Se construyó la mejora de mayor prioridad, que responde al punto débil de la escala (ítems P4 y P10) y a los 8 comentarios de orientación inicial.
+
+**Qué es y dónde está**
+
+| Rol | Dónde la encuentra |
+|---|---|
+| Administrador y operador | Opción **Ayuda** del menú lateral (`/app/ayuda`), con el título «Ayuda y primeros pasos» |
+| Conductor | Pestaña **Ayuda** de la barra de abajo de su pantalla (en el celular); la misma pestaña pasa a «Volver a mi ruta» |
+
+**Contenido** (adaptado al rol; el de cada rol describe solo lo que ese rol puede hacer):
+
+- **Primeros pasos**, en el orden habitual de trabajo de cada rol (el administrador: de ver el mapa a generar, confirmar y re-optimizar rutas y consultar la sostenibilidad; el operador: pedidos y consulta de rutas; el conductor: su ruta, la siguiente parada y cómo registrar una entrega).
+- **Cómo leer el mapa** (solo administrador y operador): estados de las paradas, línea discontinua de los borradores, congestión y horas punta, y los controles para ocultar rutas y cambiar la hora. Responde a P01, P05 y P06.
+- **Verificación en dos pasos**: qué es, de dónde sale el código de 6 dígitos y cómo activarla. Responde a P03.
+- **Preguntas frecuentes** (11, filtradas por rol), entre ellas «¿Por qué lo primero que veo es el mapa y no un resumen?» (P02), «¿Por qué la primera vez que entro tarda tanto?», «¿Qué diferencia hay entre generar, confirmar y descartar?» y «¿Qué pasa con una entrega que no se pudo realizar?».
+
+Cada afirmación del contenido describe lo que la interfaz hace de verdad (nombres de botones, secciones y reglas por rol).
+
+**Cómo se verificó**
+
+| Verificación | Resultado |
+|---|---|
+| Pruebas de componentes (Vitest) | 13 pruebas nuevas, entre ellas que cada rol ve solo su guía y sus preguntas y que el índice enlaza a secciones que existen; la suite completa pasa (191 de 191) |
+| Pruebas de extremo a extremo (Playwright) | 14 casos nuevos en Chromium, Firefox y WebKit: abrir la ayuda desde el menú, el contenido por rol, el índice, desplegar una pregunta **solo con el teclado** y, en el celular, abrir la ayuda del conductor y volver a su ruta sin desbordes. Suite completa: 119 de 119 aprobados y 1 omitido |
+| Lighthouse de la pantalla Ayuda | 100 en rendimiento, accesibilidad, buenas prácticas y SEO, tanto en móvil como en escritorio |
+| Validador W3C | 0 errores de HTML. Marca 4 errores de CSS por las *container queries* del encabezado (`@container`), que ya aparecían en las demás pantallas y que los navegadores actuales soportan; no vienen de esta mejora |
+
+**Qué falta:** medir su efecto. La mejora se construyó después de la aplicación de la escala, así que los puntajes de este informe corresponden al sistema **sin** la guía; la meta de la sección 4.5 se comprobará al volver a aplicar la escala.
 
 ## 5. Conclusiones
 
 - RouteZero **supera el umbral de aceptación** de la escala SUS (73.8 frente a 68; grado B-; «bueno»), con 8 de 10 participantes por encima del umbral y sin diferencias grandes entre roles.
 - Se percibe **fácil de usar, consistente y confiable**, incluso por personas sin experiencia previa en sistemas de gestión y que hoy trabajan de forma manual.
-- La principal debilidad es la **curva de entrada**: los participantes sienten que necesitan una explicación antes de empezar (P4 y P10). La mejora de mayor impacto y menor costo es una guía de primeros pasos con preguntas frecuentes.
+- La principal debilidad es la **curva de entrada**: los participantes sienten que necesitan una explicación antes de empezar (P4 y P10). La mejora de mayor impacto y menor costo era una guía de primeros pasos con preguntas frecuentes, que ya se aplicó (sección 4.6); falta medir su efecto.
 - Los **conductores**, que usan el sistema en el celular, son el grupo con el puntaje más bajo y el más cercano al umbral; conviene priorizar su recorrido.
 
 ## 6. Limitaciones
@@ -249,6 +281,7 @@ Mejoras **propuestas**, ordenadas por impacto sobre los puntos débiles (P4 y P1
 - La SUS mide la **percepción global**; no mide por sí sola si las tareas se completaron ni cuánto tardaron. No se registraron tiempos por tarea.
 - Los enunciados en español son la traducción del material del curso; no se hizo una validación formal de esa traducción.
 - Las duraciones de las sesiones incluyen el tiempo de la encuesta.
+- **La mejora aplicada no se ha vuelto a medir:** los puntajes corresponden al sistema sin la guía de ayuda.
 - **Momento de la respuesta:** la escala se respondió por cuenta de cada participante algunas horas después de usar el sistema, no inmediatamente, como recomienda Brooke; el recuerdo de la experiencia pudo ser menos preciso.
 - Los grados de letra y el adjetivo son referencias de la literatura calculadas sobre muestras mucho mayores; con n = 10 conviene leerlos como orientación.
 
@@ -257,6 +290,7 @@ Mejoras **propuestas**, ordenadas por impacto sobre los puntos débiles (P4 y P1
 - Formulario de la encuesta (Google Apps Script que lo crea): [`crear_formulario_sus.gs`](../../../scripts/usabilidad/crear_formulario_sus.gs).
 - Guía de las sesiones y tareas por rol: [`GUION_SESION.md`](../../../scripts/usabilidad/GUION_SESION.md).
 - Cálculo del puntaje: [`procesar_sus.py`](../../../scripts/usabilidad/procesar_sus.py) y sus pruebas, [`test_procesar_sus.py`](../../../scripts/usabilidad/test_procesar_sus.py) (incluyen el ejemplo resuelto del artículo original de Brooke).
+- Mejora aplicada: contenido ([`contenidoAyuda.ts`](../../../frontend/src/components/contenidoAyuda.ts)), componente ([`AyudaContenido.tsx`](../../../frontend/src/components/AyudaContenido.tsx)), pantalla ([`AyudaPage.tsx`](../../../frontend/src/pages/operaciones/AyudaPage.tsx)) y pruebas de extremo a extremo ([`ayuda.spec.ts`](../../../frontend/e2e/ayuda.spec.ts)).
 - Gráficos: [`evidencias/sus-por-participante.png`](evidencias/sus-por-participante.png) y [`evidencias/sus-por-item.png`](evidencias/sus-por-item.png).
 - Las respuestas originales (archivo CSV de Google Forms) no se publican en el repositorio para proteger a los participantes.
 
@@ -279,3 +313,4 @@ Sauro, J., & Lewis, J. R. (2016). *Quantifying the user experience: Practical st
 | V_1_0_0 | 2026-11-17 | Versión inicial: ficha técnica, respuestas de 10 participantes, cálculo paso a paso del puntaje SUS (73.8; grado B-), análisis por ítem, rol, dispositivo y experiencia, cuellos de botella, mejoras propuestas y limitaciones | Inciso Aguilar Elizabeth Antonela |
 | V_1_0_0 (ajuste) | 2026-11-17 | Se precisa cómo se recogieron las respuestas (por cuenta de cada participante, algunas horas después de usar el sistema) y se agrega la limitación correspondiente | Inciso Aguilar Elizabeth Antonela |
 | V_1_0_0 (ajuste) | 2026-11-17 | Se precisan la referencia de la industria y la correspondencia del adjetivo «bueno», ya verificadas con la tabla de los autores | Inciso Aguilar Elizabeth Antonela |
+| V_1_0_0 (ajuste) | 2026-11-17 | Se aplica la mejora de mayor prioridad (guía de primeros pasos y preguntas frecuentes): se agrega la sección 4.6 con su contenido y su verificación, y se actualizan el estado de las mejoras, las conclusiones y las limitaciones | Inciso Aguilar Elizabeth Antonela |

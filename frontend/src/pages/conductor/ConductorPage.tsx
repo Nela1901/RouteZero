@@ -3,6 +3,7 @@ import { ETIQUETA_ESTADO_RUTA, marcaDeEntrega } from "../../components/utilesEnt
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useState } from "react";
 import { api, mensajeDeError } from "../../api/client";
+import { AyudaContenido } from "../../components/AyudaContenido";
 import { BotonTema } from "../../components/BotonTema";
 import { estiloAviso } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
@@ -81,6 +82,7 @@ export function ConductorPage() {
   }, []);
 
   const { usuario, cerrarSesion } = useAuth();
+  const [verAyuda, setVerAyuda] = useState(false);
   const { notificar } = useToast();
   const { confirmar } = useConfirm();
   const [datos, setDatos] = useState<MiRuta | null>(null);
@@ -171,9 +173,14 @@ export function ConductorPage() {
       </header>
 
       <main style={{ flexGrow: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column" }}>
-        {error && <div role="alert" style={{ ...estiloAviso, margin: 14 }}>{error}</div>}
+        {verAyuda && (
+          <div style={{ padding: 14 }}>
+            <AyudaContenido rol="CONDUCTOR" />
+          </div>
+        )}
+        {!verAyuda && error && <div role="alert" style={{ ...estiloAviso, margin: 14 }}>{error}</div>}
 
-        {datos && !ruta && (
+        {!verAyuda && datos && !ruta && (
           <div role="status" style={{ ...estiloTarjeta, margin: 14 }}>
             <div style={{ fontFamily: "var(--rz-font-display)", fontWeight: 700, fontSize: 18 }}>
               {datos.vinculado ? "Sin ruta por ahora" : "Cuenta sin vincular"}
@@ -182,7 +189,7 @@ export function ConductorPage() {
           </div>
         )}
 
-        {datos && ruta && (
+        {!verAyuda && datos && ruta && (
           <>
             <ResumenRuta datos={datos} />
 
@@ -332,6 +339,9 @@ export function ConductorPage() {
       >
         <button type="button" onClick={() => void cargar()} style={estiloTab}>
           Actualizar
+        </button>
+        <button type="button" onClick={() => setVerAyuda((v) => !v)} aria-pressed={verAyuda} style={estiloTab}>
+          {verAyuda ? "Volver a mi ruta" : "Ayuda"}
         </button>
         <button type="button" onClick={() => void cerrarSesion()} style={estiloTab}>
           Cerrar sesión

@@ -13,6 +13,7 @@ const ClientesPage = lazy(() => import("./pages/operaciones/ClientesPage").then(
 const RutasPage = lazy(() => import("./pages/operaciones/RutasPage").then((m) => ({ default: m.RutasPage })));
 const PedidosPage = lazy(() => import("./pages/operaciones/PedidosPage").then((m) => ({ default: m.PedidosPage })));
 const SostenibilidadPage = lazy(() => import("./pages/operaciones/SostenibilidadPage").then((m) => ({ default: m.SostenibilidadPage })));
+const AyudaPage = lazy(() => import("./pages/operaciones/AyudaPage").then((m) => ({ default: m.AyudaPage })));
 const SeguridadPage = lazy(() => import("./pages/operaciones/SeguridadPage").then((m) => ({ default: m.SeguridadPage })));
 const ConductorPage = lazy(() => import("./pages/conductor/ConductorPage").then((m) => ({ default: m.ConductorPage })));
 
@@ -70,6 +71,7 @@ export default function App() {
         <Route path="pedidos" element={<PedidosPage />} />
         {usuario.rolNombre === "ADMINISTRADOR" && <Route path="sostenibilidad" element={<SostenibilidadPage />} />}
         <Route path="seguridad" element={<SeguridadPage />} />
+        <Route path="ayuda" element={<AyudaPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/app/mapa" replace />} />
     </Routes>

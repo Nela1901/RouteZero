@@ -65,7 +65,7 @@ test.describe("Accesibilidad (WCAG 2.2)", () => {
       const api = await simularApi(page, { rol: "ADMINISTRADOR" });
       await conSesion(page, "ADMINISTRADOR");
       await page.setViewportSize({ width: ancho, height: 700 });
-      for (const ruta of ["/app/mapa", "/app/rutas", "/app/sostenibilidad"]) {
+      for (const ruta of ["/app/mapa", "/app/rutas", "/app/sostenibilidad", "/app/ayuda"]) {
         await page.goto(ruta);
         await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
         const medidas = await page.evaluate(() => ({ contenido: document.documentElement.scrollWidth, ventana: document.documentElement.clientWidth }));
