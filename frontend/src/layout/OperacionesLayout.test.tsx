@@ -51,6 +51,16 @@ describe("OperacionesLayout: título de cada pantalla (WCAG 2.4.2)", () => {
     expect(document.title).toBe("Seguridad · RouteZero");
   });
 
+  it("la pantalla de ayuda tiene su propio título", () => {
+    renderEn("/app/ayuda");
+    expect(document.title).toBe("Ayuda · RouteZero");
+  });
+
+  it("el menú incluye «Ayuda» para cualquier rol de operaciones", () => {
+    renderEn("/app/mapa");
+    expect(screen.getByRole("link", { name: /^Ayuda/ })).toHaveAttribute("href", "/app/ayuda");
+  });
+
   it("usa el título general si la ruta no es de una sección", () => {
     renderEn("/otra-ruta");
     expect(document.title).toBe("RouteZero");

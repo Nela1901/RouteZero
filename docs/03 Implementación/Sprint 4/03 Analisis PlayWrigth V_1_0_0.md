@@ -22,9 +22,9 @@ La aplicación se prueba de extremo a extremo con Playwright en **tres motores d
 
 | Aspecto | Resultado |
 |---|---|
-| Casos de prueba ejecutados | **106** (30 por navegador de escritorio y 8 por navegador móvil) |
-| Resultado | **105 aprobados, 0 fallidos, 0 inestables y 1 omitida** con justificación (sección 3.4) |
-| Tasa de éxito de los casos ejecutados | **100 %** (105 de 105) |
+| Casos de prueba ejecutados | **120** (34 por navegador de escritorio y 9 por navegador móvil) |
+| Resultado | **119 aprobados, 0 fallidos, 0 inestables y 1 omitida** con justificación (sección 3.4) |
+| Tasa de éxito de los casos ejecutados | **100 %** (119 de 119) |
 | Duración de la suite completa | 1.4 min en local, con ejecución en paralelo |
 | Ejecución en GitHub Actions (Linux) | **Verde en los tres navegadores** (Pull Request #100 y `main`) y despliegue a producción en verde |
 | TTFB, FCP y LCP de la pantalla de inicio (producción, mediana) | **258 ms, 308 ms y 524 ms**, los tres en el rango «bueno» de Web Vitals |
@@ -33,7 +33,7 @@ La aplicación se prueba de extremo a extremo con Playwright en **tres motores d
 | Disponibilidad en la ventana medida | **100 %** (10 de 10 consultas, en cada una de las dos mediciones) |
 | Hallazgo principal | El plan gratuito de Render tardó **51.7 s** en la primera petición tras un periodo inactivo (arranque en frío) |
 
-![Informe HTML de Playwright con la suite completa: 105 pruebas aprobadas, 0 fallidas, 0 inestables y 1 omitida](evidencias/playwright-informe-html.png)
+![Informe HTML de Playwright con la suite completa: 119 pruebas aprobadas, 0 fallidas, 0 inestables y 1 omitida](evidencias/playwright-informe-html.png)
 
 *Figura 1. Informe HTML generado por Playwright el 17-11-2026 (`npx playwright test`, reporter `html`).*
 
@@ -55,6 +55,7 @@ frontend/
     ├── sostenibilidad.spec.ts      dashboard, plan de compensación y reporte PDF
     ├── accesibilidad.spec.ts       criterios de WCAG 2.2
     ├── resiliencia.spec.ts         comportamiento ante fallos de la API
+    ├── ayuda.spec.ts               guía de primeros pasos y preguntas frecuentes
     ├── conductor-movil.spec.ts     vista del conductor en el celular
     ├── operaciones-movil.spec.ts   pantallas de operaciones en el celular
     ├── monitoreo/                  produccion.monitoreo.ts
@@ -65,11 +66,11 @@ frontend/
 
 | Proyecto | Motor | Dispositivo emulado | Archivos que ejecuta | Casos |
 |---|---|---|---|---|
-| `chromium` | Chromium | Desktop Chrome | todos menos los de móvil | 30 |
-| `firefox` | Firefox | Desktop Firefox | todos menos los de móvil | 30 |
-| `webkit` | WebKit (motor de Safari) | Desktop Safari | todos menos los de móvil | 30 |
-| `movil-chromium` | Chromium | Pixel 7 | `conductor-movil` y `operaciones-movil` | 8 |
-| `movil-webkit` | WebKit | iPhone 14 | `conductor-movil` y `operaciones-movil` | 8 |
+| `chromium` | Chromium | Desktop Chrome | todos menos los de móvil | 34 |
+| `firefox` | Firefox | Desktop Firefox | todos menos los de móvil | 34 |
+| `webkit` | WebKit (motor de Safari) | Desktop Safari | todos menos los de móvil | 34 |
+| `movil-chromium` | Chromium | Pixel 7 | `conductor-movil` y `operaciones-movil` | 9 |
+| `movil-webkit` | WebKit | iPhone 14 | `conductor-movil` y `operaciones-movil` | 9 |
 
 Firefox no tiene perfil de dispositivo móvil en Playwright, por eso el móvil se prueba con Chromium y WebKit.
 
@@ -123,10 +124,11 @@ Las pruebas de extremo a extremo **simulan la API en el navegador** (`e2e/api.ts
 |---|---|---|
 | **Autenticación** (`login.spec.ts`, 4) | inicio y cierre de sesión del administrador; credenciales incorrectas; operador sin acceso a flota ni conductores; conductor entra directo a su vista | RN-001 y RN-014: acceso y mínimo privilegio por rol |
 | **Flujos de negocio** | mapa con rutas y congestión (5); re-optimización (3); dashboard, plan de compensación y reporte PDF (8) | HU-012 a HU-017: lo que hace cada rol |
-| **Vista del conductor en el celular** (`conductor-movil.spec.ts`, 5 por navegador móvil) | ver la ruta, registrar una entrega y pasar a la siguiente parada; ruta completada; sin ruta; cuenta sin vincular; sin desplazamiento horizontal y botones táctiles | HU-014 |
+| **Vista del conductor en el celular** (`conductor-movil.spec.ts`, 6 por navegador móvil) | ver la ruta, registrar una entrega y pasar a la siguiente parada; abrir la ayuda y volver a la ruta; ruta completada; sin ruta; cuenta sin vincular; sin desplazamiento horizontal y botones táctiles | HU-014 |
 | **Validaciones** | credenciales inválidas muestran «Credenciales inválidas»; el informe sin datos avisa y no descarga nada; el operador no puede re-optimizar | Mensajes y permisos |
 | **Accesibilidad** (`accesibilidad.spec.ts`, 7) | finalidad de los campos, título de cada página, enlace «Saltar al contenido», contorno del foco, ausencia de desbordes con 320 y 640 px y con el espaciado de texto de WCAG | WCAG 2.2 |
 | **Resiliencia** (`resiliencia.spec.ts`, 3) | red caída al iniciar sesión, error 500 del servidor y ruta del conductor que no carga | Sección 5.2 |
+| **Ayuda y primeros pasos** (`ayuda.spec.ts`, 4) | el administrador abre la ayuda desde el menú y despliega una pregunta; el operador no ve las preguntas del administrador; el índice lleva a la sección elegida; las preguntas se despliegan solo con el teclado | Mejora derivada de la evaluación de usabilidad (`04 Usabilidad`) |
 
 ### 3.2 Código relevante
 
@@ -164,14 +166,14 @@ Ejecución completa del 17-11-2026 (`npx playwright test`, reporters `html` y `j
 
 | Proyecto | Casos | Aprobados | Fallidos | Omitidos |
 |---|---|---|---|---|
-| `chromium` | 30 | 30 | 0 | 0 |
-| `firefox` | 30 | 30 | 0 | 0 |
-| `webkit` | 30 | 29 | 0 | 1 |
-| `movil-chromium` | 8 | 8 | 0 | 0 |
-| `movil-webkit` | 8 | 8 | 0 | 0 |
-| **Total** | **106** | **105** | **0** | **1** |
+| `chromium` | 34 | 34 | 0 | 0 |
+| `firefox` | 34 | 34 | 0 | 0 |
+| `webkit` | 34 | 33 | 0 | 1 |
+| `movil-chromium` | 9 | 9 | 0 | 0 |
+| `movil-webkit` | 9 | 9 | 0 | 0 |
+| **Total** | **120** | **119** | **0** | **1** |
 
-Los 105 casos ejecutados pasaron (100 %), sin ningún caso inestable (`flaky`), en 82 s.
+Los 119 casos ejecutados pasaron (100 %), sin ningún caso inestable (`flaky`), en 84 s. La ejecución de la sección 6, sobre el Pull Request #100, fue anterior a la pantalla de ayuda y tenía 106 casos.
 
 ### 3.4 Hallazgo por navegador: WebKit y el tabulador
 
@@ -288,3 +290,4 @@ Resultados en GitHub Actions (Linux, 17-11-2026), sobre el Pull Request #100 y s
 |---|---|---|---|
 | V_1_0_0 | 2026-11-17 | Versión inicial: configuración de Playwright en tres navegadores, 106 casos de extremo a extremo (105 aprobados y 1 omitido en WebKit), pruebas de resiliencia, monitoreo de producción con Web Vitals, tiempos de la API y códigos HTTP, e integración en los workflows | Inciso Aguilar Elizabeth Antonela |
 | V_1_0_0 (ajuste) | 2026-11-17 | Se agregan los resultados reales de GitHub Actions (CI, pruebas en los tres navegadores y despliegue a producción) y el problema de instalación de WebKit con su solución; no cambian la estructura ni las mediciones | Inciso Aguilar Elizabeth Antonela |
+| V_1_0_0 (ajuste) | 2026-11-17 | Se actualizan las cifras de la suite (120 casos, 119 aprobados y 1 omitido) y el informe HTML con las pruebas de la pantalla de ayuda, la mejora derivada de la evaluación SUS | Inciso Aguilar Elizabeth Antonela |

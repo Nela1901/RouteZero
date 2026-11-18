@@ -112,6 +112,22 @@ describe("ConductorPage", () => {
     expect(screen.getByText(/pide al administrador que registre tu correo/i)).toBeInTheDocument();
   });
 
+  it("la pestaña «Ayuda» muestra la guía del conductor y «Volver a mi ruta» regresa a la ruta", async () => {
+    vi.mocked(api.get).mockResolvedValue(datos());
+    const usuario = userEvent.setup();
+    renderPagina();
+    expect(await screen.findByRole("region", { name: "Siguiente parada" })).toBeInTheDocument();
+
+    await usuario.click(screen.getByRole("button", { name: "Ayuda" }));
+    expect(screen.getByRole("heading", { name: "Primeros pasos como conductor" })).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Siguiente parada" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Volver a mi ruta" })).toHaveAttribute("aria-pressed", "true");
+
+    await usuario.click(screen.getByRole("button", { name: "Volver a mi ruta" }));
+    expect(screen.queryByRole("heading", { name: "Primeros pasos como conductor" })).not.toBeInTheDocument();
+    expect(await screen.findByRole("region", { name: "Siguiente parada" })).toBeInTheDocument();
+  });
+
   it("sin ruta asignada muestra el mensaje y ningún mapa", async () => {
     vi.mocked(api.get).mockResolvedValue(datos({ ruta: null, mensaje: "No tienes rutas asignadas por el momento." }));
     renderPagina();

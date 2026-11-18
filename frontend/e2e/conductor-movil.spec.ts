@@ -28,6 +28,24 @@ test.describe("Vista del conductor en el celular (HU-014)", () => {
     expect(api.noSimuladas).toEqual([]);
   });
 
+  test("la pestaña «Ayuda» muestra la guía del conductor sin desbordar y permite volver a la ruta", async ({ page }) => {
+    const api = await simularApi(page, { rol: "CONDUCTOR", miRuta: miRuta() });
+    await conSesion(page, "CONDUCTOR");
+    await page.goto("/");
+    await expect(page.getByRole("region", { name: "Siguiente parada" })).toBeVisible();
+
+    await page.getByRole("navigation", { name: "Acciones" }).getByRole("button", { name: "Ayuda" }).click();
+
+    await expect(page.getByRole("heading", { name: "Primeros pasos como conductor" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Siguiente parada" })).toHaveCount(0);
+    const medidas = await page.evaluate(() => ({ contenido: document.documentElement.scrollWidth, ventana: document.documentElement.clientWidth }));
+    expect(medidas.contenido).toBeLessThanOrEqual(medidas.ventana);
+
+    await page.getByRole("button", { name: "Volver a mi ruta" }).click();
+    await expect(page.getByRole("region", { name: "Siguiente parada" })).toBeVisible();
+    expect(api.noSimuladas).toEqual([]);
+  });
+
   test("al atender la última parada muestra que la ruta está completada", async ({ page }) => {
     const casi = [parada(1, { estado_entrega: "ENTREGADO" }), parada(2, { estado_entrega: "FALLIDO" }), parada(3)];
     const api = await simularApi(page, { rol: "CONDUCTOR", miRuta: miRuta(casi, "EN_EJECUCION") });
