@@ -270,13 +270,13 @@ RouteZero/
 │   │   │   ├── 02 Retrospectiva del Sprint V_1_0_0.md
 │   │   │   ├── 03 Analisis PlayWrigth V_1_0_0.md
 │   │   │   ├── 04 Usabilidad V_1_0_0.md
-│   │   │   ├── 05 Informe de estado del proyecto V_1_2_0.md
-│   │   │   ├── 06 Registro de Impedimentos V_1_1_0.md
 │   │   │   ├── evidencias/   (informe HTML de Playwright y resultados del monitoreo de producción)
-│   │   │   ├── historial Sprint 4/   (7 versiones anteriores de los documentos 01, 02, 05 y 06)
+│   │   │   ├── historial Sprint 4/   (7 versiones anteriores de la revisión, la retrospectiva, el informe de estado y el registro de impedimentos)
 │   │   │   └── Plan y documentos técnicos/
 │   │   │       ├── 01 Sprint 4 Plan de ejecución y estado V_1_5_0.md
 │   │   │       ├── 02 Implementación de la sostenibilidad V_1_4_0.md
+│   │   │       ├── 05 Informe de estado del proyecto V_1_2_0.md
+│   │   │       ├── 06 Registro de Impedimentos V_1_1_0.md
 │   │   │       └── historial Plan y documentos técnicos/   (9 versiones anteriores)
 │   │   └── reduccion del impacto ambiental/   (Inspección 04: Green Software y estándares)
 │   │       ├── 01 Informe de reduccion del impacto ambiental V_1_6_0.md
@@ -414,6 +414,8 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 |---|---|
 | Sprint 4: plan de ejecución y estado | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/01 Sprint 4 Plan de ejecución y estado V_1_5_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/01%20Sprint%204%20Plan%20de%20ejecuci%C3%B3n%20y%20estado%20V_1_5_0.md) |
 | Implementación de la sostenibilidad | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/02 Implementación de la sostenibilidad V_1_4_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/02%20Implementaci%C3%B3n%20de%20la%20sostenibilidad%20V_1_4_0.md) |
+| Informe de estado del proyecto | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/05 Informe de estado del proyecto V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/05%20Informe%20de%20estado%20del%20proyecto%20V_1_2_0.md) |
+| Registro de impedimentos | [`docs/03 Implementación/Sprint 4/Plan y documentos técnicos/06 Registro de Impedimentos V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/Plan%20y%20documentos%20t%C3%A9cnicos/06%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
 
 **Entregables de cierre del Sprint 4** (`docs/03 Implementación/Sprint 4/`, Inspección 05):
 
@@ -423,8 +425,6 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Retrospectiva del Sprint | [`docs/03 Implementación/Sprint 4/02 Retrospectiva del Sprint V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md) |
 | Pruebas E2E y monitoreo con Playwright | [`docs/03 Implementación/Sprint 4/03 Analisis PlayWrigth V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/03%20Analisis%20PlayWrigth%20V_1_0_0.md) |
 | Evaluación de usabilidad con la escala SUS | [`docs/03 Implementación/Sprint 4/04 Usabilidad V_1_0_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/04%20Usabilidad%20V_1_0_0.md) |
-| Informe de Estado del Proyecto | [`docs/03 Implementación/Sprint 4/05 Informe de estado del proyecto V_1_2_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/05%20Informe%20de%20estado%20del%20proyecto%20V_1_2_0.md) |
-| Registro de Impedimentos | [`docs/03 Implementación/Sprint 4/06 Registro de Impedimentos V_1_1_0.md`](docs/03%20Implementaci%C3%B3n/Sprint%204/06%20Registro%20de%20Impedimentos%20V_1_1_0.md) |
 | Evidencias (informe HTML de Playwright y monitoreo de producción) | [`docs/03 Implementación/Sprint 4/evidencias/`](docs/03%20Implementaci%C3%B3n/Sprint%204/evidencias/) |
 
 **Integración y despliegue continuos** (GitHub Actions, `.github/workflows/`):
