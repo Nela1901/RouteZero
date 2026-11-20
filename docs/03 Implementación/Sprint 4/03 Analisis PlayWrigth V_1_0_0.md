@@ -179,6 +179,32 @@ Los 119 casos ejecutados pasaron (100 %), sin ningún caso inestable (`flaky`), 
 
 La prueba «el primer Tab lleva a *Saltar al contenido*» pasa en Chromium y Firefox y **se omite en WebKit**. Al investigarlo, con una sonda que imprimía el elemento enfocado tras cada pulsación, se vio que WebKit solo recorre botones y campos con Tab y **nunca enlaces**, ni el de «Saltar al contenido» ni los del menú. Es el comportamiento por defecto de Safari (los enlaces entran al orden del Tab solo si el usuario activa una preferencia del navegador) y Playwright no puede cambiar esa preferencia. No es un fallo de la aplicación, pero tampoco se puede verificar con teclado en ese motor, por eso la prueba lo declara de forma explícita (`test.skip(browserName === "webkit", …)`) en lugar de ocultarlo.
 
+### 3.5 Informe HTML por navegador
+
+El informe HTML de Playwright permite filtrar los resultados con su propio buscador. Las figuras siguientes muestran el mismo informe de la sección 1 (17-11-2026, 9:28 p. m., 1.4 min en total) filtrado por proyecto. En todas se conservan los contadores globales de la parte superior: **119 aprobados, 0 fallidos, 0 inestables y 1 omitido**.
+
+> **Cómo se generaron las capturas.** Son capturas de pantalla reales del informe HTML producido por `npx playwright test` y de las páginas públicas de GitHub Actions, tomadas con un script de Playwright que abre cada página y fotografía la pantalla; no están editadas ni dibujadas. Se pueden reproducir con `npx playwright show-report` (escribiendo en el buscador del informe, por ejemplo, `p:firefox`).
+
+![Informe HTML de Playwright filtrado por Firefox: 34 casos aprobados](evidencias/playwright-informe-firefox.png)
+
+*Figura 2. Informe filtrado por Firefox (`p:firefox`): 34 casos, todos aprobados, en 2.0 min acumulados.*
+
+![Informe HTML de Playwright filtrado por WebKit: 42 casos aprobados](evidencias/playwright-informe-webkit.png)
+
+*Figura 3. Informe filtrado por WebKit (`p:webkit`): 42 casos aprobados. El filtro incluye también el proyecto móvil `movil-webkit` (33 de escritorio y 9 de celular); el caso omitido no se cuenta en ese total.*
+
+![Informe HTML de Playwright filtrado por el proyecto móvil de Chromium: 9 casos aprobados](evidencias/playwright-informe-movil-chromium.png)
+
+*Figura 4. Proyecto móvil de Chromium (`p:movil-chromium`, Pixel 7): 9 casos, entre ellos la pestaña «Ayuda» del conductor y las pantallas sin desborde horizontal.*
+
+![Informe HTML de Playwright filtrado por el proyecto móvil de WebKit](evidencias/playwright-informe-movil-webkit.png)
+
+*Figura 5. Proyecto móvil de WebKit (`p:movil-webkit`, iPhone 14).*
+
+![Informe HTML de Playwright filtrado por casos omitidos: una prueba de WebKit](evidencias/playwright-informe-omitida.png)
+
+*Figura 6. Único caso omitido (`s:skipped`): el enlace «Saltar al contenido» en WebKit, que Safari no incluye en el orden del Tab por defecto (sección 3.4).*
+
 ## 4. Monitoreo de rendimiento en producción
 
 ### 4.1 Método
@@ -267,6 +293,16 @@ Resultados en GitHub Actions (Linux, 17-11-2026), sobre el Pull Request #100 y s
 
 **Un problema real de la integración:** en una primera ejecución, el trabajo de WebKit se quedó más de 26 minutos colgado instalando las dependencias del sistema con `playwright install --with-deps` y en la siguiente agotó su tiempo, sin llegar a ejecutar las pruebas. Se resolvió ejecutando el trabajo dentro de la imagen oficial de Playwright (`mcr.microsoft.com/playwright:v1.64.1-noble`), que ya trae los tres navegadores y sus dependencias, con un tope de 30 minutos por trabajo. Desde entonces los tres navegadores pasan en CI.
 
+Las páginas públicas de esas ejecuciones (Pull Request #102 fusionado a `main`, commit `b8162cb`) quedan como evidencia. Incluyen los avisos informativos de GitHub sobre la versión de Node.js de las acciones, que no afectan al resultado:
+
+![Ejecución de tests.yml en GitHub Actions: 5 tareas en verde, resumen de Playwright y 5 artefactos](evidencias/github-actions-pruebas.png)
+
+*Figura 7. `Pruebas` #11: éxito en 1 min 21 s, con cinco tareas (Vitest, pruebas del backend y E2E en Chromium, Firefox y WebKit), el resumen de Playwright de cada navegador (43, 34 y 42 aprobados, más 1 omitido en WebKit) y los 5 artefactos guardados, entre ellos el informe HTML de cada navegador.*
+
+![Ejecución de deploy-production.yml en GitHub Actions: tres tareas en verde y el artefacto del monitoreo](evidencias/github-actions-despliegue.png)
+
+*Figura 8. `Despliegue a producción` #4: éxito en 2 min 0 s, con la validación de CI y pruebas, el despliegue a Render y Vercel y la comprobación posterior con Playwright (3 casos aprobados en 14.4 s), que guarda el artefacto `monitoreo-produccion`.*
+
 ## 7. Limitaciones y trabajo futuro
 
 - La suite de extremo a extremo **simula la API**: no detecta fallos del backend real ni de la base. Ese riesgo lo cubren las pruebas de integración del backend (359, contra Supabase), que corren en local y no en GitHub Actions.
@@ -276,7 +312,8 @@ Resultados en GitHub Actions (Linux, 17-11-2026), sobre el Pull Request #100 y s
 
 ## 8. Evidencias
 
-- Informe HTML de la suite completa: [`evidencias/playwright-informe-html.png`](evidencias/playwright-informe-html.png).
+- Informe HTML de la suite completa: [`evidencias/playwright-informe-html.png`](evidencias/playwright-informe-html.png), y filtrado por navegador: [Firefox](evidencias/playwright-informe-firefox.png), [WebKit](evidencias/playwright-informe-webkit.png), [celular con Chromium](evidencias/playwright-informe-movil-chromium.png), [celular con WebKit](evidencias/playwright-informe-movil-webkit.png) y [el caso omitido](evidencias/playwright-informe-omitida.png).
+- Ejecuciones de GitHub Actions: [`Pruebas` #11](evidencias/github-actions-pruebas.png) y [`Despliegue a producción` #4](evidencias/github-actions-despliegue.png).
 - Resultados del monitoreo de producción (medición 2, 17-11-2026): [`evidencias/monitoreo-produccion-2026-11-17.json`](evidencias/monitoreo-produccion-2026-11-17.json).
 - Código de las pruebas: [`frontend/e2e/`](../../../frontend/e2e/) y configuración: [`playwright.config.ts`](../../../frontend/playwright.config.ts) y [`playwright.monitoreo.config.ts`](../../../frontend/playwright.monitoreo.config.ts).
 
@@ -291,3 +328,4 @@ Resultados en GitHub Actions (Linux, 17-11-2026), sobre el Pull Request #100 y s
 | V_1_0_0 | 2026-11-17 | Versión inicial: configuración de Playwright en tres navegadores, 106 casos de extremo a extremo (105 aprobados y 1 omitido en WebKit), pruebas de resiliencia, monitoreo de producción con Web Vitals, tiempos de la API y códigos HTTP, e integración en los workflows | Inciso Aguilar Elizabeth Antonela |
 | V_1_0_0 (ajuste) | 2026-11-17 | Se agregan los resultados reales de GitHub Actions (CI, pruebas en los tres navegadores y despliegue a producción) y el problema de instalación de WebKit con su solución; no cambian la estructura ni las mediciones | Inciso Aguilar Elizabeth Antonela |
 | V_1_0_0 (ajuste) | 2026-11-17 | Se actualizan las cifras de la suite (120 casos, 119 aprobados y 1 omitido) y el informe HTML con las pruebas de la pantalla de ayuda, la mejora derivada de la evaluación SUS | Inciso Aguilar Elizabeth Antonela |
+| V_1_0_0 (ajuste) | 2026-11-19 | Se agregan capturas del informe HTML filtrado por navegador y de las ejecuciones de GitHub Actions (pruebas y despliegue), con la indicación de cómo se generaron | Inciso Aguilar Elizabeth Antonela |

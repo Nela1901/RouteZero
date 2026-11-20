@@ -11,11 +11,11 @@
 | **Sprint** | Sprint 4 — Sostenibilidad y Cierre (22-10-2026 – 13-11-2026) |
 | **Versión** | 1.1.0 |
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ---
 
-La numeración continúa la del [Registro del Sprint 3](../Sprint%203/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) (IMP-005 a IMP-022). Se arrastran los impedimentos que siguen abiertos y se registran los del Sprint 4 (IMP-023 a IMP-029). IMP-018, IMP-020, IMP-021 e IMP-022 quedaron resueltos en el Sprint 3 y no se repiten.
+La numeración continúa la del [Registro del Sprint 3](../../Sprint%203/02%20Registro%20de%20Impedimentos%20V_1_1_0.md) (IMP-005 a IMP-022). Se arrastran los impedimentos que siguen abiertos y se registran los del Sprint 4 (IMP-023 a IMP-029). IMP-018, IMP-020, IMP-021 e IMP-022 quedaron resueltos en el Sprint 3 y no se repiten.
 
 | Impedimento # | Fecha de Registro | Descripción del Impedimento así como el Impacto en el Proyecto | Prioridad | Reportado por | Fecha tope de Resolución | Estado | Fecha de Resolución | Resolución/Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -33,7 +33,7 @@ La numeración continúa la del [Registro del Sprint 3](../Sprint%203/02%20Regis
 
 ---
 
-[← Volver al README Principal](../../../README.md)
+[← Volver al README Principal](../../../../README.md)
 
 ## Historial de Control de Cambios
 
@@ -41,3 +41,4 @@ La numeración continúa la del [Registro del Sprint 3](../Sprint%203/02%20Regis
 |---|---|---|---|
 | V_1_0_0 | 2026-10-23 | Versión inicial: se arrastran IMP-005, IMP-013, IMP-016 e IMP-019 y se registran IMP-023 a IMP-029 | Inciso Aguilar Elizabeth Antonela |
 | V_1_1_0 | 2026-11-17 | El documento pasa a ser el `06` de la carpeta (la consigna de la Inspección 05 reserva del `01` al `04`); se registran IMP-027 (arranque en frío de Render medido con Playwright), IMP-028 (despliegue automático sin esperar a las pruebas) e IMP-029 (vulnerabilidad de `picomatch` sin parche, en herramientas de desarrollo) | Inciso Aguilar Elizabeth Antonela |
+| V_1_1_0 (ajuste) | 2026-11-19 | El documento se mueve a `Plan y documentos técnicos` para que la carpeta del Sprint 4 muestre solo los cuatro entregables de la consigna de la Inspección 05; se ajustan sus enlaces, sin cambios de contenido | Inciso Aguilar Elizabeth Antonela |
