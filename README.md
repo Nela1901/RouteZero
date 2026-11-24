@@ -283,8 +283,16 @@ RouteZero/
 │   │       ├── 02 Estandares Ingeniería de software V_1_6_0.md
 │   │       ├── evidencias/   (reportes de Lighthouse, cálculo SWDM v4 y capturas)
 │   │       └── historial reduccion del impacto ambiental/   (12 versiones anteriores)
-│   ├── 04 Seguimiento_Control/   (pendiente)
-│   └── 05 Cierre/   (pendiente)
+│   ├── 04 Cierre/   (evaluación final: siete reportes de gestión y cierre)
+│   │   ├── 01 Reporte de Estado V_1_0_0.md
+│   │   ├── 02 Reporte de Variación V_1_0_0.md
+│   │   ├── 03 Reporte de Análisis de Valor Ganado - EVM V_1_0_0.md
+│   │   ├── 04 Tableros de Control - Híbridos V_1_0_0.md
+│   │   ├── 05 Radiadores de Información V_1_0_0.md
+│   │   ├── 06 Reporte Final del Proyecto V_1_0_0.md
+│   │   ├── 07 Reporte Final de Lecciones Aprendidas V_1_0_0.md
+│   │   └── evidencias/   (capturas de Jira y de la retrospectiva, y gráficos del valor ganado)
+│   └── 05 Video proyecto/   (video de unos 5 minutos: presentación y demostración funcional)
 ├── backend/
 │   ├── src/   (algoritmo, auditoria, auth, clientes, conductores, core, flota, pedidos, red_vial, rutas, sostenibilidad)
 │   ├── tests/
@@ -443,7 +451,25 @@ Antes de abrir un Pull Request con cambios en la documentación se ejecuta `pyth
 | Estándares de ingeniería de software y guía de desarrollo verde (ISO/IEC 25010, GSF, W3C WSG y matriz de mapeo) | [`docs/03 Implementación/reduccion del impacto ambiental/02 Estandares Ingeniería de software V_1_6_0.md`](docs/03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/02%20Estandares%20Ingenier%C3%ADa%20de%20software%20V_1_6_0.md) |
 | Reportes consolidados de auditoría (Lighthouse en producción y local antes y después, cálculo SWDM v4 y capturas) | [`docs/03 Implementación/reduccion del impacto ambiental/evidencias/`](docs/03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/) |
 
-*El Sprint 4 es el último del plan; el cierre del proyecto se documentará en `docs/04 Seguimiento_Control/` y `docs/05 Cierre/`.*
+---
+
+### Fase 04: Cierre del proyecto (evaluación final)
+
+Siete reportes de gestión y cierre, con la línea base de 14 semanas sin modificar (no hubo re-baseline) y el cierre final de las semanas 15 y 16 registrado como cambio de alcance CR-01. Los valores monetarios y los índices del EVM salen del documento 03.
+
+| Documento | Ubicación |
+|---|---|
+| Reporte de Estado (Status Report) | [`docs/04 Cierre/01 Reporte de Estado V_1_0_0.md`](docs/04%20Cierre/01%20Reporte%20de%20Estado%20V_1_0_0.md) |
+| Reporte de Variación (cronograma, costo y calidad) | [`docs/04 Cierre/02 Reporte de Variación V_1_0_0.md`](docs/04%20Cierre/02%20Reporte%20de%20Variaci%C3%B3n%20V_1_0_0.md) |
+| Reporte de Análisis de Valor Ganado - EVM | [`docs/04 Cierre/03 Reporte de Análisis de Valor Ganado - EVM V_1_0_0.md`](docs/04%20Cierre/03%20Reporte%20de%20An%C3%A1lisis%20de%20Valor%20Ganado%20-%20EVM%20V_1_0_0.md) |
+| Tableros de Control Híbridos | [`docs/04 Cierre/04 Tableros de Control - Híbridos V_1_0_0.md`](docs/04%20Cierre/04%20Tableros%20de%20Control%20-%20H%C3%ADbridos%20V_1_0_0.md) |
+| Radiadores de Información (burndown, burnup, tablero, mood chart y retrospectiva) | [`docs/04 Cierre/05 Radiadores de Información V_1_0_0.md`](docs/04%20Cierre/05%20Radiadores%20de%20Informaci%C3%B3n%20V_1_0_0.md) |
+| Reporte Final del Proyecto | [`docs/04 Cierre/06 Reporte Final del Proyecto V_1_0_0.md`](docs/04%20Cierre/06%20Reporte%20Final%20del%20Proyecto%20V_1_0_0.md) |
+| Reporte Final de Lecciones Aprendidas | [`docs/04 Cierre/07 Reporte Final de Lecciones Aprendidas V_1_0_0.md`](docs/04%20Cierre/07%20Reporte%20Final%20de%20Lecciones%20Aprendidas%20V_1_0_0.md) |
+| Evidencias (capturas reales de Jira y de la retrospectiva, y gráficos del valor ganado) | [`docs/04 Cierre/evidencias/`](docs/04%20Cierre/evidencias/) |
+| Video del proyecto (presentación y demostración funcional) | [`docs/05 Video proyecto/`](docs/05%20Video%20proyecto/) |
+
+*El Sprint 4 es el último del plan; el cierre final se documenta en `docs/04 Cierre/` y el video en `docs/05 Video proyecto/`.*
 
 ---
 
@@ -481,6 +507,16 @@ Para comprobar el empaquetado y las pruebas: `npm run build` y `npx vitest run`.
 ### 4. Datos de demostración
 
 El script [`backend/scripts/datos_demo.sql`](backend/scripts/datos_demo.sql) deja la base con un escenario de ejemplo (flota, conductores, clientes y pedidos). Se ejecuta en el SQL Editor de Supabase y borra los datos de esas tablas, por lo que no debe usarse en un entorno con datos reales.
+
+### 5. Guía de despliegue
+
+El sistema se despliega en tres servicios gratuitos: base de datos en Supabase, backend en Render y frontend en Vercel. Ninguna credencial va en el repositorio; solo los nombres de las variables (ver `.env.example` y `frontend/.env.example`).
+
+1. **Base de datos (Supabase).** Crear el proyecto y los roles `app_backend` (sin `BYPASSRLS`) y `app_admin` (solo para mantenimiento). Ejecutar a mano, en el SQL Editor, los scripts idempotentes `migracion_*.sql` de [`backend/scripts/`](backend/scripts/) **antes** de desplegar el código que los usa (no hay herramienta de migraciones). Crear los usuarios en Authentication y su fila en `usuarios` con el rol que corresponda. El modelo de datos está en [`docs/01 Inicio/11. Base de datos V_1_10_0.md`](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_10_0.md).
+2. **Backend (Render).** Servicio web desde [`render.yaml`](render.yaml): `rootDir: backend`, construcción con `pip install -r requirements.txt` e inicio con `uvicorn src.main:app --host 0.0.0.0 --port $PORT`. Variables de entorno: `DATABASE_URL`, `DATABASE_ADMIN_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY` y `FRONTEND_ORIGIN` (la URL del frontend, para el CORS). Las variables de Cloudinary son opcionales (foto del conductor). La comprobación de salud es `/api/health`.
+3. **Frontend (Vercel).** Importar el repositorio con la carpeta raíz `frontend`, comando de construcción `npm run build` y la variable `VITE_API_URL` apuntando a la URL del backend en Render. [`frontend/vercel.json`](frontend/vercel.json) define las reescrituras de la aplicación de una sola página y las cabeceras de seguridad.
+4. **Despliegue automático.** El flujo [`deploy-production.yml`](.github/workflows/deploy-production.yml) despliega en Render y Vercel con *deploy hooks* guardados como Secrets de GitHub (`RENDER_DEPLOY_HOOK` y `VERCEL_DEPLOY_HOOK`) solo cuando `ci.yml` y `tests.yml` terminan en verde para ese commit, y luego comprueba que la API y el frontend respondan.
+5. **Primera ejecución.** El plan gratuito de Render se apaga tras un periodo sin tráfico y la primera petición puede tardar casi un minuto; conviene abrir `/api/health` unos minutos antes de una demostración.
 
 ### Sistema desplegado
 
