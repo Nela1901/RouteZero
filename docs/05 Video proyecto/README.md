@@ -9,6 +9,8 @@ Esta carpeta contiene el video del proyecto **RouteZero — Optimizador de rutas
 | Elevator pitch | 1 minuto | El problema (congestión, costos, emisiones y ventanas de tiempo), la solución propuesta, su propuesta de valor y el público objetivo |
 | Demostración funcional | 4 minutos | Recorrido por los módulos principales del sistema desplegado, con flujos reales de usuario y la integración entre frontend y backend |
 
+**Video:** [`Video proyecto_RouteZero.mp4`](Video%20proyecto_RouteZero.mp4) (4:59, 41.3 MB).
+
 El sistema que se muestra está desplegado en [https://route-zero-omega.vercel.app](https://route-zero-omega.vercel.app); la guía para ejecutarlo está en la sección «Instalación» del [README principal](../../README.md).
 
 ---
