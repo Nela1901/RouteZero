@@ -467,7 +467,9 @@ Siete reportes de gestión y cierre, con la línea base de 14 semanas sin modifi
 | Reporte Final del Proyecto | [`docs/04 Cierre/06 Reporte Final del Proyecto V_1_0_0.md`](docs/04%20Cierre/06%20Reporte%20Final%20del%20Proyecto%20V_1_0_0.md) |
 | Reporte Final de Lecciones Aprendidas | [`docs/04 Cierre/07 Reporte Final de Lecciones Aprendidas V_1_0_0.md`](docs/04%20Cierre/07%20Reporte%20Final%20de%20Lecciones%20Aprendidas%20V_1_0_0.md) |
 | Evidencias (capturas reales de Jira y de la retrospectiva, y gráficos del valor ganado) | [`docs/04 Cierre/evidencias/`](docs/04%20Cierre/evidencias/) |
-| Video del proyecto (presentación y demostración funcional, 4:59) | [`docs/05 Video proyecto/Video proyecto_RouteZero.mp4`](docs/05%20Video%20proyecto/Video%20proyecto_RouteZero.mp4) |
+| Video del proyecto (presentación y demostración funcional, 4:59 y 41.3 MB) | [**Descargar el video**](https://github.com/Nela1901/RouteZero/raw/main/docs/05%20Video%20proyecto/Video%20proyecto_RouteZero.mp4) · [ubicación en el repositorio](docs/05%20Video%20proyecto/Video%20proyecto_RouteZero.mp4) |
+
+> **Cómo ver el video:** GitHub no reproduce en línea los archivos de este tamaño y, al abrirlo, solo ofrece «View raw». Usa el enlace **Descargar el video** de la tabla (se baja el archivo `.mp4`) y ábrelo con cualquier reproductor, como el Reproductor multimedia de Windows o VLC.
 
 *El Sprint 4 es el último del plan; el cierre final se documenta en `docs/04 Cierre/` y el video en `docs/05 Video proyecto/`.*
 
