@@ -4,7 +4,8 @@
 
 ## ▶ Ver el video
 
-https://github.com/user-attachments/assets/5bf60625-fc34-4a03-a1bc-c5d6f36d3108
+https://github.com/user-attachments/assets/7bb9be72-e7e5-4ff4-83d1-6dfd97866ca1
+
 
 **[Ver el video en línea (Google Drive)](https://drive.google.com/file/d/1TaNZeSg6Gke3PZNUJ8K7wn8wNEmquRW5/view?usp=sharing)** · se reproduce en el navegador, sin descargar.
 
