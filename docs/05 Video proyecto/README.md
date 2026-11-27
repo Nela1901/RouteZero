@@ -4,6 +4,8 @@
 
 ## ▶ Ver el video
 
+https://github.com/user-attachments/assets/5bf60625-fc34-4a03-a1bc-c5d6f36d3108
+
 **[Ver el video en línea (Google Drive)](https://drive.google.com/file/d/1TaNZeSg6Gke3PZNUJ8K7wn8wNEmquRW5/view?usp=sharing)** · se reproduce en el navegador, sin descargar.
 
 **[Descargar el video (.mp4)](https://github.com/Nela1901/RouteZero/raw/main/docs/05%20Video%20proyecto/Video%20proyecto_RouteZero.mp4)** · el archivo está en esta misma carpeta: `Video proyecto_RouteZero.mp4` (41.3 MB).
